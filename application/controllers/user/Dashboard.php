@@ -36,10 +36,13 @@ class Dashboard extends CI_Controller {
     }
 
     public function index() {
-        $arr['page']='dash';
-        
-        
-        $this->load->view('user/vwDashboard',$arr);
+  		$data['title'] = 'Welcome to the Smarty Website';
+		$data['bold'] = true;
+		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
+        $this->smarty->assign("css","");
+        $this->smarty->assign('pg','dash');
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'user/home.tpl', $data );
     }
 
     
