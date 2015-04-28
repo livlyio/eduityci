@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-24 18:34:07
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-25 17:26:45
          compiled from "application\views\templates\home\home.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:23475553a707f6fb736-36723203%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '9654acbfe67f231a10ddd603fb21455d38516ea2' => 
     array (
       0 => 'application\\views\\templates\\home\\home.tpl',
-      1 => 1429893234,
+      1 => 1429938581,
       2 => 'file',
     ),
   ),
@@ -15,9 +15,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
-  'has_nocache_code' => false,
   'version' => 'Smarty-3.1.21-dev',
   'unifunc' => 'content_553a707f75ab35_11170663',
+  'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_553a707f75ab35_11170663')) {function content_553a707f75ab35_11170663($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("home/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value)), 0);?>
 
@@ -30,7 +30,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 				<p class="animated hiding" data-animation="fadeInDown" data-delay="500">Eduity helps you make sure you have skilled workers when and where you need them.</p><p>Part planning tool and part social media, Eduity takes the uncertainty out of workforce planning &amp; development.
 </p>
             	<ul class="list-inline">
-                	<li><a href="http://live-neduity.gotpantheon.com/user/register" class="btn btn-primary animated hiding" data-animation="bounceIn" data-delay="700">Get started</a></li>
+                	<li><a href="#levels" class="btn btn-primary animated hiding" data-animation="bounceIn" data-delay="700">Get started</a></li>
 				</ul>
         </div>
         <div class="main-image">
@@ -187,7 +187,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 									<article class="center">
 										<h3>Stay <span class="highlight">Ahead</span> of the Curve</h3>
 										<div class="sub-title">How do you know what employers really need and value? <br />
-What can you do to help others develop their skills… and sharpen your own skills in the process?</div>
+                                        What can you do to help others develop their skills and sharpen your own skills in the process?</div>
 										<ul><li>Get feedback and guidance from peer experts who know the employers and the work. </li><li>Get recognition and rewards for your capabilities and for helping others to develop theirs.</li></ul>
 										<br/>
 										<a href="#" class="btn btn-secondary animated hiding" data-animation="bounceIn" data-delay="700">Sign up to build your capability plan</a>
@@ -208,7 +208,7 @@ What can you do to help others develop their skills… and sharpen your own skills
 										<h3>Build Your <span class="highlight">Dream Team</span></h3>
 										<div class="sub-title">What capabilities does your organization need to grow and perform? <br />
 How can you queue up skilled persons to meet future needs?</div>
-										<ul><li>Quickly and easily map out current and future needs using standard O*NET data</li><li>Identify critical gaps and fill them before they happen, and tap under-­utilized personnel before they leave.</li></ul>
+										<ul><li>Quickly and easily map out current and future needs using standard O*NET data</li><li>Identify critical gaps and fill them before they happen, and tap under-utilized personnel before they leave.</li></ul>
 										<br/>
 										<a href="#" class="btn btn-secondary animated hiding" data-animation="bounceIn" data-delay="700">Sign up to create your capability map</a>
 									</article>
@@ -327,7 +327,7 @@ How can you make sure workforce skills fit the needs of new and growing employer
             <div class="section-header animated hiding col-sm-8 col-sm-offset-2" data-animation="fadeInDown">
                 <h2>WHO <span class="highlight">IS</span> EDUITY?</h2>
 				<div class="sub-heading">
-                    Eduity is an early stage startup based on Chattanooga, Tennessee. 
+                    Eduity is an early stage startup based in Chattanooga, Tennessee. 
                 </div>
 				<br/>
 				<p>We are applying social network technology to close the skills gap between what people can do and what employers need. We see this is fundamentally an information gap that arises from social disconnects. Knowledge about abilities and workforce needs is scattered around, in the heads of those closest to the work. Our approach is to empower, incentivize, and inform people so they help each other develop capabilities valued by employers. It is all about interpersonal interactions and relationships. Eduity provides services and software that makes it easy, meaningful, and rewarding to help each other do better, get more, and make a difference.</p>

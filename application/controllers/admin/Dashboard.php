@@ -29,19 +29,16 @@ class Dashboard extends CI_Controller {
         parent::__construct();
         $this->load->library('form_validation');
         $this->load->library('session');
-        $this->load->model('Lv_model','lvmodel');
+     //   $this->load->model('Lv_model','lvmodel');
          if (!$this->session->userdata('is_admin_login')) {
-            redirect('admin/home');
+         //   redirect('admin/home');
         }
     }
 
     public function index() {
         $arr['page']='dash';
         
-        $arr['total_porn'] = $this->lvmodel->count_bycat('Porn');
-        $arr['total_test'] = $this->lvmodel->count_bycat('Test');
-        $arr['total_weight'] = $this->lvmodel->count_bycat('Weightloss');
-        $arr['total_links'] = $this->lvmodel->count_links();
+
         
         $this->load->view('admin/vwDashboard',$arr);
     }

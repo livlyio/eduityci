@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-24 21:15:24
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-28 15:50:45
          compiled from "application\views\templates\user\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3515553a93ec298723-01882159%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '025ad281a5261598669cd6d5f998e2d21cc93ab0' => 
     array (
       0 => 'application\\views\\templates\\user\\header.tpl',
-      1 => 1429902921,
+      1 => 1430229037,
       2 => 'file',
     ),
   ),
@@ -21,6 +21,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   array (
     'title' => 0,
     'name' => 0,
+    'css' => 0,
     'pg' => 0,
   ),
   'has_nocache_code' => false,
@@ -37,6 +38,92 @@ favicon.png">
     <title><?php echo $_smarty_tpl->tpl_vars['title']->value;?>
  - <?php echo $_smarty_tpl->tpl_vars['name']->value;?>
 </title>
+    <?php echo (($tmp = @$_smarty_tpl->tpl_vars['css']->value)===null||$tmp==='' ? '' : $tmp);?>
+
+        <?php echo '<script'; ?>
+ type="text/javascript" src="<?php echo @constant('HTTP_JS_PATH');?>
+jquery.js"><?php echo '</script'; ?>
+>
+    <?php echo '<script'; ?>
+ type="text/javascript" src="<?php echo @constant('HTTP_JS_PATH');?>
+jquery-ui.js"><?php echo '</script'; ?>
+>
+    <link href="<?php echo @constant('HTTP_CSS_PATH');?>
+jquery-ui.css" rel="stylesheet" type="text/css" />        
+    
+<style type="text/css">
+.ui-autocomplete {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  float: left;
+  display: none;
+  min-width: 160px;
+  _width: 160px;
+  padding: 4px 0;
+  margin: 2px 0 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+ 
+  .ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+ 
+    &.ui-state-hover, &.ui-state-active {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: #0088cc;
+      border-radius: 0px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      background-image: none;
+    }
+  }
+}
+</style>
+    
+    <?php echo '<script'; ?>
+ type="text/javascript">
+$(function(){
+    var $sfield = $('#job_search').autocomplete({
+        source: function(request, response){
+            var url = "http://localhost/user/organization/control_areas";
+              $.post(url, {data:request.term}, function(data){
+                response($.map(data, function(jobs) {
+                    return {
+                        value: jobs.title
+                    };
+                }));
+              }, "json");  
+        },
+        minLength: 2,
+        autofocus: true
+    });
+});
+<?php echo '</script'; ?>
+>
+            
     <!-- Bootstrap core CSS -->
     <link href="<?php echo @constant('HTTP_CSS_PATH');?>
 bootstrap.css" rel="stylesheet">

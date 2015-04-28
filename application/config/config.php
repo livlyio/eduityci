@@ -29,7 +29,7 @@ define('HTTP_JS_PATH', $config['base_url'].'assets/js/');
 define('HTTP_CSS_PATH_ADMIN', $config['base_url'].'assets/admin/css/');
 define('HTTP_IMAGES_PATH_ADMIN', $config['base_url'].'assets/admin/images/');
 define('HTTP_JS_PATH_ADMIN', $config['base_url'].'assets/js/jquery/');
-
+//define('XAJAX_FUNCTION','test_function');
 
 
 /*

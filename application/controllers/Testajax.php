@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Testajax extends CI_Controller
@@ -6,10 +8,14 @@ class Testajax extends CI_Controller
 
     public function __construct() {
       parent::__construct();
-      $this->load->library('xajax');
-      $rqstButton = $this->xajax->register(XAJAX_FUNCTION, 'showText');
-      $this->xajax->register(XAJAX_FUNCTION, array('test_function', $this, 'test_function') );
-      $this->xajax->processRequest();
+    
+                /*** set up the xajax environment ***/
+            include 'C:\Users\Greg\Documents\EduityCI\application\libraries/xajax_core/xajax.php';
+ 
+            /*** a new xajax object ***/
+            $this->xajax = new xajax;
+            $this->xajax->register(XAJAX_FUNCTION,array('test_function',&$this,'test_function'));
+            $this->xajax->processRequest();
     }
 
     public function test_function($number)
