@@ -4,7 +4,7 @@
     <div class="container">
     <div class="row">
         <div class="text-heading col-sm-6">
-            	<h1 class="animated hiding" data-animation="bounceInDown" data-delay="0">Avoid the <span class="highlight">Talent</span> Crunch</h1>
+            	<h1 class="animated hiding" data-animation="bounceInDown" data-delay="0">Find Your <span class="highlight">Future</span> </h1>
 				<p class="animated hiding" data-animation="fadeInDown" data-delay="500">Eduity helps you make sure you have skilled workers when and where you need them.</p><p>Part planning tool and part social media, Eduity takes the uncertainty out of workforce planning &amp; development.
 </p>
             	<ul class="list-inline">

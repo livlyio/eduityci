@@ -23,6 +23,7 @@ class Register extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->library('form_validation');
+        $this->load->library('flexi_auth');
     }
 
     public function index() {
@@ -99,7 +100,27 @@ class Register extends CI_Controller {
         redirect('home', 'refresh');
     }
 
-    
+	function register_account()
+	{
+		// Redirect user away from registration page if already logged in.
+		if ($this->flexi_auth->is_logged_in()) 
+		{
+			redirect('auth');
+		}
+		// If 'Registration' form has been submitted, attempt to register their details as a new account.
+		else if ($this->input->post('register_user'))
+		{			
+			$this->load->model('flexi_auth_model');
+			$this->flexi_auth_model->register_account();
+		}
+		
+		// Get any status message that may have been set.
+		$this->data['message'] = (! isset($this->data['message'])) ? $this->session->flashdata('message') : $this->data['message'];		
+
+print_r($this->data); die();
+
+		$this->load->view('register_view', $this->data);
+	}    
 
 }
 

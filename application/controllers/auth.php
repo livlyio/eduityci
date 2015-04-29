@@ -21,6 +21,7 @@ class Auth extends CI_Controller {
 		// Load required CI libraries and helpers.
 		$this->load->database();
 		$this->load->library('session');
+ 
  		$this->load->helper('url');
  		$this->load->helper('form');
 
@@ -98,8 +99,10 @@ class Auth extends CI_Controller {
 		if ($this->input->post('login_user'))
 		{
 			$this->load->model('flexi_auth_model');
-			$this->flexi_auth_model->login();
+			$this->flexi_auth_model->login($this->input->post('login_identity'),$this->input->post('login_password'));
 		}
+        
+    //    print_r($this->input->post()); die();
 			
 		// CAPTCHA Example
 		// Check whether there are any existing failed login attempts from the users ip address and whether those attempts have exceeded the defined threshold limit.
@@ -136,7 +139,20 @@ class Auth extends CI_Controller {
 		// Get any status message that may have been set.
 		$this->data['message'] = (! isset($this->data['message'])) ? $this->session->flashdata('message') : $this->data['message'];		
 
-		$this->load->view('login_view', $this->data);
+		if ($this->flexi_auth->is_logged_in()) 
+		{
+			redirect('user/dashboard');
+		}
+
+
+  	//	$data['title'] = 'Welcome to the Smarty Website';
+		$data['bold'] = true;
+		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
+        $this->smarty->assign("css","");
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'home/login.tpl', $data );
+        
+	//	$this->load->view('login_view', $this->data);
     }
 
 	/**

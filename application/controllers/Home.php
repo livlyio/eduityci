@@ -26,7 +26,7 @@ class Home extends CI_Controller {
     }
 
     public function index() {
-        		$data['title'] = 'Welcome to the Smarty Website';
+  		$data['title'] = 'Welcome to the Smarty Website';
 		$data['bold'] = true;
 		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
         $this->smarty->assign("css","");
