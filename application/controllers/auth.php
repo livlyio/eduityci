@@ -100,7 +100,8 @@ class Auth extends CI_Controller {
 		{
 			$this->load->model('flexi_auth_model');
 			$this->flexi_auth_model->login($this->input->post('login_identity'),$this->input->post('login_password'));
-		}
+            redirect('user/dashboard');
+        }
         
     //    print_r($this->input->post()); die();
 			

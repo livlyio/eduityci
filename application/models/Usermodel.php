@@ -67,6 +67,17 @@ class Usermodel extends CI_Model {
         return $this->db->insert_id();        
     }  
     
+    function insert_error($level,$uid,$message)
+    {
+        $data['error_level'] = $level;
+        $data['uacc_id'] = $uid;
+        $data['message'] = $message;
+        $data['ipaddr'] = $this->input->ip_address();
+        $data['timestamp'] = date("Y-m-d H:i:s");
+        
+        $this->db->insert('error_log',$data);
+        return $this->db->insert_id();
+    }
 
 
 }

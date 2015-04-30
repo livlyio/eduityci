@@ -13,6 +13,9 @@ class Userlib
         $this->CI->load->model('Orgmodel','orgmodel');
         $this->CI->load->helper('data_helper');
         $this->CI->load->helper('url');
+        $this->ipaddr = $this->CI->input->ip_address();
+        $auth = $this->CI->session->userdata('flexi_auth');
+        $this->user = $auth['user_id'];
     
     }
     
@@ -90,6 +93,11 @@ class Userlib
     return make_menu('Organizations',$out);
     
     
+    }
+    
+    public function log_error($level,$message)
+    {
+       return $this->CI->usermodel->insert_error($level,$this->user,$message);      
     }
     
     

@@ -45,13 +45,14 @@ class Organization extends CI_Controller {
 		if (! $this->flexi_auth->is_logged_in()) 
 		{
 			// Set a custom error message.
+            $eid = $this->userlib->log_error('notice','User has not logged in, tried to access area user/organization');
 			$this->flexi_auth->set_error_message('You must login as a user to access this area.', TRUE);
 			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
 			redirect('auth');
 		}
         
-        $auth = $this->session->userdata('flexi_auth');
-        $this->user = $auth['user_id'];
+       // $auth = $this->session->userdata('flexi_auth');
+        $this->user = $this->userlib->user;
         $this->profile = $this->userlib->get_profile($this->user);
         $this->menu['org_menu'] = $this->userlib->org_menu();
         $this->menu['pg'] = 'org';
@@ -63,9 +64,10 @@ class Organization extends CI_Controller {
             // User has no profile information, something went wrong.
             // Set a custom error message.
             log_message('error','No profile information existed for user: '. $this->user .' on dashboard, returned False.');
-			$this->flexi_auth->logout();
-            $this->flexi_auth->set_error_message('There is an error with your account, please contact support.', TRUE);
+            $eid = $this->userlib->log_error('error','No profile exists for user: '. $this->user);
+            $this->flexi_auth->set_error_message('There is an error with your account, please contact support. ERROR ID: '. $eid, TRUE);
 			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            $this->flexi_auth->logout();
             redirect('support');
         }
 
@@ -73,7 +75,7 @@ class Organization extends CI_Controller {
     
     public function index()
     {
-        
+        redirect('user/dashboard');
     }
 
     public function view() 
@@ -87,8 +89,9 @@ class Organization extends CI_Controller {
         
         // Security Check_
         if (!$this->userlib->has_access('ORG',$this->user,$this->org)) {
-            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to OrgID: '. $oid);
- 			$this->flexi_auth->set_error_message('There is an error with your account, please contact support.', TRUE);
+            log_message('security','UserID: '. $this->user .' attempted unauthorized access to OrgID: '. $this->org);
+ 			$eid = $this->userlib->log_error('security','User attempted unauthorized access to OrgID: '. $this->org);
+            $this->flexi_auth->set_error_message('There is an error with your account, please contact support. ERROR ID: '. $eid, TRUE);
 			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
             redirect('support');
         }
@@ -123,7 +126,8 @@ class Organization extends CI_Controller {
         // Security Check_
         if (!$this->userlib->has_access('UNT',$this->user,$this->unit)) {
             log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to UnitID: '. $this->unit);
- 			$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support.', TRUE);
+            $eid = $this->userlib->log_error('security','User attempted unauthorized access to UnitID: '. $this->unit);
+        	$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support. Error ID: '. $eid, TRUE);
 			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
             redirect('support');
         }        
@@ -149,7 +153,7 @@ class Organization extends CI_Controller {
         
         // Security Check_
         if (!$this->userlib->has_write_access('ORG',$this->user,$this->org)) {
-            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to add units to OrgID: '. $this->org);
+            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to add units to ADD UNIT OrgID: '. $this->org);
  			$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support.', TRUE);
 			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
             redirect('support');
