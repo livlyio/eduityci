@@ -27,6 +27,31 @@ class Orgmodel extends CI_Model {
         
     }
     
+    function org_name($id)
+    {
+        $this->odb->select('org_name');
+        $this->odb->where('org_id',$id);
+        $query = $this->odb->get('organizations');
+
+        if ($query->num_rows() > 0) {
+            $result = $query->row(); 
+            return $result->org_name;
+        }
+        log_message('error', 'Orgmodel->org_name() did not return a value.');
+        return '';          
+    }
+    
+    function get_units($id)
+    {
+        $this->odb->where('org_id',$id);
+        $query = $this->odb->get('organizations_units');
+        if ($query->num_rows() > 0) {
+            return $query->result_array(); 
+        }
+        return false;        
+               
+    }
+    
     
     function get_unit_map($id)
     {
@@ -50,27 +75,10 @@ class Orgmodel extends CI_Model {
     }
     return $branch;
     }
-    
-    function count_links(){
-        $query = $this->db->get('redirects');
-        return $query->num_rows();         
-    }
-    
-    function get_links($start,$stop)
-    {
-        $query = $this->db->get('redirects',$start,$stop);
 
-        if ($query->num_rows() > 0) {
-            $result = $query->result_array(); 
-            return $result;
-        }
-        return false;        
-        
-    }
-
-    function get_unit($orgid,$unitid)
+    function get_unit($unitid)
     {
-        $query = $this->odb->get_where('organizations_units', array('unit_id' => $unitid,'org_id' => $orgid), 1, 0);
+        $query = $this->odb->get_where('organizations_units', array('unit_id' => $unitid), 1, 0);
 
         if ($query->num_rows() > 0) {
             return $query->row_array(); 
@@ -78,56 +86,16 @@ class Orgmodel extends CI_Model {
         return false;
     }
     
-    function save_stat($alias, $realurl, $clientip, $hostname, $referer)
+    function add_unit($orgid,$data)
     {
-     return;   
-    }
+        unset($data['add_unit']);
+        
+        $data['org_id'] = $orgid;
+        
+        $this->odb->insert('organizations_units',$data);
+        return $this->odb->insert_id();
+    }    
     
-    function count_bycat($cat) {
-        $this->db->where(array('category' => $cat));
-        $query = $this->db->get('redirects');
-        return $query->num_rows();  
-    }
-    
-    
-    function create($inurl, $name, $cat, $user)
-    {
-    $long_url = prep_url($inurl);
-
-    //$link_length = $this->config->item(‘link_length’);
-    $link_length = '3';
-
-    $alias = random_string('nozero', '1') . random_string('alnum', $link_length);
-
-    while ($this->does_alias_exist($alias))
-    {
-        $alias = random_string('nozero', '1') . random_string('alnum', $link_length);
-    }
-
-    $this->save_new_alias($long_url, $alias, $name, $cat, $user);
-
-    return base_url() . $alias;
-    }
-
-
-/**
-
-* Method to see if a generated Alias already exists in the table
-
-* @param type $alias String to check to see if it exists
-
-* @return Bool True or False
-
-*/
-
-    function does_alias_exist($alias)
-    {
-        $this->db->select('id');
-        $query = $this->db->get_where('redirects', array('alias' => $alias), 1, 0);
-        if ($query->num_rows() > 0) { return true; }
-    
-        return false;
-    }
 
 }
 

@@ -29,69 +29,167 @@ class Organization extends CI_Controller {
         parent::__construct();
         $this->load->library('form_validation');
         $this->load->library('session');
+        $this->load->library('userlib');
+        $this->load->helper('data_helper');
         $this->load->model('Orgmodel','orgmodel');
         $this->load->model('Usermodel','usermodel');
         $this->load->model('onetmodel','omodel');
+ 		$this->load->helper('url');
+ 		$this->load->helper('form');
+
+        // Auth STDclass
+  		$this->auth = new stdClass;
+		// Load 'standard' flexi auth library by default.
+		$this->load->library('flexi_auth');	
+		// Check user is logged in.
+		if (! $this->flexi_auth->is_logged_in()) 
+		{
+			// Set a custom error message.
+			$this->flexi_auth->set_error_message('You must login as a user to access this area.', TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+			redirect('auth');
+		}
         
         $auth = $this->session->userdata('flexi_auth');
-        $uid = $auth['user_id'];
+        $this->user = $auth['user_id'];
+        $this->profile = $this->userlib->get_profile($this->user);
+        $this->menu['org_menu'] = $this->userlib->org_menu();
+        $this->menu['pg'] = 'org';
+        $this->menu['base'] = base_url();
         
-        $this->profile = $this->usermodel->get_profile($uid);
-       // print_r($this->profile); die();
+      //  print_r($this->menu); die();
+        
+        if (!$this->profile) {
+            // User has no profile information, something went wrong.
+            // Set a custom error message.
+            log_message('error','No profile information existed for user: '. $this->user .' on dashboard, returned False.');
+			$this->flexi_auth->logout();
+            $this->flexi_auth->set_error_message('There is an error with your account, please contact support.', TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            redirect('support');
+        }
+
+    }
+    
+    public function index()
+    {
+        
     }
 
-    public function index() {
-  		$data['title'] = 'Eduity';
+    public function view() 
+    {
+        
+        
+        // Pull organization information
+        // $data = $this->orgmodel->get_org($this->org); 
+        
+        $this->org = $this->uri->segment('4');
+        
+        // Security Check_
+        if (!$this->userlib->has_access('ORG',$this->user,$this->org)) {
+            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to OrgID: '. $oid);
+ 			$this->flexi_auth->set_error_message('There is an error with your account, please contact support.', TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            redirect('support');
+        }
+        
+        $data = $this->orgmodel->get_org($this->org); 
+        
+        
+        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        $data['org_id'] = $this->org;
+        $data['title'] = 'Eduity';
 		$data['bold'] = true;
 		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
         
-        $data['orginfo'] = $this->orgmodel->get_org($this->profile->organization_id);
-        
-        $mdata = $this->orgmodel->get_unit_map($this->profile->organization_id);        
-        $map = $this->printTree($mdata);
+        $mdata = $this->orgmodel->get_unit_map($this->org);        
+        $map = printTree($mdata);
+          
         
         $this->smarty->assign('map',$map);
-        $this->smarty->assign("css",'<link rel="stylesheet" type="text/css" media="screen, print" href="../assets/css/slickmap.css" />');
+        $this->smarty->assign("css",'<link rel="stylesheet" type="text/css" media="screen, print" href="'. site_url('/assets/css/slickmap.css') .'" />');
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
         $this->smarty->view( 'user/orghome.tpl', $data );
     }
     
-    function printTree($array,$child = '0'){
-    $out = "<ul>\n";
-    foreach($array as $item){
-        if(is_array($item) && isset($item['unit_title'])){
-                if(isset($item['children']) && is_array($item['children'])){
-                    $out .= "<li><a href=\"". base_url() . 'user/organization/units/'. $item['unit_id'] ."\">".$item['unit_title']."</a>";
-                    $out .= $this->printTree($item['children'],'1');
-                    $out .= "</li>\n";
-                } else {
-                    $out .= "<li><a href=\"". base_url() . 'user/organization/units/'. $item['unit_id'] ."\">".$item['unit_title']."</a></li>\n";
-                }   
-        }  
-    }
-    $out .= "</ul>\n\n";
-    return $out;
-    }
+
 
 
     public function units()
     {
-        $unitid = $this->uri->segment('4');
-        $udata = $this->orgmodel->get_unit($this->profile->organization_id,$unitid);
-        if (!$udata) {
-            //Unit doesn't exist for this org
-            redirect('user/organization');
-        }
-      //  print_r($udata); die();
-      
-        $data = array();
+        $this->unit = $this->uri->segment('4');
         
-        $this->smarty->assign('info',$udata);
+        // Security Check_
+        if (!$this->userlib->has_access('UNT',$this->user,$this->unit)) {
+            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to UnitID: '. $this->unit);
+ 			$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support.', TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            redirect('support');
+        }        
+        
+        $udata = $this->orgmodel->get_unit($this->unit);
+        
+        if (!$udata) {
+            //Unit doesn't exist
+            log_message('error','Unit '. $this->unit .' does not exist UID: '. $this->user);         
+            redirect('user/dashboard');
+        }
+        $odata = $this->orgmodel->get_org($udata['org_id']);
+        $data = array_merge($udata,$odata);
+        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
         $this->smarty->view( 'user/viewunit.tpl', $data );        
     }
+    
+    public function add_unit()
+    {
+        $this->org = $this->uri->segment('4');
+        
+        // Security Check_
+        if (!$this->userlib->has_write_access('ORG',$this->user,$this->org)) {
+            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to add units to OrgID: '. $this->org);
+ 			$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support.', TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            redirect('support');
+        }         
+        
+        if ($this->input->post('add_unit')) {
+           // print_r($this->input->post()); die();
+            $id = $this->orgmodel->add_unit($this->org,$this->input->post());
+            $this->userlib->grant_rw_access('UNT',$this->user,$id);
+            redirect('/user/organization/units/'.$id);
+        }
+        
+        $data = $this->orgmodel->get_org($this->org);
+        $data['parents'] = '';
+        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        $data['org_id'] = $this->org;
+        
+        $units = $this->orgmodel->get_units($this->org);
+        
+        foreach ($units as $row) {
+            if ($row['parent_id'] != 0) {
+                foreach ($units as $r) {
+                    if ($r['unit_id'] == $row['parent_id']) {
+                       $data['parents'] .= '<option value="'. $row['unit_id'] .'">'. $r['unit_title'] .' &gt; '. $row['unit_title'] .'</option>'; 
+                    }
+                }
+            } else {
+            $data['parents'] .= '<option value="'. $row['unit_id'] .'">Main &gt; '. $row['unit_title'] .'</option>'; 
+           }    
+        }
+       // die($data['parents']);
+        
+        
+        $this->smarty->assign('pg','org');
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'user/addunit.tpl', $data );          
+        
+        
+    }
+    
 
  function control_areas(){
     $term = $this->input->post('data', TRUE);

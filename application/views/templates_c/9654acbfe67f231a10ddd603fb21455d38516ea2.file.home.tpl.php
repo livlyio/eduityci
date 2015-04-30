@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-25 17:26:45
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-29 20:11:56
          compiled from "application\views\templates\home\home.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:23475553a707f6fb736-36723203%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '9654acbfe67f231a10ddd603fb21455d38516ea2' => 
     array (
       0 => 'application\\views\\templates\\home\\home.tpl',
-      1 => 1429938581,
+      1 => 1430330317,
       2 => 'file',
     ),
   ),
@@ -26,7 +26,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <div class="container">
     <div class="row">
         <div class="text-heading col-sm-6">
-            	<h1 class="animated hiding" data-animation="bounceInDown" data-delay="0">Avoid the <span class="highlight">Talent</span> Crunch</h1>
+            	<h1 class="animated hiding" data-animation="bounceInDown" data-delay="0">Find Your <span class="highlight">Future</span> </h1>
 				<p class="animated hiding" data-animation="fadeInDown" data-delay="500">Eduity helps you make sure you have skilled workers when and where you need them.</p><p>Part planning tool and part social media, Eduity takes the uncertainty out of workforce planning &amp; development.
 </p>
             	<ul class="list-inline">

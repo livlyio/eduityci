@@ -3,7 +3,7 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Home extends CI_Controller {
+class Support extends CI_Controller {
 
     /**
      * Index Page for this controller.
@@ -26,12 +26,12 @@ class Home extends CI_Controller {
     }
 
     public function index() {
-  		$data['title'] = 'Welcome to the Smarty Website';
 		$data['bold'] = true;        
 		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
+        $data['message'] = $this->session->flashdata('message');
         $this->smarty->assign("css","");
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'home/home.tpl', $data );
+        $this->smarty->view( 'home/support.tpl', $data );
         
      //   $arr['page'] ='home';
        // $this->load->view('vwHome',$arr);

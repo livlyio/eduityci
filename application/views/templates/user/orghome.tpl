@@ -86,7 +86,7 @@
 {/literal}
 
 <div class="page-header container">
-    <h1><small>{$orginfo.org_name} </small></h1>
+    <h1><small>{$org_name} </small></h1>
 </div>
 <div class="container">
 
@@ -95,10 +95,10 @@
         <div class="panel-heading">Organizaiton Profile</div>
         <div class="panel-body">
         <table class="table table-striped table-hover">
-        <tr><td>Name:</td><td>{$orginfo.org_name} </td></tr>
-        <tr><td>Description:</td><td>{$orginfo.org_desc} </td></tr>
-        <tr><td>Location:</td><td>{$orginfo.org_location} </td></tr>
-        <tr><td>Website:</td><td>{$orginfo.website} </td></tr>
+        <tr><td>Name:</td><td>{$org_name} </td></tr>
+        <tr><td>Description:</td><td>{$org_desc} </td></tr>
+        <tr><td>Location:</td><td>{$org_location} </td></tr>
+        <tr><td>Website:</td><td>{$website} </td></tr>
         </table>
         
         </div>
@@ -121,12 +121,12 @@
 		<h1>Organizational Map</h1>
 	
 		<ul id="utilityNav">
-			<li><a href="/register">Add Unit</a></li>
+			<li><a href="{$smarty.const.BASE_URL}/user/organization/add_unit/{$org_id}">Add Unit</a></li>
 			<li><a href="/login">Reorder Units</a></li>
 		</ul>
 
 		<ul id="primaryNav" class="col4">
-			<li id="home"><a href="http://sitetitle.com">{$orginfo.org_name}</a></li>
+			<li id="home"><a href="#">{$org_name}</a></li>
 		{$map}	
 		</ul>
 

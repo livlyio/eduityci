@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-28 15:51:12
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-29 23:42:41
          compiled from "application\views\templates\user\viewunit.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:22124553db6bf02ce94-57713342%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'de8e73077fece5af7322e1728d6e84d77757ed0c' => 
     array (
       0 => 'application\\views\\templates\\user\\viewunit.tpl',
-      1 => 1430229070,
+      1 => 1430343742,
       2 => 'file',
     ),
   ),
@@ -19,7 +19,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_553db6bf0979c9_47595885',
   'variables' => 
   array (
-    'info' => 0,
+    'org_name' => 0,
+    'unit_title' => 0,
+    'unit_desc' => 0,
+    'unit_location' => 0,
+    'website' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -38,7 +42,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
 
 <div class="page-header container">
-    <h1><small>XYZ Company</small></h1>
+    <h1><small><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
+</small></h1>
 </div>
 <div class="container">
 
@@ -47,13 +52,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <div class="panel-heading">Organizaiton Profile</div>
         <div class="panel-body">
         <table class="table table-striped table-hover">
-        <tr><td>Name:</td><td><?php echo $_smarty_tpl->tpl_vars['info']->value['unit_title'];?>
+        <tr><td>Name:</td><td><?php echo $_smarty_tpl->tpl_vars['unit_title']->value;?>
  </td></tr>
-        <tr><td>Description:</td><td><?php echo $_smarty_tpl->tpl_vars['info']->value['unit_desc'];?>
+        <tr><td>Description:</td><td><?php echo $_smarty_tpl->tpl_vars['unit_desc']->value;?>
  </td></tr>
-        <tr><td>Location:</td><td><?php echo $_smarty_tpl->tpl_vars['info']->value['unit_location'];?>
+        <tr><td>Location:</td><td><?php echo $_smarty_tpl->tpl_vars['unit_location']->value;?>
  </td></tr>
-        <tr><td>Website:</td><td><?php echo (($tmp = @$_smarty_tpl->tpl_vars['info']->value['website'])===null||$tmp==='' ? '' : $tmp);?>
+        <tr><td>Website:</td><td><?php echo (($tmp = @$_smarty_tpl->tpl_vars['website']->value)===null||$tmp==='' ? '' : $tmp);?>
  </td></tr>
         </table>
         

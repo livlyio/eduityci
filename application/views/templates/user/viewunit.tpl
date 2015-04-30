@@ -12,7 +12,7 @@
 {/literal}
 
 <div class="page-header container">
-    <h1><small>XYZ Company</small></h1>
+    <h1><small>{$org_name}</small></h1>
 </div>
 <div class="container">
 
@@ -21,10 +21,10 @@
         <div class="panel-heading">Organizaiton Profile</div>
         <div class="panel-body">
         <table class="table table-striped table-hover">
-        <tr><td>Name:</td><td>{$info.unit_title} </td></tr>
-        <tr><td>Description:</td><td>{$info.unit_desc} </td></tr>
-        <tr><td>Location:</td><td>{$info.unit_location} </td></tr>
-        <tr><td>Website:</td><td>{$info.website|default:''} </td></tr>
+        <tr><td>Name:</td><td>{$unit_title} </td></tr>
+        <tr><td>Description:</td><td>{$unit_desc} </td></tr>
+        <tr><td>Location:</td><td>{$unit_location} </td></tr>
+        <tr><td>Website:</td><td>{$website|default:''} </td></tr>
         </table>
         
         </div>

@@ -42,7 +42,7 @@ class Home extends CI_Controller {
      public function do_login() {
 
         if ($this->session->userdata('is_user_login')) {
-            redirect('user/home/dashboard');
+            //redirect('user/home/dashboard');
         } else {
             $user = $_POST['username'];
             $password = $_POST['password'];

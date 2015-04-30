@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-27 06:12:23
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-30 22:06:21
          compiled from "application\views\templates\user\orghome.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:26479553ae149b053e8-03963172%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1e9996fd78d31906fbf31ac9e1a5a45b794ffbbd' => 
     array (
       0 => 'application\\views\\templates\\user\\orghome.tpl',
-      1 => 1430107938,
+      1 => 1430424379,
       2 => 'file',
     ),
   ),
@@ -19,7 +19,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_553ae149cc18c9_99736113',
   'variables' => 
   array (
-    'orginfo' => 0,
+    'org_name' => 0,
+    'org_desc' => 0,
+    'org_location' => 0,
+    'website' => 0,
+    'org_id' => 0,
     'map' => 0,
   ),
   'has_nocache_code' => false,
@@ -123,7 +127,7 @@ starter-template.css" rel="stylesheet">
 
 
 <div class="page-header container">
-    <h1><small><?php echo $_smarty_tpl->tpl_vars['orginfo']->value['org_name'];?>
+    <h1><small><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
  </small></h1>
 </div>
 <div class="container">
@@ -133,13 +137,13 @@ starter-template.css" rel="stylesheet">
         <div class="panel-heading">Organizaiton Profile</div>
         <div class="panel-body">
         <table class="table table-striped table-hover">
-        <tr><td>Name:</td><td><?php echo $_smarty_tpl->tpl_vars['orginfo']->value['org_name'];?>
+        <tr><td>Name:</td><td><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
  </td></tr>
-        <tr><td>Description:</td><td><?php echo $_smarty_tpl->tpl_vars['orginfo']->value['org_desc'];?>
+        <tr><td>Description:</td><td><?php echo $_smarty_tpl->tpl_vars['org_desc']->value;?>
  </td></tr>
-        <tr><td>Location:</td><td><?php echo $_smarty_tpl->tpl_vars['orginfo']->value['org_location'];?>
+        <tr><td>Location:</td><td><?php echo $_smarty_tpl->tpl_vars['org_location']->value;?>
  </td></tr>
-        <tr><td>Website:</td><td><?php echo $_smarty_tpl->tpl_vars['orginfo']->value['website'];?>
+        <tr><td>Website:</td><td><?php echo $_smarty_tpl->tpl_vars['website']->value;?>
  </td></tr>
         </table>
         
@@ -163,12 +167,14 @@ starter-template.css" rel="stylesheet">
 		<h1>Organizational Map</h1>
 	
 		<ul id="utilityNav">
-			<li><a href="/register">Add Unit</a></li>
+			<li><a href="<?php echo @constant('BASE_URL');?>
+/user/organization/add_unit/<?php echo $_smarty_tpl->tpl_vars['org_id']->value;?>
+">Add Unit</a></li>
 			<li><a href="/login">Reorder Units</a></li>
 		</ul>
 
 		<ul id="primaryNav" class="col4">
-			<li id="home"><a href="http://sitetitle.com"><?php echo $_smarty_tpl->tpl_vars['orginfo']->value['org_name'];?>
+			<li id="home"><a href="#"><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
 </a></li>
 		<?php echo $_smarty_tpl->tpl_vars['map']->value;?>
 	
