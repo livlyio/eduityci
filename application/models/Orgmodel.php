@@ -96,6 +96,22 @@ class Orgmodel extends CI_Model {
         return $this->odb->insert_id();
     }    
     
+    function update_unit($unitid,$data)
+    {
+        unset($data['save_unit']);
+        unset($data['unit_id']);
+        $this->odb->where('unit_id',$unitid);
+        $this->odb->update('organizations_units',$data);
+        return true;
+    }
+    
+    function delete_unit($unitid)
+    {
+        $this->odb->where('unit_id',$unitid);
+        $this->odb->delete('organizations_units');
+        return true;   
+    }
+    
 
 }
 

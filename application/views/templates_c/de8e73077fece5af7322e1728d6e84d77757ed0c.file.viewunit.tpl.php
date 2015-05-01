@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-29 23:42:41
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-01 02:05:55
          compiled from "application\views\templates\user\viewunit.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:22124553db6bf02ce94-57713342%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'de8e73077fece5af7322e1728d6e84d77757ed0c' => 
     array (
       0 => 'application\\views\\templates\\user\\viewunit.tpl',
-      1 => 1430343742,
+      1 => 1430438053,
       2 => 'file',
     ),
   ),
@@ -23,7 +23,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'unit_title' => 0,
     'unit_desc' => 0,
     'unit_location' => 0,
-    'website' => 0,
+    'unit_website' => 0,
+    'base' => 0,
+    'unit_id' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -58,8 +60,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
  </td></tr>
         <tr><td>Location:</td><td><?php echo $_smarty_tpl->tpl_vars['unit_location']->value;?>
  </td></tr>
-        <tr><td>Website:</td><td><?php echo (($tmp = @$_smarty_tpl->tpl_vars['website']->value)===null||$tmp==='' ? '' : $tmp);?>
+        <tr><td>Website:</td><td><?php echo (($tmp = @$_smarty_tpl->tpl_vars['unit_website']->value)===null||$tmp==='' ? '' : $tmp);?>
  </td></tr>
+        <tr><td><a href="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
+user/organization/edit_unit/<?php echo $_smarty_tpl->tpl_vars['unit_id']->value;?>
+" class="btn btn-warning" role="button">Edit Unit</a></td><td><a href="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
+user/organization/del_unit/<?php echo $_smarty_tpl->tpl_vars['unit_id']->value;?>
+" class="btn btn-danger" role="button" onclick="javascript:return confirm('Are you sure you want to delete this unit?')">Delete Unit</a></td></tr>
         </table>
         
         </div>

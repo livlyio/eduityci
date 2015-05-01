@@ -79,9 +79,7 @@ class Organization extends CI_Controller {
     }
 
     public function view() 
-    {
-        
-        
+    {      
         // Pull organization information
         // $data = $this->orgmodel->get_org($this->org); 
         
@@ -104,6 +102,7 @@ class Organization extends CI_Controller {
         $data['title'] = 'Eduity';
 		$data['bold'] = true;
 		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
+        $data['base'] = $this->menu['base'];
         
         $mdata = $this->orgmodel->get_unit_map($this->org);        
         $map = printTree($mdata);
@@ -115,9 +114,6 @@ class Organization extends CI_Controller {
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
         $this->smarty->view( 'user/orghome.tpl', $data );
     }
-    
-
-
 
     public function units()
     {
@@ -141,6 +137,7 @@ class Organization extends CI_Controller {
         }
         $odata = $this->orgmodel->get_org($udata['org_id']);
         $data = array_merge($udata,$odata);
+        $data['base'] = $this->menu['base'];
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
@@ -190,6 +187,60 @@ class Organization extends CI_Controller {
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
         $this->smarty->view( 'user/addunit.tpl', $data );          
+        
+        
+    }
+    
+    public function del_unit()
+    {
+        $this->unit = $this->uri->segment('4');
+        
+        if (!$this->userlib->has_write_access('UNT',$this->user,$this->unit)) {
+            log_message('security','UserID: '. $this->user .' attempted unauthorized access to edit UnitID: '. $this->unit);
+            $eid = $this->userlib->log_error('security','User attempted unauthorized access to edit UnitID: '. $this->unit);
+        	$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support. Error ID: '. $eid, TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            redirect('support');
+        }        
+        $udata = $this->orgmodel->get_unit($this->unit);
+        
+        $this->orgmodel->delete_unit($this->unit);
+        redirect('user/organization/view/'.$udata['org_id']);
+    }
+    
+    public function edit_unit()
+    {
+        $this->unit = $this->uri->segment('4');
+        
+        // Security Check_
+        if (!$this->userlib->has_write_access('UNT',$this->user,$this->unit)) {
+            log_message('security','UserID: '. $this->user .' attempted unauthorized access to edit UnitID: '. $this->unit);
+            $eid = $this->userlib->log_error('security','User attempted unauthorized access to edit UnitID: '. $this->unit);
+        	$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support. Error ID: '. $eid, TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            redirect('support');
+        } 
+        
+        if ($this->input->post('save_unit')) {
+            $this->orgmodel->update_unit($this->unit,$this->input->post());
+            redirect('user/organization/units/'.$this->unit);
+           
+        }       
+        
+        $udata = $this->orgmodel->get_unit($this->unit);
+        
+        if (!$udata) {
+            //Unit doesn't exist
+            log_message('error','Unit '. $this->unit .' does not exist UID: '. $this->user);         
+            redirect('user/dashboard');
+        }
+        $odata = $this->orgmodel->get_org($udata['org_id']);
+        $data = array_merge($udata,$odata);
+        $data['base'] = $this->menu['base'];
+        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        $this->smarty->assign('pg','org');
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'user/editunit.tpl', $data );                
         
         
     }

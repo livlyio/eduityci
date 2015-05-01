@@ -24,7 +24,8 @@
         <tr><td>Name:</td><td>{$unit_title} </td></tr>
         <tr><td>Description:</td><td>{$unit_desc} </td></tr>
         <tr><td>Location:</td><td>{$unit_location} </td></tr>
-        <tr><td>Website:</td><td>{$website|default:''} </td></tr>
+        <tr><td>Website:</td><td>{$unit_website|default:''} </td></tr>
+        <tr><td><a href="{$base}user/organization/edit_unit/{$unit_id}" class="btn btn-warning" role="button">Edit Unit</a></td><td><a href="{$base}user/organization/del_unit/{$unit_id}" class="btn btn-danger" role="button" onclick="javascript:return confirm('Are you sure you want to delete this unit?')">Delete Unit</a></td></tr>
         </table>
         
         </div>
