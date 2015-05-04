@@ -30,10 +30,11 @@ class Organization extends CI_Controller {
         $this->load->library('form_validation');
         $this->load->library('session');
         $this->load->library('userlib');
+        $this->load->library('encrypt');
         $this->load->helper('data_helper');
         $this->load->model('Orgmodel','orgmodel');
         $this->load->model('Usermodel','usermodel');
-        $this->load->model('onetmodel','omodel');
+        $this->load->model('onetmodel','onet');
  		$this->load->helper('url');
  		$this->load->helper('form');
 
@@ -42,16 +43,12 @@ class Organization extends CI_Controller {
 		// Load 'standard' flexi auth library by default.
 		$this->load->library('flexi_auth');	
 		// Check user is logged in.
-		if (! $this->flexi_auth->is_logged_in()) 
-		{
-			// Set a custom error message.
-            $eid = $this->userlib->log_error('notice','User has not logged in, tried to access area user/organization');
-			$this->flexi_auth->set_error_message('You must login as a user to access this area.', TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-			redirect('auth');
-		}
+
         
-       // $auth = $this->session->userdata('flexi_auth');
+        if ($this->uri->total_segments() >= '4') {
+            $this->get = $this->userlib->decode_segment();
+        }
+        
         $this->user = $this->userlib->user;
         $this->profile = $this->userlib->get_profile($this->user);
         $this->menu['org_menu'] = $this->userlib->org_menu();
@@ -80,35 +77,20 @@ class Organization extends CI_Controller {
 
     public function view() 
     {      
+        //Assign ID value(s) from encrypted URI string
+        $this->org = $this->get->org_id; // Org ID  
+        // Security Check_        
+        $this->userlib->check_acl('ORG',$this->user,$this->org,'RO');
+        // Passed security check, continue
         // Pull organization information
-        // $data = $this->orgmodel->get_org($this->org); 
-        
-        $this->org = $this->uri->segment('4');
-        
-        // Security Check_
-        if (!$this->userlib->has_access('ORG',$this->user,$this->org)) {
-            log_message('security','UserID: '. $this->user .' attempted unauthorized access to OrgID: '. $this->org);
- 			$eid = $this->userlib->log_error('security','User attempted unauthorized access to OrgID: '. $this->org);
-            $this->flexi_auth->set_error_message('There is an error with your account, please contact support. ERROR ID: '. $eid, TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-            redirect('support');
-        }
-        
-        $data = $this->orgmodel->get_org($this->org); 
-        
-        
+        $data = $this->orgmodel->get_org($this->org);       
+        // Additional Values for display
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        $data['org_id'] = $this->org;
-        $data['title'] = 'Eduity';
-		$data['bold'] = true;
-		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
+        $data['org_id'] = $this->userlib->encode($this->org);
+        $data['query_str'] = $this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => '0'));
         $data['base'] = $this->menu['base'];
-        
-        $mdata = $this->orgmodel->get_unit_map($this->org);        
-        $map = printTree($mdata);
-          
-        
-        $this->smarty->assign('map',$map);
+        $data['map'] = $this->userlib->PrintTree($this->orgmodel->get_unit_map($this->org));
+        // Assign and show template  
         $this->smarty->assign("css",'<link rel="stylesheet" type="text/css" media="screen, print" href="'. site_url('/assets/css/slickmap.css') .'" />');
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
@@ -117,28 +99,25 @@ class Organization extends CI_Controller {
 
     public function units()
     {
-        $this->unit = $this->uri->segment('4');
-        
+        $this->org = $this->get->org_id; // Org ID
+        $this->unit = $this->get->unit_id;  // Unit ID   
         // Security Check_
-        if (!$this->userlib->has_access('UNT',$this->user,$this->unit)) {
-            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to UnitID: '. $this->unit);
-            $eid = $this->userlib->log_error('security','User attempted unauthorized access to UnitID: '. $this->unit);
-        	$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support. Error ID: '. $eid, TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-            redirect('support');
-        }        
-        
+        $this->userlib->check_acl('UNT',$this->user,$this->unit,'RO');
+        // Passed security check, continue
+        // Grab unit information
         $udata = $this->orgmodel->get_unit($this->unit);
-        
-        if (!$udata) {
-            //Unit doesn't exist
-            log_message('error','Unit '. $this->unit .' does not exist UID: '. $this->user);         
-            redirect('user/dashboard');
-        }
-        $odata = $this->orgmodel->get_org($udata['org_id']);
+        // Grab org information
+        $odata = $this->orgmodel->get_org($this->org);
+        // Merge with unit information for display
         $data = array_merge($udata,$odata);
+        // Set additional variables for display
+        //$data['unit_id'] = $this->userlib->encode($data['unit_id']);
+        $data['query_str'] = $this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => $this->unit));
         $data['base'] = $this->menu['base'];
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        // Create breadcrumb links for easy navigation
+        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->unit));
+        // Assign and display template
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
         $this->smarty->view( 'user/viewunit.tpl', $data );        
@@ -146,43 +125,38 @@ class Organization extends CI_Controller {
     
     public function add_unit()
     {
-        $this->org = $this->uri->segment('4');
+        // Grab data ID from encrypted URI
+        $this->org = $this->get->org_id; // Org ID
+        $this->unit = $this->get->unit_id;  // Parent Unit ID  
         
-        // Security Check_
-        if (!$this->userlib->has_write_access('ORG',$this->user,$this->org)) {
-            log_message('hacker','UserID: '. $this->user .' attempted unauthorized access to add units to ADD UNIT OrgID: '. $this->org);
- 			$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support.', TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-            redirect('support');
-        }         
-        
+        if ($this->unit == '0') {
+            // Home is parent, adding to Tier 1
+            // Security Check
+            $this->userlib->check_acl('ORG',$this->user,$this->org,'RW'); 
+        } else {
+            // Another unit is the parent, adding to Tier 2+
+            // Security Check
+            $this->userlib->check_acl('UNT',$this->user,$this->unit,'RW'); 
+        }
+
+        // Passed check, get org info
+        $data = $this->orgmodel->get_org($this->org);     
+                
+        // When user submits form...
         if ($this->input->post('add_unit')) {
-           // print_r($this->input->post()); die();
-            $id = $this->orgmodel->add_unit($this->org,$this->input->post());
+            // Save new unit
+            $id = $this->orgmodel->add_unit($this->org,$this->unit,$this->input->post());
+            // Auto grant read/write access to creator
             $this->userlib->grant_rw_access('UNT',$this->user,$id);
-            redirect('/user/organization/units/'.$id);
-        }
-        
-        $data = $this->orgmodel->get_org($this->org);
-        $data['parents'] = '';
+            // Redirect to view new unit
+            redirect('/user/organization/units/'. $this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => $id)));
+        } 
+        // Otherwise display add unit page
+        $data['query_str'] = $this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => $this->unit));
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        $data['org_id'] = $this->org;
-        
-        $units = $this->orgmodel->get_units($this->org);
-        
-        foreach ($units as $row) {
-            if ($row['parent_id'] != 0) {
-                foreach ($units as $r) {
-                    if ($r['unit_id'] == $row['parent_id']) {
-                       $data['parents'] .= '<option value="'. $row['unit_id'] .'">'. $r['unit_title'] .' &gt; '. $row['unit_title'] .'</option>'; 
-                    }
-                }
-            } else {
-            $data['parents'] .= '<option value="'. $row['unit_id'] .'">Main &gt; '. $row['unit_title'] .'</option>'; 
-           }    
-        }
-       // die($data['parents']);
-        
+
+        // Create breadcrumb links for easy navigation
+        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->unit));         
         
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
@@ -193,64 +167,104 @@ class Organization extends CI_Controller {
     
     public function del_unit()
     {
-        $this->unit = $this->uri->segment('4');
-        
-        if (!$this->userlib->has_write_access('UNT',$this->user,$this->unit)) {
-            log_message('security','UserID: '. $this->user .' attempted unauthorized access to edit UnitID: '. $this->unit);
-            $eid = $this->userlib->log_error('security','User attempted unauthorized access to edit UnitID: '. $this->unit);
-        	$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support. Error ID: '. $eid, TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-            redirect('support');
-        }        
-        $udata = $this->orgmodel->get_unit($this->unit);
-        
+        // Grab data ID from encrypted URI
+        $this->org = $this->get->org_id; // Org ID
+        $this->unit = $this->get->unit_id;  // Unit ID  
+        // Security Check
+        $this->userlib->check_acl('UNT',$this->user,$this->unit,'RW'); 
+        // Passed check
+        // Delete the unit
         $this->orgmodel->delete_unit($this->unit);
-        redirect('user/organization/view/'.$udata['org_id']);
+        // Go back to org home
+        redirect('user/organization/view/'. $this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => '0')));
     }
     
     public function edit_unit()
     {
-        $this->unit = $this->uri->segment('4');
-        
-        // Security Check_
-        if (!$this->userlib->has_write_access('UNT',$this->user,$this->unit)) {
-            log_message('security','UserID: '. $this->user .' attempted unauthorized access to edit UnitID: '. $this->unit);
-            $eid = $this->userlib->log_error('security','User attempted unauthorized access to edit UnitID: '. $this->unit);
-        	$this->flexi_auth->set_error_message('There is an error with your account or you attempted to access an area you have not been authorized, please contact support. Error ID: '. $eid, TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-            redirect('support');
-        } 
-        
+        // Grab data ID from encrypted URI
+        $this->org = $this->get->org_id; // Org ID
+        $this->unit = $this->get->unit_id;  // Unit ID  
+        // Security Check
+        $this->userlib->check_acl('UNT',$this->user,$this->unit,'RW'); 
+        // Passed check
+        // If submitting form proceed to save routine       
         if ($this->input->post('save_unit')) {
             $this->orgmodel->update_unit($this->unit,$this->input->post());
-            redirect('user/organization/units/'.$this->unit);
-           
+            redirect('user/organization/units/'.$this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => $this->unit)));         
         }       
-        
+        // Otherwise get unit data
         $udata = $this->orgmodel->get_unit($this->unit);
-        
-        if (!$udata) {
-            //Unit doesn't exist
-            log_message('error','Unit '. $this->unit .' does not exist UID: '. $this->user);         
-            redirect('user/dashboard');
-        }
-        $odata = $this->orgmodel->get_org($udata['org_id']);
+        $odata = $this->orgmodel->get_org($this->org);
         $data = array_merge($udata,$odata);
+        // Create breadcrumb links for easy navigation
+        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->unit));        
+        $data['query_str'] = $this->userlib->encode_query(array('org_id' => $this->org,'unit_id' => $this->unit));
         $data['base'] = $this->menu['base'];
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        // Load template
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/editunit.tpl', $data );                
-        
-        
+        $this->smarty->view( 'user/editunit.tpl', $data );                     
     }
     
+    function search_jobs()
+    {
+        if ($this->input->post('lastQuery')) {
+            
+	       $query = $this->input->post('lastQuery'); //save the query in a variable
+	       $querylen = strlen($query); //count the number of characters in that query
+	       $result = array(); //set up an array that we'll store the matched search terms in (and finally send back to the JavaScript)
+	
+            if ($querylen < 3) return;
+    
+	       $jobs = $this->onet->search_jobs($query);
+           
+           foreach ($jobs as $job) {
+                $result[$job->title] = $job->onetsoc_code;
+           }
+       
+	echo json_encode($result); //encode the results list as a JavaScript object, and send it back to the JavaScript
+    }        
+    }
+    
+    function unitcrumbs($bread)
+    {
+    $out = '<a href="'. base_url() .'user/organization/view/'. $this->userlib->encode_query(array('org_id' => $bread['0']['org_id'],'unit_id' => '0')) .'">Home</a> ';
+        foreach ($bread as $crumb) {
+            $out .= ' &gt; <a href="'. base_url() .'user/organization/units/'. $this->userlib->encode_query(array('org_id' => $bread['0']['org_id'],'unit_id' => $crumb['unit_id'])) .'">'.$crumb['unit_title'].'</a>';          
+        }
+    return $out;
+    }
+    
+    function enc($data)
+    {
+        return $this->userlib->encode($data);
+    }
+    
+    function segval()
+    {
+        return $this->userlib->decode($this->uri->segment('4'));
+    }
+    
+    function check_acl($type, $privs = 'RO')
+    {
+        switch ($type) {
+            case 'ORG':
+            
+            break;
+            case 'UNT':
+            $this->userlib->check_acl($type,$this->user,$this->unit,$privs); 
+            break;
+        }
+    }
+    
+    
 
- function control_areas(){
-    $term = $this->input->post('data', TRUE);
-    $countries = $this->omodel->get_areas($term);
-    echo json_encode($countries);
-}   
+    function control_areas(){
+        $term = $this->input->post('data', TRUE);
+        $countries = $this->omodel->get_areas($term);
+        echo json_encode($countries);
+    }   
     
 
 }

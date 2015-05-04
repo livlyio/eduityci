@@ -121,7 +121,7 @@
 		<h1>Organizational Map</h1>
 	
 		<ul id="utilityNav">
-			<li><a href="{$smarty.const.BASE_URL}/user/organization/add_unit/{$org_id}">Add Unit</a></li>
+			<li><a href="{$smarty.const.BASE_URL}/user/organization/add_unit/{$query_str}">Add Unit</a></li>
 			<li><a href="/login">Reorder Units</a></li>
 		</ul>
 

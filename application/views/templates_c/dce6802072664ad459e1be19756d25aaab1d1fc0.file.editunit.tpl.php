@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-01 01:48:31
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-04 21:11:34
          compiled from "application\views\templates\user\editunit.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:317155542bb9dc93ed9-36431270%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'dce6802072664ad459e1be19756d25aaab1d1fc0' => 
     array (
       0 => 'application\\views\\templates\\user\\editunit.tpl',
-      1 => 1430437680,
+      1 => 1430766692,
       2 => 'file',
     ),
   ),
@@ -20,8 +20,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'variables' => 
   array (
     'org_name' => 0,
+    'crumbs' => 0,
     'base' => 0,
-    'unit_id' => 0,
+    'query_str' => 0,
     'unit_title' => 0,
     'unit_desc' => 0,
     'unit_location' => 0,
@@ -46,13 +47,15 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 <div class="page-header container">
     <h1><small><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
 </small></h1>
+    <small><?php echo $_smarty_tpl->tpl_vars['crumbs']->value;?>
+ &gt; Edit</small>
 </div>
 <div class="container">
 
         <form method="post" action="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
-user/organization/edit_unit/<?php echo $_smarty_tpl->tpl_vars['unit_id']->value;?>
+user/organization/edit_unit/<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
 ">
-        <div class="panel-heading">Organizaiton Profile</div>
+        <div class="panel-heading">Edit Unit Profile</div>
         <div class="panel-body">
         <table class="table table-striped table-hover">
         <tr><td>Name:</td><td><input type="text" size="50" value="<?php echo $_smarty_tpl->tpl_vars['unit_title']->value;?>

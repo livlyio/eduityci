@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-01 02:05:55
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-04 23:21:20
          compiled from "application\views\templates\user\viewunit.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:22124553db6bf02ce94-57713342%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'de8e73077fece5af7322e1728d6e84d77757ed0c' => 
     array (
       0 => 'application\\views\\templates\\user\\viewunit.tpl',
-      1 => 1430438053,
+      1 => 1430774478,
       2 => 'file',
     ),
   ),
@@ -20,12 +20,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'variables' => 
   array (
     'org_name' => 0,
+    'crumbs' => 0,
     'unit_title' => 0,
     'unit_desc' => 0,
     'unit_location' => 0,
     'unit_website' => 0,
     'base' => 0,
-    'unit_id' => 0,
+    'query_str' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -43,15 +44,31 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 </style>
 
 
+<div id="search-overlay">
+	<h2>Begin typing to search</h2>
+	<div id="close">X</div>
+	<form>
+		<input id="hidden-search" type="text" autocomplete="off" /> <!--hidden input the user types into-->
+		<input id="display-search" type="text" autocomplete="off" readonly="readonly" /> <!--mirrored input that shows the actual input value-->
+	</form>
+	
+	<div id="results">
+		<h2 class="artists">Artists</h2>
+		<ul id="artists"></ul>
+	</div>
+</div>
+
 <div class="page-header container">
     <h1><small><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
 </small></h1>
+    <small><?php echo $_smarty_tpl->tpl_vars['crumbs']->value;?>
+</small>
 </div>
 <div class="container">
 
     <div class="panel panel-info">
         <!-- Default panel contents -->
-        <div class="panel-heading">Organizaiton Profile</div>
+        <div class="panel-heading">Unit Profile</div>
         <div class="panel-body">
         <table class="table table-striped table-hover">
         <tr><td>Name:</td><td><?php echo $_smarty_tpl->tpl_vars['unit_title']->value;?>
@@ -63,9 +80,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
         <tr><td>Website:</td><td><?php echo (($tmp = @$_smarty_tpl->tpl_vars['unit_website']->value)===null||$tmp==='' ? '' : $tmp);?>
  </td></tr>
         <tr><td><a href="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
-user/organization/edit_unit/<?php echo $_smarty_tpl->tpl_vars['unit_id']->value;?>
+user/organization/edit_unit/<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
 " class="btn btn-warning" role="button">Edit Unit</a></td><td><a href="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
-user/organization/del_unit/<?php echo $_smarty_tpl->tpl_vars['unit_id']->value;?>
+user/organization/add_unit/<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
+" class="btn btn-info" role="button">Add Sub-Unit</a> &nbsp;&nbsp; <a href="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
+user/organization/del_unit/<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
 " class="btn btn-danger" role="button" onclick="javascript:return confirm('Are you sure you want to delete this unit?')">Delete Unit</a></td></tr>
         </table>
         
@@ -84,8 +103,15 @@ user/organization/del_unit/<?php echo $_smarty_tpl->tpl_vars['unit_id']->value;?
 
 <div class="container">
 
-<input type="text" name="job_search" id="job_search" size="50" placeholder="Type Work Function" />
-<br /><br /><br /><br />
+<br /><br />
+
+<div id="search">
+	Search Occupations
+	<img src="<?php echo $_smarty_tpl->tpl_vars['base']->value;?>
+assets/images/bt-search.jpg" alt="Search" />
+</div>
+
+<br /><br />
 </div>
 
 <hr>

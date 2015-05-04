@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-30 22:06:21
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-04 20:47:14
          compiled from "application\views\templates\user\orghome.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:26479553ae149b053e8-03963172%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1e9996fd78d31906fbf31ac9e1a5a45b794ffbbd' => 
     array (
       0 => 'application\\views\\templates\\user\\orghome.tpl',
-      1 => 1430424379,
+      1 => 1430764457,
       2 => 'file',
     ),
   ),
@@ -23,7 +23,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'org_desc' => 0,
     'org_location' => 0,
     'website' => 0,
-    'org_id' => 0,
+    'query_str' => 0,
     'map' => 0,
   ),
   'has_nocache_code' => false,
@@ -168,7 +168,7 @@ starter-template.css" rel="stylesheet">
 	
 		<ul id="utilityNav">
 			<li><a href="<?php echo @constant('BASE_URL');?>
-/user/organization/add_unit/<?php echo $_smarty_tpl->tpl_vars['org_id']->value;?>
+/user/organization/add_unit/<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
 ">Add Unit</a></li>
 			<li><a href="/login">Reorder Units</a></li>
 		</ul>

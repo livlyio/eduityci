@@ -75,6 +75,23 @@ class Orgmodel extends CI_Model {
     }
     return $branch;
     }
+    
+    function get_bcpath($unit)
+    {
+        $this->crumbs = array();
+        
+        $this->crumbs['0'] = $this->get_unit($unit);
+        
+        $id = $this->crumbs['0']['parent_id'];
+        
+        while ($id != '0') {
+            $data = $this->get_unit($id);
+            $this->crumbs[] = $data;
+            $id = $data['parent_id'];
+        }
+       // print_r($this->crumbs); die();
+        return array_reverse($this->crumbs);  
+    }
 
     function get_unit($unitid)
     {
@@ -85,16 +102,18 @@ class Orgmodel extends CI_Model {
         }
         return false;
     }
+     
     
-    function add_unit($orgid,$data)
+    function add_unit($orgid,$parent,$data)
     {
         unset($data['add_unit']);
-        
+        unset($data['parent_id']);
+        $data['parent_id'] = $parent;
         $data['org_id'] = $orgid;
         
         $this->odb->insert('organizations_units',$data);
         return $this->odb->insert_id();
-    }    
+    }   
     
     function update_unit($unitid,$data)
     {

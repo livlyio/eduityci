@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-01 02:04:13
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-04 23:16:09
          compiled from "application\views\templates\user\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3515553a93ec298723-01882159%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '025ad281a5261598669cd6d5f998e2d21cc93ab0' => 
     array (
       0 => 'application\\views\\templates\\user\\header.tpl',
-      1 => 1430438094,
+      1 => 1430774164,
       2 => 'file',
     ),
   ),
@@ -39,6 +39,7 @@ favicon.png">
  - <?php echo $_smarty_tpl->tpl_vars['name']->value;?>
 </title>
 
+    
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
           <?php echo '<script'; ?>
 >var base_url = ‘<?php echo @constant('BASE_URL');?>
@@ -67,30 +68,9 @@ jquery.js"><?php echo '</script'; ?>
 jquery-ui.js"><?php echo '</script'; ?>
 >
     <link href="<?php echo @constant('HTTP_CSS_PATH');?>
-jquery-ui.css" rel="stylesheet" type="text/css" />        
-   
-    <?php echo '<script'; ?>
- type="text/javascript">
-$(function(){
-    var $sfield = $('#job_search').autocomplete({
-        source: function(request, response){
-            var url = "http://localhost/user/organization/control_areas";
-              $.post(url, {data:request.term}, function(data){
-                response($.map(data, function(jobs) {
-                    return {
-                        value: jobs.title
-                    };
-                }));
-              }, "json");  
-        },
-        minLength: 2,
-        autofocus: true
-    });
-    });
-});
-<?php echo '</script'; ?>
->
-            
+jquery-ui.css" rel="stylesheet" type="text/css" />
+
+                   
     <!-- Bootstrap core CSS -->
     <link href="<?php echo @constant('HTTP_CSS_PATH');?>
 bootstrap.css" rel="stylesheet" />
@@ -98,6 +78,14 @@ bootstrap.css" rel="stylesheet" />
  src="<?php echo @constant('HTTP_JS_PATH');?>
 bootstrap.js"><?php echo '</script'; ?>
 >
+    
+     	<?php echo '<script'; ?>
+ type="text/javascript" src="<?php echo @constant('HTTP_JS_PATH');?>
+ajax-search-suggest.js"><?php echo '</script'; ?>
+>
+	<link rel="stylesheet" type="text/css" media="screen" href="<?php echo @constant('HTTP_CSS_PATH');?>
+search.css" />
+	<link href="http://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet" type="text/css" />   
   </head>
 <body>
 <?php echo $_smarty_tpl->tpl_vars['navigation']->value;?>

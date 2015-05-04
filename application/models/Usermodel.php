@@ -37,31 +37,45 @@ class Usermodel extends CI_Model {
         return false;         
     }
     
-    function has_access_org($uid,$tid,$perm = false)
+    function has_access_privs($type,$uid,$tid,$perm = 'RO')
     {
         $this->db->where('uacc_id',$uid);
-        $this->db->where('profile_type','ORG');
+        $this->db->where('profile_type',$type);
         $this->db->where('profile_type_id',$tid);
-        if ($perm) { $this->db->where('permission',$perm); }
-        $query = $this->db->get('user_profiles');
-        return $query->num_rows() > 0;                    
-    }
+        
+        switch ($perm) {
+            case 'RO':
+                $this->db->where('allow_read','1');
+            break;
+            case 'RW':
+                $this->db->where('allow_read','1');
+                $this->db->where('allow_write','1');
+            break;
+            default:
+                $this->db->where('allow_read','1');
+            break;
+        }
 
-    function has_access_unit($uid,$tid)
-    {
-        $this->db->where('uacc_id',$uid);
-        $this->db->where('profile_type','UNT');
-        $this->db->where('profile_type_id',$tid);
         $query = $this->db->get('user_profiles');
-        return $query->num_rows() > 0;                    
+        return $query->num_rows() > 0;        
     }
     
+
+    
     function insert_permission($type,$uid,$tid,$perm)
-    {
+    {    
         $data['profile_type'] = $type;
         $data['uacc_id'] = $uid;
         $data['profile_type_id'] = $tid; 
-        $data['permission'] = $perm;
+        switch ($perm) {
+            case 'RW':
+            $data['allow_read'] = 1;
+            $data['allow_write'] = 1;
+            break;
+            case 'RO':
+            $data['allow_read'] = 1;
+            break;
+        }
     
         $this->db->insert('user_profiles',$data);
         return $this->db->insert_id();        
