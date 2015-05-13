@@ -12,11 +12,46 @@ http://www.opensource.org/licenses/mit-license.php
 http://www.gnu.org/licenses/gpl.html
 */
 
+
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.document.location = $(this).data("href");
+    });
+});
+
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
 $(document).ready(function(){ //when the browser has rendered the page...
+
+var href = $(location).attr('pathname');
 	
 	//save selectors we'll be using more than once into variables for better performance
 	var $hiddenSearch = $("#hidden-search"),
 		$displaySearch = $("#display-search"),
+        $orgid = $("#org").val(),
+        $unitid = $("#unit").val(),
 		$searchOverlay = $("#search-overlay"),
 		$artistsList = $("#artists");
 
@@ -53,7 +88,7 @@ $(document).ready(function(){ //when the browser has rendered the page...
 	
 	function updateResults(latestQuery){
 		if(latestQuery.length > 0){ //if there is a query to process...
-			$.post("user/organization/search_jobs", {latestQuery: latestQuery}, function(data){ //..send that query to the php script "auto-suggest.php" via ajax
+			$.post("http://localhost/user/organization/search_jobs/", {latestQuery: latestQuery, org: $orgid, unit: $unitid}, function(data){ //..send that query to the php script "auto-suggest.php" via ajax
 				
 			    if(data.length > 0){ //if the php script returns a result...
 			    	data = $.parseJSON(data); //turn the string from the PHP script into a JavaScript object
@@ -69,8 +104,9 @@ $(document).ready(function(){ //when the browser has rendered the page...
 										
 					for(term in data){ //for each matched term in the returned data...
 						url = data[term]; //get the url for the matched term;
+                       
 						if($.inArray(term, previousTerms) === -1){ //if this term isn't in the previous list of terms (and isn't already being displayed)...
-							$artistsList.prepend('<li><a href="'+url+'" title="'+term+'">'+term+'</a></li>');
+							$artistsList.prepend(url);
 						}else{ //if it is in the previous list...
 							keepTerms.push(term); //add the term we want to keep to an array
 						}				

@@ -61,8 +61,19 @@ class Userlib
     $result = $this->CI->usermodel->has_access_privs($type,$uid,$tid,$privs);    
     // If user does not have access
     if (!$result) {
+        // Critical error
+        $this->critical_error('Attempted unauthorized access to ['. $type .': '. $tid .']');
+        die(); 
+        } else {
+            // User has requested permissions
+            return;
+        }
+    }
+    
+    public function critical_error($input)
+    {
         // Create log message
-        $message = '[USR: '. $uid .'] attempted unauthorized access to ['. $type .': '. $tid .']';
+        $message = '[USR: '. $this->user .'] '.$input;
         // Save to database
         $eid = $this->log_error('security',$message);
         // Write to system log
@@ -73,21 +84,17 @@ class Userlib
         // Redirect to support
         redirect('support');
         // Halt execution 
-        die(); 
-        } else {
-            // User has requested permissions
-            return;
-        }
+        die();        
     }
 
     public function log_error($level,$message)
     {
+       if (!isset($this->user)) $this->user = '0';
        return $this->CI->usermodel->insert_error($level,$this->user,$message);      
     }    
     
     public function get_profile()
     {
-
         $this->profile = $this->CI->usermodel->get_profiles($this->user);
         return $this->profile;
     }
@@ -99,9 +106,11 @@ class Userlib
     $out = array();
     $i = 0;
     
+    if (!$this->profile) return array();
+    
     foreach ($this->profile as $p) {
         if ($p->profile_type == 'ORG') { 
-           $enc = $this->encode_query(array('org_id' => $p->profile_type_id,'unit_id' => '0'));
+           $enc = $this->encode_query(array('org' => $p->profile_type_id,'unit' => '0'));
            $out[$i]['url'] = site_url('user/organization/view/'. $enc);
            $out[$i]['anchor'] = $this->CI->orgmodel->org_name($p->profile_type_id);
            $i++; 
@@ -115,11 +124,11 @@ class Userlib
     foreach($array as $item){
         if(is_array($item) && isset($item['unit_title'])){
                 if(isset($item['children']) && is_array($item['children'])){
-                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->encode_query(array('org_id' => $item['org_id'],'unit_id' => $item['unit_id']))) ."\">".$item['unit_title']."</a>";
+                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->encode_query(array('org' => $item['org_id'],'unit' => $item['unit_id']))) ."\">".$item['unit_title']."</a>";
                     $out .= $this->PrintTree($item['children'],'1');
                     $out .= "</li>\n";
                 } else {
-                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->encode_query(array('org_id' => $item['org_id'],'unit_id' => $item['unit_id']))) ."\">".$item['unit_title']."</a></li>\n";
+                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->encode_query(array('org' => $item['org_id'],'unit' => $item['unit_id']))) ."\">".$item['unit_title']."</a></li>\n";
                 }   
         }  
     }
@@ -154,7 +163,16 @@ class Userlib
     
     public function decode_segment($loc = 4)
     {  
+        $seg = $this->CI->uri->uri_to_assoc($loc);
+        $object = (object) $seg;
+        return $object;
+        
+        $seg = $this->CI->uri->segment($loc);
+        if (strpos($seg,'.php') || strpos($seg,'.css') || strpos($seg,'.js')) { return; }
         $array = $this->decode_query($this->CI->uri->segment($loc));
+        // Check to make sure we have some value not 0
+        if (array_sum($array) <= 0) { $this->critical_error('Query segment contains null values. ['. $this->CI->uri->segment($loc) .']'); die(); }
+        // Values are in array, send back as an object
         $object = (object) $array;
         return $object;
     }
@@ -162,13 +180,21 @@ class Userlib
     public function decode_query($string)
     {
         $dec = $this->decode($string);
+        // Check if decoded data contains gibberish
+        if (preg_match( '/[\\x80-\\xff]+/' , $dec ) > 0) {
+            // Something went seriously wrong or user is trying to enter their own strings.
+            $this->critical_error('Query segment is invalid. ['. $string .']');
+            die();
+        }
         parse_str($dec, $output);
         return $output;  
     }
     
     public function encode_query($array)
     {
-        return $this->encode(http_build_query($array));
+        return $this->CI->uri->assoc_to_uri($array);
+        
+       // return $this->encode(http_build_query($array));
     }
 	
     public function safe_b64encode($string) {

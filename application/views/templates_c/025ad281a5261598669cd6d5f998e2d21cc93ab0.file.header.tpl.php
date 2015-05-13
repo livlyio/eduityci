@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-04 23:16:09
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-13 20:36:22
          compiled from "application\views\templates\user\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3515553a93ec298723-01882159%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '025ad281a5261598669cd6d5f998e2d21cc93ab0' => 
     array (
       0 => 'application\\views\\templates\\user\\header.tpl',
-      1 => 1430774164,
+      1 => 1431541835,
       2 => 'file',
     ),
   ),
@@ -43,7 +43,9 @@ favicon.png">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
           <?php echo '<script'; ?>
 >var base_url = ‘<?php echo @constant('BASE_URL');?>
-’; <?php echo '</script'; ?>
+’; 
+          var base_url = ‘<?php echo @constant('BASE_URL');?>
+’;<?php echo '</script'; ?>
 >
     <!--[if lt IE 9]>
       <?php echo '<script'; ?>
@@ -69,6 +71,66 @@ jquery-ui.js"><?php echo '</script'; ?>
 >
     <link href="<?php echo @constant('HTTP_CSS_PATH');?>
 jquery-ui.css" rel="stylesheet" type="text/css" />
+
+<link href="http://localhost/assets/jquery/jquery-ui-1.11.2/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+<link href="http://localhost/assets/flexigrid/css/flexigrid.css" rel="stylesheet" type="text/css" />
+
+<?php echo '<script'; ?>
+ type="text/javascript" src="http://localhost/assets/jquery/jquery-1.11.2.min.js"><?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ type="text/javascript" src="http://localhost/assets/jquery/jquery-migrate-1.2.1.min.js"><?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ type="text/javascript" src="http://localhost/assets/jquery/jquery-ui-1.11.2/jquery-ui.min.js"><?php echo '</script'; ?>
+>
+<?php echo '<script'; ?>
+ type="text/javascript" src="http://localhost/assets/flexigrid/js/flexigrid.js"><?php echo '</script'; ?>
+>
+
+<style type="text/css">
+
+	::selection{ background-color: #E13300; color: white; }
+	::moz-selection{ background-color: #E13300; color: white; }
+	::webkit-selection{ background-color: #E13300; color: white; }
+
+
+
+	code {
+		font-family: Consolas, Monaco, Courier New, Courier, monospace;
+		font-size: 12px;
+		background-color: #f9f9f9;
+		border: 1px solid #D0D0D0;
+		color: #002166;
+		display: block;
+		margin: 14px 0 14px 0;
+		padding: 12px 10px 12px 10px;
+	}
+
+	#flex-body{
+		margin: 0px 20px 0 20px;
+	}
+	
+	p.footer{
+		text-align: right;
+		font-size: 11px;
+		border-top: 1px solid #D0D0D0;
+		line-height: 32px;
+		padding: 0 10px 0 10px;
+		margin: 20px 0 0 0;
+	}
+	
+	#flex-container{
+		margin: 20px;
+	
+	}
+    .panel{
+        float: left;
+        width: 500px;
+        height: 303px;
+    }
+
+</style>
 
                    
     <!-- Bootstrap core CSS -->

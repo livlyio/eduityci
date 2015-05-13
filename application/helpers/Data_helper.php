@@ -26,6 +26,15 @@ function secs_to_h($secs)
         return substr($s, 0, -2);
 }
 
+    function getquery($org = false, $unit = false, $code = false)
+    {
+        $out['org'] = $org ?: '0';
+        $out['unit'] = $unit ?: '0';
+        $out['code'] = $code ?: '0';
+        //$out['code'] = isset($this->get->code) ?: '0';
+        return $this->uri->assoc_to_uri($out);
+    }
+
 function make_menu($name,$items = false) {
    if (!$items) {
    return '';

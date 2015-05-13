@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-04 20:47:14
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-13 20:21:55
          compiled from "application\views\templates\user\orghome.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:26479553ae149b053e8-03963172%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1e9996fd78d31906fbf31ac9e1a5a45b794ffbbd' => 
     array (
       0 => 'application\\views\\templates\\user\\orghome.tpl',
-      1 => 1430764457,
+      1 => 1431541313,
       2 => 'file',
     ),
   ),
@@ -20,9 +20,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'variables' => 
   array (
     'org_name' => 0,
-    'org_desc' => 0,
-    'org_location' => 0,
-    'website' => 0,
+    'org_info_panel' => 0,
     'query_str' => 0,
     'map' => 0,
   ),
@@ -44,87 +42,6 @@ starter-template.css" rel="stylesheet">
 
 </style>
 
-<?php echo '<script'; ?>
- type="text/javascript" src="https://www.google.com/jsapi"><?php echo '</script'; ?>
->
-<?php echo '<script'; ?>
- type="text/javascript">
-    google.load("visualization", "1", {packages: ["corechart"]});
-    google.setOnLoadCallback(drawChart);
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-            ['Language', 'Speakers (in millions)'],
-            ['Assamese', 13], ['Bengali', 83], ['Bodo', 1.4],
-            ['Dogri', 2.3], ['Gujarati', 46], ['Hindi', 300],
-            ['Kannada', 38], ['Kashmiri', 5.5], ['Konkani', 5],
-            ['Maithili', 20], ['Malayalam', 33], ['Manipuri', 1.5],
-            ['Marathi', 72], ['Nepali', 2.9], ['Oriya', 33],
-            ['Punjabi', 29], ['Sanskrit', 0.01], ['Santhali', 6.5],
-            ['Sindhi', 2.5], ['Tamil', 61], ['Telugu', 74], ['Urdu', 52],
-        ]);
-
-        var options = {
-            title: 'Indian Language Use',
-            legend: 'none',
-            pieSliceText: 'label',
-            slices: {4: {offset: 0.2},
-                12: {offset: 0.3},
-                14: {offset: 0.4},
-                15: {offset: 0.5},
-            },
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-        chart.draw(data, options);
-    }
-<?php echo '</script'; ?>
->
-<?php echo '<script'; ?>
- type="text/javascript">
-    google.load("visualization", "1", {packages: ["corechart"]});
-    google.setOnLoadCallback(drawChart);
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['Work', 11],
-            ['Eat', 2],
-            ['Commute', 2],
-            ['Watch TV', 2],
-            ['Sleep', 7]
-        ]);
-
-        var options = {
-            title: 'My Daily Activities'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart12'));
-        chart.draw(data, options);
-    }
-<?php echo '</script'; ?>
->
-<?php echo '<script'; ?>
- type="text/javascript">
-    google.load("visualization", "1", {packages: ["corechart"]});
-    google.setOnLoadCallback(drawChart);
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-            ['Year', 'Sales', 'Expenses'],
-            ['2004', 1000, 400],
-            ['2005', 1170, 460],
-            ['2006', 660, 1120],
-            ['2007', 1030, 540]
-        ]);
-
-        var options = {
-            title: 'Company Performance'
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-    }
-<?php echo '</script'; ?>
->
-
 
 <div class="page-header container">
     <h1><small><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
@@ -132,31 +49,9 @@ starter-template.css" rel="stylesheet">
 </div>
 <div class="container">
 
-    <div class="panel panel-info">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Organizaiton Profile</div>
-        <div class="panel-body">
-        <table class="table table-striped table-hover">
-        <tr><td>Name:</td><td><?php echo $_smarty_tpl->tpl_vars['org_name']->value;?>
- </td></tr>
-        <tr><td>Description:</td><td><?php echo $_smarty_tpl->tpl_vars['org_desc']->value;?>
- </td></tr>
-        <tr><td>Location:</td><td><?php echo $_smarty_tpl->tpl_vars['org_location']->value;?>
- </td></tr>
-        <tr><td>Website:</td><td><?php echo $_smarty_tpl->tpl_vars['website']->value;?>
- </td></tr>
-        </table>
-        
-        </div>
-    </div>
+    <?php echo $_smarty_tpl->tpl_vars['org_info_panel']->value;?>
 
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Panel heading</div>
-        <div class="panel-body">
-            <p>Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien.</p>
-        </div>
-    </div>
+
 
 </div><!-- /.container -->
 

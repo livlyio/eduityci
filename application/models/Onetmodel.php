@@ -14,9 +14,9 @@ class Onetmodel extends CI_Model {
         $this->load->helper('string');
     }
     
-    function search_jobs($query)
+    function search_jobs($term)
     {
-        $this->odb->like('title',$query);
+        $this->odb->like('title',$term);
         $this->odb->limit(10);
         $query = $this->odb->get('occupation_data');
         if ($query->num_rows() > 0) {
