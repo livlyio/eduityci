@@ -39,7 +39,7 @@ if (! function_exists('build_grid_js'))
 	{
 		//Basic propreties
 		$grid_js = '<script type="text/javascript">$(document).ready(function(){';
-		$grid_js .= '$("#'.$grid_id.'").flexigrid({';
+		$grid_js .= '$("#flexigrid").flexigrid({';
 		$grid_js .= "url: '".$url."',";
 		$grid_js .= "dataType: 'json',";
 		$grid_js .= "sortname: '".$sortname."',";

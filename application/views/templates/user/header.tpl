@@ -8,7 +8,16 @@
     <link rel="shortcut icon" href="{$smarty.const.HTTP_CSS_PATH}favicon.png">
     <title>{$title} - {$name}</title>
 
+    {$css|default:''}
+    <script type="text/javascript" src="{$smarty.const.HTTP_JS_PATH}jquery.js"></script>
+    <script type="text/javascript" src="{$smarty.const.HTTP_JS_PATH}jquery-ui.js"></script>
+    <link href="{$smarty.const.HTTP_CSS_PATH}jquery-ui.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="http://johnny.github.io/jquery-sortable/js/jquery-sortable.js"></script>
     
+    
+    
+
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
           <script>var base_url = ‘{$smarty.const.BASE_URL}’; 
           var base_url = ‘{$smarty.const.BASE_URL}’;</script>
@@ -16,72 +25,141 @@
       <script src="{$smarty.const.HTTP_JS_PATH}html5shiv.js"></script>
       <script src="{$smarty.const.HTTP_JS_PATH}respond.min.js"></script>
     <![endif]-->
-     <link href="{$smarty.const.HTTP_CSS_PATH}fam-icons.css" rel="stylesheet" />
-    {$css|default:''}
-    <script type="text/javascript" src="{$smarty.const.HTTP_JS_PATH}jquery.js"></script>
-    <script type="text/javascript" src="{$smarty.const.HTTP_JS_PATH}jquery-ui.js"></script>
-    <link href="{$smarty.const.HTTP_CSS_PATH}jquery-ui.css" rel="stylesheet" type="text/css" />
 
-<link href="http://localhost/assets/jquery/jquery-ui-1.11.2/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
-<link href="http://localhost/assets/flexigrid/css/flexigrid.css" rel="stylesheet" type="text/css" />
+    <link href="http://vitalets.github.io/x-editable/assets/bootstrap300/css/bootstrap.css" rel="stylesheet">
+ 
+    <!-- bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script> 
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>  
+
+    <!-- x-editable (bootstrap version) -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.6/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.6/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+
+<link href="{$smarty.const.HTTP_CSS_PATH}starter-template.css" rel="stylesheet" />
+    
 {literal}
-<script type="text/javascript" src="http://localhost/assets/jquery/jquery-1.11.2.min.js"></script>
-<script type="text/javascript" src="http://localhost/assets/jquery/jquery-migrate-1.2.1.min.js"></script>
-<script type="text/javascript" src="http://localhost/assets/jquery/jquery-ui-1.11.2/jquery-ui.min.js"></script>
-<script type="text/javascript" src="http://localhost/assets/flexigrid/js/flexigrid.js"></script>
-
 <style type="text/css">
+body {
+    font-size:18px;
+}
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
 
-	::selection{ background-color: #E13300; color: white; }
-	::moz-selection{ background-color: #E13300; color: white; }
-	::webkit-selection{ background-color: #E13300; color: white; }
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
 
-
-
-	code {
-		font-family: Consolas, Monaco, Courier New, Courier, monospace;
-		font-size: 12px;
-		background-color: #f9f9f9;
-		border: 1px solid #D0D0D0;
-		color: #002166;
-		display: block;
-		margin: 14px 0 14px 0;
-		padding: 12px 10px 12px 10px;
-	}
-
-	#flex-body{
-		margin: 0px 20px 0 20px;
-	}
-	
-	p.footer{
-		text-align: right;
-		font-size: 11px;
-		border-top: 1px solid #D0D0D0;
-		line-height: 32px;
-		padding: 0 10px 0 10px;
-		margin: 20px 0 0 0;
-	}
-	
-	#flex-container{
-		margin: 20px;
-	
-	}
-    .panel{
-        float: left;
-        width: 500px;
-        height: 303px;
-    }
+ol.example li.placeholder {
+  position: relative;
+  /** More li styles **/
+}
+ol.example li.placeholder:before {
+  position: absolute;
+  /** Define arrowhead **/
+}
 
 </style>
-{/literal}
-                   
-    <!-- Bootstrap core CSS -->
-    <link href="{$smarty.const.HTTP_CSS_PATH}bootstrap.css" rel="stylesheet" />
-    <script src="{$smarty.const.HTTP_JS_PATH}bootstrap.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    //toggle `popup` / `inline` mode
+    $.fn.editable.defaults.mode = 'popup';     
     
+    //make username editable
+    $('#username').editable( {
+        type: 'text'
+        ,send: 'always'
+        ,pk: 1
+        ,url: {/literal}{$update|default:''}{literal}
+    });
+    
+    $('#least').editable( {
+        type: 'text'
+        ,send: 'always'
+        ,url: {/literal}{$update|default:''}{literal}
+    });
+    
+    $('#likely').editable( {
+        type: 'text'
+        ,send: 'always'
+        ,url: {/literal}{$update|default:''}{literal}
+    }); 
+    
+    $('#most').editable( {
+        type: 'text'
+        ,send: 'always'
+        ,url: {/literal}{$update|default:''}{literal}
+    });   
+    
+    $('#title').editable( {
+        type: 'text'
+        ,send: 'title'
+        ,url: {/literal}{$update|default:''}{literal}
+    });     
+    
+    $('#projected').editable({
+        format: 'yyyy-mm-dd'
+        ,viewformat: 'mm/dd/yyyy'
+        ,send: 'always'
+        ,url: {/literal}{$update|default:''}{literal}   
+        ,datepicker: {
+                weekStart: 1
+           }
+        });      
+
+// Sortable rows
+$('.sorted_table').sortable({
+  containerSelector: 'table',
+  itemPath: '> tbody',
+  itemSelector: 'tr',
+  placeholder: '<tr class="placeholder"/>'
+})
+
+// Sortable column heads
+var oldIndex
+$('.sorted_head tr').sortable({
+  containerSelector: 'tr',
+  itemSelector: 'th',
+  placeholder: '<th class="placeholder"/>',
+  vertical: false,
+  onDragStart: function (item, group, _super) {
+    oldIndex = item.index()
+    item.appendTo(item.parent())
+    _super(item)
+  },
+  onDrop: function  (item, container, _super) {
+    var field,
+    newIndex = item.index()
+    
+    if(newIndex != oldIndex)
+      item.closest('table').find('tbody tr').each(function (i, row) {
+        row = $(row)
+        field = row.children().eq(oldIndex)
+        if(newIndex)
+          field.before(row.children()[newIndex])
+        else
+          row.prepend(field)
+      })
+
+    _super(item)
+  }
+})
+    
+ } );
+
+</script>  
+{/literal}
+       
+       
+ 
      	<script type="text/javascript" src="{$smarty.const.HTTP_JS_PATH}ajax-search-suggest.js"></script>
 	<link rel="stylesheet" type="text/css" media="screen" href="{$smarty.const.HTTP_CSS_PATH}search.css" />
 	<link href="http://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet" type="text/css" />   
   </head>
 <body>
 {$navigation}
+

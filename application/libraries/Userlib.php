@@ -119,22 +119,7 @@ class Userlib
     return $this->make_menu('Organizations',$out);
     }
     
-    function printTree($array,$child = '0'){
-    $out = "<ul>\n";
-    foreach($array as $item){
-        if(is_array($item) && isset($item['unit_title'])){
-                if(isset($item['children']) && is_array($item['children'])){
-                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->encode_query(array('org' => $item['org_id'],'unit' => $item['unit_id']))) ."\">".$item['unit_title']."</a>";
-                    $out .= $this->PrintTree($item['children'],'1');
-                    $out .= "</li>\n";
-                } else {
-                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->encode_query(array('org' => $item['org_id'],'unit' => $item['unit_id']))) ."\">".$item['unit_title']."</a></li>\n";
-                }   
-        }  
-    }
-    $out .= "</ul>\n\n";
-    return $out;
-    }    
+
     
     function make_menu($name,$items = false) {
         if (!$items) {

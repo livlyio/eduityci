@@ -12,6 +12,7 @@ class Orgmodel extends CI_Model {
         parent::__construct();
         $this->odb = $this->load->database('orgdb', TRUE);
         $this->onet = $this->load->database('onetdb', TRUE);
+        $this->load->model('onetmodel');
         $this->load->helper('string');
     }
     
@@ -78,6 +79,48 @@ class Orgmodel extends CI_Model {
     return $branch;
     }
     
+    function new_forecast($org,$unit,$occ)
+    {
+        $data = array('org_id' => $org,'unit_id' => $unit,'ouj_id' => $occ,'title' => 'Forecast Title','least' => '0','likely' => '0','most' => '0','projected' => '0000-00-00','notes' => '');
+        $data['created'] = date("Y-m-d");
+        $this->odb->insert('organizations_units_jobs_forecasts',$data);      
+    }
+    
+    function update_forecast($get,$data)
+    {
+        $update[$data['name']] = $data['value'];
+        $this->odb->where('org_id',$get->org);
+        $this->odb->where('unit_id',$get->unit);
+        $this->odb->where('ouj_id',$get->code);
+        $this->odb->where('fc_id',$data['pk']);
+        return $this->odb->update('organizations_units_jobs_forecasts',$update);      
+    }
+    
+    function list_or_create_forecasts($org,$unit,$occ)
+    {
+        $list = $this->list_forecasts($org,$unit,$occ);
+        if (!$list) {
+            $this->new_forecast($org,$unit,$occ);
+            $list = $this->list_forecasts($org,$unit,$occ);
+        }
+        return $list;   
+    }
+    
+    function get_forecast_byid($fid)
+    {
+        
+    }
+    
+    function list_forecasts($org,$unit,$occ)
+    {
+        $this->odb->where('org_id',$org);
+        $this->odb->where('unit_id',$unit);
+        $this->odb->where('ouj_id',$occ);
+        $query = $this->odb->get('organizations_units_jobs_forecasts');
+        
+        return ($query->num_rows() > 0) ? $query->result() : false;
+    }
+    
     function get_bcpath($unit,$org = 0)
     {
         $this->crumbs = array();
@@ -105,11 +148,12 @@ class Orgmodel extends CI_Model {
         return false;
     }
      
-    function add_soc($org,$unit,$soc)
+    function add_soc($org,$unit,$soc,$title)
     {
         $data['org_id'] = $org;
         $data['unit_id'] = $unit;
         $data['onetsoc_code'] = $soc;
+        $data['title'] = $title;
         
         $this->odb->insert('organizations_units_jobs',$data);
         $code = $this->odb->insert_id();
@@ -139,7 +183,7 @@ class Orgmodel extends CI_Model {
     }    
      
     
-    function get_unit_soc($org,$unit,$code)
+    function get_unit_soc($org,$unit,$code,$obj = false)
     {
         $this->odb->select('*');
         //If they have entered a custom title or description, return the custom values
@@ -153,7 +197,17 @@ class Orgmodel extends CI_Model {
         $query = $this->odb->get('organizations_units_jobs');
  
         if ($query->num_rows() > 0) {
-            return $query->row_array(); 
+            if ($obj) {
+            $r1 = $query->row();
+            $r1->common = $this->onetmodel->list_common($r1->onetsoc_code);
+            $r1->wage = $this->onetmodel->get_wage_bysoc($r1->onetsoc_code)->A_MEDIAN;
+            return $r1;                
+            } else {  
+            $r1 = $query->row_array();
+            $r1['common'] = $this->onetmodel->list_common($r1['onetsoc_code']);
+            $r1['wage'] = $this->onetmodel->get_wage_bysoc($r1['onetsoc_code'])->A_MEDIAN;
+            return $r1; 
+            }
         }
         log_message('error', 'Orgmodel->get_unit_soc() did not return a value.');
         return '';        
@@ -187,6 +241,16 @@ class Orgmodel extends CI_Model {
         log_message('error', 'Orgmodel->get_unit_soc() did not return a value.');
         return '';    
     }
+   
+    function get_soc_default_type($soc,$type)
+    {
+        $this->onet->where($type.'.onetsoc_code',$soc);
+     //   $this->onet->where($type.'.not_relevant !=','Y');
+        $this->onet->join('content_model_reference','content_model_reference.element_id = '.$type.'.element_id');
+        $this->onet->group_by('element_name');
+        $query = $this->onet->get($type);
+        return $query->result();
+    }   
     
     function get_soc_default_skills($soc)
     {
@@ -196,6 +260,15 @@ class Orgmodel extends CI_Model {
         $query = $this->onet->get('skills');
         return $query->result();
     }
+    
+    function get_soc_default_knows($soc)
+    {
+        $this->onet->where('knowledge.onetsoc_code',$soc);
+        $this->onet->where('knowledge.not_relevant !=','Y');
+        $this->onet->join('content_model_reference','content_model_reference.element_id = knowledge.element_id');
+        $query = $this->onet->get('knowledge');
+        return $query->result();
+    }    
     
     function add_soc_default_skills($org,$unit,$soc,$code)
     {    

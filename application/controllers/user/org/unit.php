@@ -40,7 +40,6 @@ class Organization extends CI_Controller {
         $this->load->model('onetmodel','onet');
  		$this->load->helper('url');
  		$this->load->helper('form');
-        $this->lang->load('label', 'english');
        
 
         // Auth STDclass
@@ -58,6 +57,20 @@ class Organization extends CI_Controller {
         $this->menu['org_menu'] = $this->userlib->org_menu();
         $this->menu['pg'] = 'org';
         $this->menu['base'] = base_url();
+        
+      //  print_r($this->menu); die();
+        
+        if (!$this->profile) {
+            // User has no profile information, something went wrong.
+            // Set a custom error message.
+            log_message('error','No profile information existed for user: '. $this->user .' on dashboard, returned False.');
+            $eid = $this->userlib->log_error('error','No profile exists for user: '. $this->user);
+            $this->flexi_auth->set_error_message('There is an error with your account, please contact support. ERROR ID: '. $eid, TRUE);
+			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
+            $this->flexi_auth->logout();
+            redirect('support');
+        }
+
     }
     
     public function index()
@@ -73,20 +86,21 @@ class Organization extends CI_Controller {
         // Passed security check, continue
         // Pull organization information
         $data = $this->orgmodel->get_org($this->get->org);  
-
-        $data['query_str'] = $this->getquery($this->get->org,'0');
-        $data['base'] = $this->menu['base'];
-        $data['content'] = $this->widget->org_map($this->orgmodel->get_unit_map($this->get->org),$data);
-        $data['info_panel'] = $this->widget->org_info_panel($data);
+        
+        $data['org_info_panel'] = $this->widget->org_info_panel($data);
      
         // Additional Values for display
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        $data['org_id'] = $this->userlib->encode($this->get->org);
+        $data['query_str'] = $this->getquery($this->get->org,'0');
+        $data['base'] = $this->menu['base'];
+        $data['map'] = $this->userlib->PrintTree($this->orgmodel->get_unit_map($this->get->org));
         
         // Assign and show template  
         $this->smarty->assign("css",'<link rel="stylesheet" type="text/css" media="screen, print" href="'. site_url('/assets/css/slickmap.css') .'" />');
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/org_view.tpl', $data );
+        $this->smarty->view( 'user/orghome.tpl', $data );
     }
     
     
@@ -104,21 +118,20 @@ class Organization extends CI_Controller {
         $data = array_merge($udata,$odata);
         // Set additional variables for display
         //$data['unit_id'] = $this->userlib->encode($data['unit_id']);
-        $data['unit_info_panel'] = $this->widget->unit_info_panel($this->orgmodel->get_unit($this->get->unit),$this->getquery());
+        $data['unit_info_panel'] = $this->widget->unit_info_panel($this->orgmodel->get_unit($this->get->unit));
         $data['query_str'] = $this->getquery();
         $data['base'] = $this->menu['base'];
         $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
         // Create breadcrumb links for easy navigation
-        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
+        $data['jobs'] = '';
         
-        $data['jobs'] = '';       
         foreach ($this->orgmodel->get_unit_socs($this->get->org,$this->get->unit) as $job) {
             $data['jobs'] .= '<tr style="cursor: pointer;" onclick="window.document.location=\''. site_url('user/organization/viewocc/'. $this->getquery(false,false,$job->oujob_id)) .'\';"><td>'.$job->onetsoc_code.'</td><td>'.$job->title.'</td><td>'.substr($job->description, 0, 200).'</td><td><a href="" title="View"> <i class="fam-zoom"></i></a><a href="" title="Edit"><i class="fam-user-edit"></i></a></td></tr>';
         }
         
       //  print_r($data['jobs']); die();
         
-        
+        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
         $data['org'] = $this->get->org;
         $data['unit'] = $this->get->unit;
         // Assign and display template
@@ -127,143 +140,16 @@ class Organization extends CI_Controller {
         $this->smarty->view( 'user/viewunit.tpl', $data );        
     }
     
-    function search_jobs()
-    {       
-        if ($this->input->post('latestQuery')) {
-           
-	       $term = $this->input->post('latestQuery'); //save the query in a variable
-	       $querylen = strlen($term); //count the number of characters in that query
-	       $result = array(); //set up an array that we'll store the matched search terms in (and finally send back to the JavaScript)
-
-           if ($querylen < 3) return;
-    
-	       $jobs = $this->onet->search_jobs($term);
-           
-           foreach ($jobs as $job) {
-            $common = $this->onet->get_common_bysoc($job->onetsoc_code);
-                 foreach ($common as $com) {
-                    $result[$com->common_name] = '<li><a id="link" href="'.site_url('/user/organization/previewsoc/common/'. $com->common_id .'/code/'.$job->onetsoc_code.'/org/'.$this->input->post('org').'/unit/'. $this->input->post('unit')).'">'.$com->common_name.'</a></li>';
-                }
-           }     
-	   echo json_encode($result); //encode the results list as a JavaScript object, and send it back to the JavaScript
-    }        
-    }    
-    
-    public function previewsoc()
-    {
-       // Security Check_
-        $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
-        // Passed security check, continue
-
-        $job = $this->onet->get_job_common($this->get->code,$this->get->common);
-        $jd = $this->onet->get_basic_bysoc($this->get->code);
-        $job->common = $this->onet->list_common($this->get->code);
-
-        $data = $this->getview();
-        $data['baseme'] = site_url('/user/organization/previewsoc/');
-        $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-
-        $buttons = '<tr><td></td><td><a id="link" href="#" onclick="post(\''.site_url('/user/organization/addsoc/').'\', {code: \''.$this->get->code.'\', org: \''. $this->get->org .'\', unit: \''. $this->get->unit .'\', common: \''. $this->get->common .'\'});return false;" class="btn btn-info" role="button">Use '.$this->lang->line('orgocc').'</a></td></tr>';
-
-        $data['pageh'] = '<h1>Preview '.$this->lang->line('orgocc').'</h1>';
-        $data['occ_info_panel'] = $this->widget->occ_preview_panel($job,$this->getquery(),$buttons);
-        $data['generic_info_panel'] = $this->widget->occ_preview_panel2($jd,$this->getquery());      
-
-        // Assign and display template
-        $this->smarty->assign('pg','org');
-  		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/previewocc.tpl', $data );        
-    }
-    
-    public function update_forecast()
-    {        
-    if ($this->orgmodel->update_forecast($this->get,$this->input->post())) {
-        $yes[] = array(
-            'success' => 'true',
-            'msg' => 'update success for',
-            'value' => $this->input->post('value')
-        );
-        echo json_encode($yes);
-    } else {
-        $no[] = array(
-            'success' => 'false',
-            'msg' => 'update failed',
-            'value' => $this->input->post('value')
-        );
-        echo json_encode($no);        
-    }   
-        
-    }
-    
-    public function forecast()
-    {
-        // Security Check_
-        $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
-        // Passed security check, continue
-
-        //$data = $this->getview();
-        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        // Create breadcrumb links for easy navigation
-        $data['jobs'] = '';        
-        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
-         
-        $data['baseme'] = site_url('/user/organization/viewocc/');
-        $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-        $data['info_panel'] = $this->widget->short_occ_info_panel($this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code,true),$this->getquery());      
-        $data['update'] = "'".site_url('/user/organization/update_forecast/'.$this->getquery($this->get->org,$this->get->unit,$this->get->code))."'";
-        $data['baseme'] = site_url('/user/organization/viewocc/');
-
-        $data['content'] = $this->widget->forecast($this->orgmodel->list_or_create_forecasts($this->get->org,$this->get->unit,$this->get->code));
-
-        // Assign and display template
-        $this->smarty->assign('pg','org');
-  		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/org_view.tpl', $data );      
-    }
-    
-    public function searchby()
-    {
-       $data = $this->onet->search_common('chief');
-       print_r($data); die();
-    }
-    
     public function addsoc()
     {
-    //    print_r($this->input->post()); die();
-    $common = $this->onetmodel->get_common_byid($this->input->post('common'))->common_name;
+       // print_r($this->input->post()); die();
     
-    $code = $this->orgmodel->add_soc($this->input->post('org'),$this->input->post('unit'),$this->input->post('code'),$common);
+    $this->orgmodel->add_soc($this->input->post('org'),$this->input->post('unit'),$this->input->post('code'));
         
-    $get = $this->getquery($this->input->post('org'),$this->input->post('unit'),$code);    
+    $get = $this->getquery($this->input->post('org'),$this->input->post('unit'));    
         
-    redirect('user/organization/viewocc/'.$get);  
+    redirect('user/organization/units/'.$get);  
         
-    }
-    
-    public function getview()
-    {
-        $data = $this->getbasic();
-        $data['tabcontent'] = $this->widget->make_list('work_activities',$this->getquery(),'Activities');
-        $data['feedurl']['knowledge'] = "'http://localhost/user/organization/get_feed/type/knowledge/org/1/unit/25/code/32'";
-        $data['feedurl']['work_context'] = "'http://localhost/user/organization/get_feed/type/work_context/org/1/unit/25/code/32'";
-        $data['feedurl']['work_values'] = "'".site_url("/user/organization/get_feed/type/work_values/".$this->getquery())."'";
-        $data['feedurl']['work_activities'] = "'".site_url("/user/organization/get_feed/type/work_activities/".$this->getquery())."'";
-        $data['feedurl']['skills'] = "'".site_url("/user/organization/get_feed/type/skills/".$this->getquery())."'";
-        return $data;
-    }
-    
-    public function getbasic()
-    {
-        $data['query_str'] = $this->getquery();
-        $data['base'] = $this->menu['base'];
-        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        // Create breadcrumb links for easy navigation
-        $data['jobs'] = '';        
-        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
-        $data['org'] = $this->get->org;
-        $data['unit'] = $this->get->unit;
-        
-        return $data;
     }
     
     public function viewocc()
@@ -272,35 +158,33 @@ class Organization extends CI_Controller {
         $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
         // Passed security check, continue
 
-        $data = $this->getview();
-        
-        $data['baseme'] = site_url('/user/organization/viewocc/');
+        $skills = $this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->code);
+
         $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-        $data['occ_info_panel'] = $this->widget->occ_info_panel($this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code,true),$this->getquery());
-        $data['pageh'] = '<h1>View '.$this->lang->line('orgocc').'</h1>';
-        $data['generic_info_panel'] ='';      
 
-        $data['tabcontent'] = $this->widget->sortedit(array('Soc Code','Title','Description'),$this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->code));
+        $data['occ_info_panel'] = $this->widget->occ_info_panel($this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code),$this->getquery());
+        $data['generic_info_panel'] = $this->widget->generic_info_panel('Other Information','Example data.');       
 
+        $data['skills'] = $this->widget->skills_list($skills,$this->getquery());
+        
+        $data['query_str'] = $this->getquery();
+        $data['base'] = $this->menu['base'];
+        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        // Create breadcrumb links for easy navigation
+        $data['jobs'] = '';
+        
+        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
+        $data['org'] = $this->get->org;
+        $data['unit'] = $this->get->unit;
         // Assign and display template
         $this->smarty->assign('pg','org');
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/previewocc.tpl', $data );     
+        $this->smarty->view( 'user/viewocc.tpl', $data );     
         
     }
     
-
-
-    public function get_feed()
+    public function occ_feed()
     {
-        if (!is_numeric($this->get->code)) {
-        //code is onet format
-       } else {
-        // code is internal id format
-            $x = $this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code);
-            $this->get->code = $x['onetsoc_code'];
-        }
-    
         //List of all fields that can be sortable. This is Optional.
         //This prevents that a user sorts by a column that we dont want him to access, or that doesnt exist, preventing errors.
         $valid_fields = array(
@@ -309,32 +193,10 @@ class Organization extends CI_Controller {
             'element_id'
         );
         
-        $perpage = '18';
-        $page = ($this->input->post('page') - 1);
-    
+        $this->flexigrid->validate_post('oujs_id', 'asc', $valid_fields);
         
-        $start = ($page * $perpage);
-        
-        $records = $this->orgmodel->get_soc_default_type($this->get->code,$this->get->type);
-       // print_r($records);
-        $numrecs = count($records);
-       // die("recs".$numrecs);
-        
-       // $pages = ceil($numrecs/$perpage);
-     //   echo "pages: ". $pages ."<br />";
-        $split = array_chunk((array)$records,$perpage);
-      //  echo "spages: ". $split ."<br />";
-        $show = (object)$split[$page];
-       // print_r($show); die();
-        
-        $this->flexigrid->validate_post('element_id', 'asc', $valid_fields);
-        
-        if (!in_array($this->get->type,array('skills','knowledge','work_styles','work_values','work_context','work_activities'))) {
-            $this->get->type = 'work_activities';
-        }
-        
-        $records['records'] = $show;  
-        $records['record_count'] = $numrecs;
+        $records['records'] = $this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->code);
+        $records['record_count'] = count($records['records']);
         $records['footmsg'] = 'test';
         
         $this->output->set_header($this->config->item('json_header'));
@@ -358,8 +220,7 @@ class Organization extends CI_Controller {
         
         //Print please
         $this->output->set_output($this->flexigrid->json_build($records['record_count'], $record_items, $records['footmsg']));
-    } 
-
+    }
 
     public function occ_oper()
     {
@@ -489,7 +350,29 @@ class Organization extends CI_Controller {
         $this->smarty->view( 'user/editunit.tpl', $data );                     
     }
     
+    function search_jobs()
+    {       
+        if ($this->input->post('latestQuery')) {
+           
+	       $term = $this->input->post('latestQuery'); //save the query in a variable
+	       $querylen = strlen($term); //count the number of characters in that query
+	       $result = array(); //set up an array that we'll store the matched search terms in (and finally send back to the JavaScript)
 
+           // if ($querylen < 3) return;
+    
+	       $jobs = $this->onet->search_jobs($term);
+           
+           foreach ($jobs as $job) {
+           // $link = "http://localhost/user/organization/addocc/". $this->userlib->encode_query(array('org' => $this->get->org,'unit_id' => $this->get->unit,'onetsoc_code' => $job->onetsoc_code));
+           
+           $link = '<li><a id="link" href="#" onclick="post(\''.site_url('/user/organization/addsoc/').'\', {code: \''.$job->onetsoc_code.'\', org: \''. $this->input->post('org') .'\', unit: \''. $this->input->post('unit') .'\'});return false;">'.$job->title.'</a></li>';
+           
+                $result[$job->title] = $link;
+           }
+       
+	echo json_encode($result); //encode the results list as a JavaScript object, and send it back to the JavaScript
+    }        
+    }
     
     function unitcrumbs($bread)
     {

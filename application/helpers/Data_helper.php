@@ -26,6 +26,7 @@ function secs_to_h($secs)
         return substr($s, 0, -2);
 }
 
+
     function getquery($org = false, $unit = false, $code = false)
     {
         $out['org'] = $org ?: '0';

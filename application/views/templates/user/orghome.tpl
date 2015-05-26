@@ -1,16 +1,6 @@
 {include file="user/header.tpl" title="Eduity" name="$Name"}
-{literal}
-<link href="<?php echo HTTP_CSS_PATH; ?>starter-template.css" rel="stylesheet">
-<style>
-    .panel{
-        margin-left: 55px;
-        float: left;
-        width: 500px;
-        height: 303px;
-    }
 
-</style>
-{/literal}
+<link href="<?php echo HTTP_CSS_PATH; ?>starter-template.css" rel="stylesheet">
 
 <div class="page-header container">
     <h1><small>{$org_name} </small></h1>

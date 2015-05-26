@@ -35,12 +35,9 @@
         break;
         }
     } else { $color = 'panel-info'; }
-  //  if (in_array('width',$options)) { $css .= 'width: '. $options['width'] .' '; } else { $css .= 'width: auto; '; }
-   // if (in_array('height',$options)) { $css .= 'height: '. $options['height'] .' '; } else { $css .= 'height: auto; '; }  
- 
+
  if (isset($options['width'])) { $css .= 'width: '. $options['width'] .'; height: auto;'; }
  else { $css .= 'width: 800; height: auto;'; }
- 
  ?>
  
  <div class="panel <?php echo $color; ?>" style="<?php echo $css; ?>">

@@ -41,6 +41,10 @@
 
 $route['default_controller'] = "home";
 
+$route['user/org'] = 'user/org/home';
+$route['user/organization'] = 'user/org/home';
+
+
 //$route['(:any)'] = "redirect/index/$1";
 
 

@@ -11,6 +11,37 @@ class Widget {
 
 		log_message('debug', "Widget Class Initialized");
 	}
+
+    function org_map($map,$data)
+    {
+        $data['map'] = $this->printTree($map);
+        return $this->CI->load->view('widgets/orgmap',$data,TRUE); ;
+    }
+
+    function printTree($array,$child = '0'){
+    $out = "<ul>\n";
+    foreach($array as $item){
+        if(is_array($item) && isset($item['unit_title'])){
+                if(isset($item['children']) && is_array($item['children'])){
+                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->CI->uri->assoc_to_uri(array('org' => $item['org_id'],'unit' => $item['unit_id']))) ."\">".$item['unit_title']."</a>";
+                    $out .= $this->PrintTree($item['children'],'1');
+                    $out .= "</li>\n";
+                } else {
+                    $out .= "<li><a href=\"". site_url('user/organization/units/'. $this->CI->uri->assoc_to_uri(array('org' => $item['org_id'],'unit' => $item['unit_id']))) ."\">".$item['unit_title']."</a></li>\n";
+                }   
+        }  
+    }
+    $out .= "</ul>\n\n";
+    return $out;
+    }    
+    
+    function sortedit($heads,$data)
+    {
+        $arr['headings'] = $heads;
+        $arr['items'] = $data;
+        
+     return $this->CI->load->view('widgets/sortable-editable',$arr,TRUE);     
+    }
     
     function org_info_panel($data)
     {
@@ -29,11 +60,12 @@ class Widget {
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }
     
-    function unit_info_panel($data)
+    function unit_info_panel($data,$querystr)
     {
+     //   $querystr = $data['query_str'];
     $arr['options']['color'] = 'blue';
     $arr['options']['title'] = 'Unit Profile'; 
-    $arr['options']['width'] = '600px';
+    $arr['options']['width'] = '800px';
     $arr['options']['height'] = 'auto'; 
     $arr['data']['0']['name'] = 'Unit Name:';
     $arr['data']['0']['value'] = $data['unit_title'];    
@@ -43,23 +75,100 @@ class Widget {
     $arr['data']['2']['value'] = $data['unit_location']; 
     $arr['data']['3']['name'] = 'Website:';
     $arr['data']['3']['value'] = $data['unit_website'];   
+    $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/edit_unit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/add_unit/'. $querystr) .'" class="btn btn-info" role="button">Add Unit</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/del_unit/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')">Delete Unit</a></td></tr>';
+
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }    
 
-    function occ_info_panel($data,$querystr)
+    function occ_preview_panel($data,$querystr,$buttons)
     {
     $arr['options']['color'] = 'blue';
-    $arr['options']['title'] = 'Occupation Profile'; 
-    $arr['options']['width'] = 'auto';
+    $arr['options']['title'] = $this->CI->lang->line('orgocc').' Profile'; 
+    $arr['options']['width'] = '800px';
     $arr['options']['height'] = 'auto'; 
-    $arr['data']['0']['name'] = 'Occupation Name:';
-    $arr['data']['0']['value'] = $data['title'];    
+    $arr['data']['0']['name'] = $this->CI->lang->line('orgocc').' Name:';
+    $arr['data']['0']['value'] = $data->ctitle;    
     $arr['data']['1']['name'] = 'Description:';
-    $arr['data']['1']['value'] = $data['description']; 
+    $arr['data']['1']['value'] = $data->description; 
     $arr['data']['2']['name'] = 'ONET SOC Code:';
-    $arr['data']['2']['value'] = $data['onetsoc_code'];
-    if (isset($data['onetsoc_code_suffix']) && $data['onetsoc_code_suffix'] != '') { $arr['data']['2']['value'] .= '-'. $data['onetsoc_code_suffix']; } 
-    $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button">Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')">Delete Occupation</a></td></tr>';
+    $arr['data']['2']['value'] = $data->onetsoc_code;
+    $arr['data']['3']['name'] = 'Other Titles:';
+    $arr['data']['3']['value'] = $data->common; 
+    $arr['data']['4']['name'] = 'Industry:';
+    $arr['data']['4']['value'] = $data->title;     
+       
+    if (isset($data->onetsoc_code_suffix) && $data->onetsoc_code_suffix != '') { $arr['data']['2']['value'] .= '-'. $data->onetsoc_code_suffix; } 
+    
+    $arr['buttons'] = $buttons;
+   
+    return $this->CI->load->view('widgets/data-panel-multi',$arr,TRUE); 
+ }
+ 
+ function occ_preview_panel2($data,$querystr) {
+    $arr2['options']['color'] = 'blue';
+    $arr2['options']['title'] = 'Other Information'; 
+    $arr2['options']['width'] = '800px';
+    $arr2['data']['4']['name'] = 'Industry:';
+    $arr2['data']['4']['value'] = 'data'; 
+    $arr2['data']['5']['name'] = 'Average Wage:';
+    $arr2['data']['5']['value'] = '$'.$data->A_MEDIAN;
+    $arr2['data']['6']['name'] = 'Zone:';
+    $arr2['data']['6']['value'] = 'data';    
+    $arr2['data']['7']['name'] = 'Other:';
+    $arr2['data']['7']['value'] = 'data'; 
+    $arr2['data']['8']['name'] = 'Other:';
+    $arr2['data']['8']['value'] = 'data';
+    $arr2['buttons'] = '';
+    
+    $out = $this->CI->load->view('widgets/data-panel',$arr2,TRUE); 
+
+    return $out;     
+    }
+
+    function short_occ_info_panel($data,$querystr,$buttons = true)
+    {
+         
+        
+    $arr['options']['color'] = 'blue';
+    $arr['options']['title'] = $this->CI->lang->line('orgocc').' Profile'; 
+    $arr['options']['width'] = '900px';
+    $arr['options']['height'] = 'auto'; 
+    $arr['data']['0']['name'] = $this->CI->lang->line('orgocc').' Name:';
+    $arr['data']['0']['value'] = $data->title;    
+    $arr['data']['1']['name'] = 'Description:';
+    $arr['data']['1']['value'] = substr($data->description,0,strpos($data->description, ' ', 200));
+    $arr['data']['2']['name'] = 'ONET SOC Code:';
+    $arr['data']['2']['value'] = $data->onetsoc_code;
+            
+    if (isset($data->onetsoc_code_suffix) && $data->onetsoc_code_suffix != '') { $arr['data']['2']['value'] .= '-'. $data->onetsoc_code_suffix; } 
+
+    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button">Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')">Delete Occupation</a></td></tr>';
+  
+    return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
+    }
+
+    function occ_info_panel($data,$querystr,$buttons = true)
+    {
+    $arr['options']['color'] = 'blue';
+    $arr['options']['title'] = $this->CI->lang->line('orgocc').' Profile'; 
+    $arr['options']['width'] = '800px';
+    $arr['options']['height'] = 'auto'; 
+    $arr['data']['0']['name'] = $this->CI->lang->line('orgocc').' Name:';
+    $arr['data']['0']['value'] = $data->title;    
+    $arr['data']['1']['name'] = 'Description:';
+    $arr['data']['1']['value'] = $data->description; 
+    $arr['data']['2']['name'] = 'ONET SOC Code:';
+    $arr['data']['2']['value'] = $data->onetsoc_code;
+    $arr['data']['3']['name'] = 'Other Titles:';
+    $arr['data']['3']['value'] = $data->common; 
+    $arr['data']['4']['name'] = 'Industry:';
+    $arr['data']['4']['value'] = $data->title;           
+    $arr['data']['5']['name'] = 'Wage:';
+    $arr['data']['5']['value'] = '$'.$data->wage;
+            
+    if (isset($data->onetsoc_code_suffix) && $data->onetsoc_code_suffix != '') { $arr['data']['2']['value'] .= '-'. $data->onetsoc_code_suffix; } 
+
+    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/forecast/'. $querystr) .'" class="btn btn-success" role="button">Create Forecast</a> &nbsp; &nbsp;<a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button">Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this item?\')">Delete '.$this->CI->lang->line('orgocc').'</a></td></tr>';
   
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }
@@ -82,6 +191,12 @@ class Widget {
     $arr['tbody'] = $tbody;
     return $this->CI->load->view('widgets/standard-table',$arr,TRUE);     
     }   
+    
+    function forecast($data)
+    {
+        $arr['list'] = $data;
+        return $this->CI->load->view('widgets/forecast',$arr,TRUE);
+    }
     
     function edit_occ($post,$data)
     {       
@@ -155,6 +270,126 @@ class Widget {
 		
 		return $this->CI->load->view('widgets/standard-flexi-grid',$data,TRUE);        
     }    
+
+   function soc_skills_list($records,$querystr)
+    {
+        $this->CI->load->helper('flexigrid');
+	
+	/*	$options = '';
+		foreach( $records as $v ) {
+			$options .= $v['name'] . ';';
+		}
+		$options = substr($options, 0, -1);*/
+
+		/*
+		 * 0 - display name
+		 * 1 - width
+		 * 2 - sortable
+		 * 3 - align
+		 * 4 - searchable (2 -> yes and default, 1 -> yes, 0 -> no.)
+		 */
+
+		$colModel['element_name'] = array('Name',260,TRUE,'left',1);
+		$colModel['description'] = array('Description',700,TRUE,'left',1);
+	//	$colModel['onetsoc_code'] = array('SOC Code',110,TRUE,'center',2);
+		$colModel['element_id'] = array('Skill ID',90,TRUE,'center',0);
+		$colModel['actions'] = array('Actions',80, FALSE, 'right',0);
+		
+		
+		/*
+		 * Aditional Parameters
+		 */
+		$gridParams = array(
+		'width' => 'auto',
+		'height' => 400,
+		'rp' => 15,
+		'rpOptions' => '[10,15,20,25,40]',
+		'pagestat' => 'Displaying: {from} to {to} of {total} items.',
+		'blockOpacity' => 0.5,
+		'title' => 'Occupational Skills',
+		'showTableToggleBtn' => true
+		);
+		
+		/*
+		 * 0 - display name
+		 * 1 - bclass
+		 * 2 - onpress
+		 */
+		$buttons[] = array('Delete','delete','test');
+		$buttons[] = array('separator');
+		$buttons[] = array('Select All','add','test');
+		$buttons[] = array('DeSelect All','delete','test');
+		$buttons[] = array('separator');
+
+
+		//Build js
+		//View helpers/flexigrid_helper.php for more information about the params on this function
+		$grid_js = build_grid_js('flex1',site_url("/user/organization/skill_feed/".$querystr),$colModel,'id','desc',$gridParams,$buttons);
+		$data['js_grid'] = $grid_js;
+		$data['version'] = "0.36";
+
+		
+		return $this->CI->load->view('widgets/standard-flexi-grid',$data,TRUE);        
+    }    
+
+
+  function make_list($type,$querystr,$title)
+    {
+        $this->CI->load->helper('flexigrid');
+	
+		/*
+		 * 0 - display name
+		 * 1 - width
+		 * 2 - sortable
+		 * 3 - align
+		 * 4 - searchable (2 -> yes and default, 1 -> yes, 0 -> no.)
+		 */
+
+		$colModel['element_name'] = array('Name',300,TRUE,'left',1);
+		$colModel['description'] = array('Description',800,TRUE,'left',1);
+	//	$colModel['onetsoc_code'] = array('SOC Code',110,TRUE,'center',2);
+		$colModel['element_id'] = array('ID',90,TRUE,'center',0);
+//		$colModel['actions'] = array('Actions',80, FALSE, 'right',0);
+		
+		
+		/*
+		 * Aditional Parameters
+		 */
+		$gridParams = array(
+		'width' => '1400',
+		'height' => 400,
+		'rp' => 15,
+		'rpOptions' => '[10,15,20,25,40]',
+		'pagestat' => 'Displaying: {from} to {to} of {total} items.',
+		'blockOpacity' => 0.5,
+		'title' => $title,
+		'showTableToggleBtn' => true
+		);
+		
+		/*
+		 * 0 - display name
+		 * 1 - bclass
+		 * 2 - onpress
+		 */
+		$buttons[] = array('Delete','delete','test');
+		$buttons[] = array('separator');
+		$buttons[] = array('Select All','add','test');
+		$buttons[] = array('DeSelect All','delete','test');
+		$buttons[] = array('separator');
+
+
+		//Build js
+		//View helpers/flexigrid_helper.php for more information about the params on this function
+		$grid_js = build_grid_js('flexi_'.$type,site_url("/user/organization/get_feed/type/".$type."/".$querystr),$colModel,'id','desc',$gridParams,$buttons);
+		$data['js_grid'] = $grid_js;
+		$data['version'] = "0.36";
+        $data['gridid'] = 'flexi_'.$type;
+
+	//	return $data['js_grid'];
+		return $this->CI->load->view('widgets/multi-flexi-grid',$data,TRUE);        
+    }    
+    
+
 
 /*	function __construct()
 	{
