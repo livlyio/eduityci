@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 12:37:43
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 14:01:16
          compiled from "application\views\templates\user\topnav.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9752556a36093709e1-20448648%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'f447e0a72712fe410292c11be40980696907031c' => 
     array (
       0 => 'application\\views\\templates\\user\\topnav.tpl',
-      1 => 1433068634,
+      1 => 1433073669,
       2 => 'file',
     ),
   ),
@@ -167,7 +167,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                       <a href="#" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="<?php echo base_url('auth/logout');?>
+                      <a href="<?php echo base_url('account/account/logout');?>
 " class="btn btn-default btn-flat">Sign out</a>
                     </div>
                   </li>

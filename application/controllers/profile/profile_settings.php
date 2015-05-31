@@ -75,6 +75,9 @@ class Profile_Settings extends CI_Controller
 	
 		$this->data['super_admin'] = FALSE;
 		$this->data['is_admin'] = FALSE;
+        
+        
+        
 		if($this->session->userdata('admin') == TRUE)
 	        {     	
 				$this->data['is_admin'] = TRUE;
@@ -97,13 +100,14 @@ class Profile_Settings extends CI_Controller
 	public function index()
 	{
 		
-		
+	//	print_r($this->input->post()); die();
 		//var_dump($this->data['basic_details']);
 		$this->data['title'] = "Personal Settings";
 		$this->data['content'] = "personal-settings";
 		
 		//get user name
 		$this->data['user_name'] = $this->account_model->get_account_details('name');
+        $this->data['user_email'] = $this->account_model->get_account_details('email');
 		
 		$this->data['iserror'] = FALSE;
 
@@ -129,9 +133,11 @@ class Profile_Settings extends CI_Controller
 				$this->data['iserror'] = TRUE;
 			}
 			
+           
 			//save profile photo
 			if(isset($_FILES['userfile']) && $_FILES['userfile']['name'] != '')
 			{
+			 
 				$new_photo =  $this->input->post('userfile');
 				$pic_name = $_FILES['userfile']['name'];
 				//get photo name to save it 
@@ -191,8 +197,33 @@ class Profile_Settings extends CI_Controller
 			}
 		}
 		
-		
-		$this->load->view('templates/signedin-layout',$this->data);
+		$this->load->library('../controllers/user/dashboard');
+		$out = $this->load->view('settings/edit_profile',$this->data,true);
+        $this->dashboard->load_content($out,array(),'dash');
+	}
+    
+    public function do_upload()
+	{
+		$config['upload_path'] = './uploads/photos/';
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size']	= '100';
+		$config['max_width']  = '1024';
+		$config['max_height']  = '768';
+
+		$this->load->library('upload', $config);
+
+		if ( ! $this->upload->do_upload())
+		{
+			$error = array('error' => $this->upload->display_errors());
+        die($error);
+		//	$this->load->view('upload_form', $error);
+		}
+		else
+		{
+			$data = array('upload_data' => $this->upload->data());
+die("SUCCESS");
+			$this->load->view('upload_success', $data);
+		}
 	}
 	
 	private function _validation()

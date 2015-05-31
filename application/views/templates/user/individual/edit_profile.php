@@ -15,15 +15,9 @@
  
 
         <div class="form-group">
-          <label class="col-lg-3 control-label">First name:</label>
+          <label class="col-lg-3 control-label">Display Name:</label>
           <div class="col-lg-8">
-            <input class="form-control" value="Jane" type="text">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="col-lg-3 control-label">Last name:</label>
-          <div class="col-lg-8">
-            <input class="form-control" value="Bishop" type="text">
+            <input class="form-control" type="text" name="dis_name" value="<?php echo $display_name; ?>" id="dis_name" />
           </div>
         </div>
         <div class="form-group">
@@ -58,7 +52,8 @@
         <div class="form-group">
           <label class="col-md-3 control-label">Username:</label>
           <div class="col-md-8">
-            <input class="form-control" value="janeuser" type="text">
+            <input class="form-control" type="text" name="user_name" value="<?php echo $user_name; ?>" id="user_name"  />
+            <?php echo form_error('user_name','<li class="error" id="uerror">', '</li>'); ?>
           </div>
         </div>
         <div class="form-group">

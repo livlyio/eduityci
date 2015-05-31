@@ -30,13 +30,12 @@ class Organization extends CI_Controller {
         $this->load->library('form_validation');
         $this->load->library('session');
         $this->load->library('userlib');
-        $this->load->library('flexigrid');
         $this->load->library('encrypt');
         $this->load->library('widget');
         $this->load->library('script');
         
         $this->load->helper('data_helper');
-        $this->load->helper('flexigrid');
+        $this->load->model('account/account_model');
         $this->load->model('Orgmodel','orgmodel');
         $this->load->model('Usermodel','usermodel');
         $this->load->model('onetmodel','onet');
@@ -49,10 +48,9 @@ class Organization extends CI_Controller {
         // Auth STDclass
   		$this->auth = new stdClass;
 		// Load 'standard' flexi auth library by default.
-		$this->load->library('flexi_auth');	
 		// Check user is logged in.
-        if (!$this->flexi_auth->is_logged_in()) {
-            redirect(site_url('/auth'));
+        if (!$this->account_model->is_logged_in()) {
+            redirect(site_url('/auth/login'));
         }
 
         $this->get = $this->userlib->decode_segment('4');

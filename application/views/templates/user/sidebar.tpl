@@ -35,7 +35,7 @@
               <ul class="treeview-menu">
               <li><a href="{base_url('user/dashboard')}"><i class="fa fa-clock-o"></i>Home</a></li>
               <li><a href="{base_url('user/dashboard/timeline')}"><i class="fa fa-clock-o"></i>Timeline</a></li>
-                <li><a href="../../index.html"><i class="fa fa-circle-o"></i>My Profile</a></li>
+                <li><a href="{base_url('account/personal-settings/upload')}"><i class="fa fa-circle-o"></i>Edit Profile</a></li>
               </ul>
             </li>
             <li class=" {if isset($ngroup) && $ngroup == 'orgn'}active{/if} treeview">

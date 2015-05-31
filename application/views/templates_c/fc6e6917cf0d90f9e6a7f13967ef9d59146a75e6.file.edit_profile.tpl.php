@@ -1,4 +1,25 @@
-<div class="container">
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 15:41:18
+         compiled from "application\views\templates\user\individual\edit_profile.tpl" */ ?>
+<?php /*%%SmartyHeaderCode:17316556afb561e0c32-07603564%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+$_valid = $_smarty_tpl->decodeProperties(array (
+  'file_dependency' => 
+  array (
+    'fc6e6917cf0d90f9e6a7f13967ef9d59146a75e6' => 
+    array (
+      0 => 'application\\views\\templates\\user\\individual\\edit_profile.tpl',
+      1 => 1433075734,
+      2 => 'file',
+    ),
+  ),
+  'nocache_hash' => '17316556afb561e0c32-07603564',
+  'function' => 
+  array (
+  ),
+  'version' => 'Smarty-3.1.21-dev',
+  'unifunc' => 'content_556afb5621a6d4_49986231',
+  'has_nocache_code' => false,
+),false); /*/%%SmartyHeaderCode%%*/?>
+<?php if ($_valid && !is_callable('content_556afb5621a6d4_49986231')) {function content_556afb5621a6d4_49986231($_smarty_tpl) {?><div class="container">
   <div class="row">
 
     <!-- edit form column -->
@@ -6,12 +27,16 @@
       <div class="alert alert-info alert-dismissable">
         <a class="panel-close close" data-dismiss="alert">×</a> 
         <i class="fa fa-coffee"></i>
-        <?php echo $this->session->flashdata('status'); ?>
+        <?php echo '<?php'; ?>
+ echo $this->session->flashdata('status'); <?php echo '?>'; ?>
+
       </div>
       <h3>Personal info</h3>
               
         
-    	<form class="form-horizontal"id="personal-settings" method="post" enctype="multipart/form-data" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+    	<form class="form-horizontal"id="personal-settings" method="post" enctype="multipart/form-data" action="<?php echo '<?php'; ?>
+ echo $_SERVER['PHP_SELF']; <?php echo '?>'; ?>
+">
  
 
         <div class="form-group">
@@ -93,3 +118,4 @@
     </div>
   </div>
 </div>
+<?php }} ?>

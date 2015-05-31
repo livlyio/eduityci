@@ -39,7 +39,7 @@
 */
 //$route['home'] = "Home"; // overwrite the previous route
 
-$route['default_controller'] = "welcome";
+$route['default_controller'] = "home";
 $route['404_override'] = '';
 $route['signup'] = "account/account/register";
 $route['login'] = "account/account/login";

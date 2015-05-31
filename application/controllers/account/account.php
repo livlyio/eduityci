@@ -157,6 +157,7 @@ class Account extends CI_Controller
 
 	public function login()
 	{
+	   
 		$this->data['title'] .= "- Login";
 		//echo $_COOKIE['userid'];
 		//if logged-in redirect to community
@@ -206,7 +207,7 @@ class Account extends CI_Controller
 			else
 			{
 				//redirect to community home
-				redirect(base_url().'community');				
+				redirect(base_url().'user/dashboard');				
 			}
 			
 		}
@@ -243,7 +244,7 @@ class Account extends CI_Controller
 		}
 		
 		setcookie('umail','',time()-1*24*60*60,'/');
-		redirect(base_url());
+		redirect(base_url('auth/login'));
 	}
 /**	
  * change account password

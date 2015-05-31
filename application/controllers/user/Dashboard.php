@@ -32,25 +32,23 @@ class Dashboard extends CI_Controller {
         $this->load->library('session');
         $this->load->library('userlib');
         $this->load->helper('data_helper');
+        $this->load->model('account/account_model');
         $this->load->model('Orgmodel','orgmodel');
         $this->load->model('Usermodel','usermodel');
         $this->load->model('onetmodel','omodel');
  		$this->load->helper('url');
  		$this->load->helper('form');
+        $this->load->library('../controllers/stream/stream');
+        
+        if (!$this->account_model->is_logged_in()) {
+            redirect(site_url('/auth/login'));
+            die();
+        }
         
         // Auth STDclass
   		$this->auth = new stdClass;
 		// Load 'standard' flexi auth library by default.
-		$this->load->library('flexi_auth');	
-		// Check user is logged in.
-		if (! $this->flexi_auth->is_logged_in()) 
-		{
-			// Set a custom error message.
-			$this->flexi_auth->set_error_message('You must login as a user to access this area.', TRUE);
-			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-			redirect('auth');
-		}
-        
+
         $auth = $this->session->userdata('flexi_auth');
         $this->uid = $auth['user_id'];
         $this->profile = $this->userlib->get_profile($this->uid);
@@ -69,7 +67,7 @@ class Dashboard extends CI_Controller {
             redirect('support');*/
             $this->userlib->create_profile($auth['user_id']);
         }
-$this->load->library('../controllers/stream/stream');
+
     }
 
     public function notifications()

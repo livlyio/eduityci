@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 07:29:40
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 15:46:23
          compiled from "application\views\templates\user\sidebar.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:14449556a36093c31b9-84594909%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1198ca3438919eb47039c61a87442994636fd601' => 
     array (
       0 => 'application\\views\\templates\\user\\sidebar.tpl',
-      1 => 1433050086,
+      1 => 1433079877,
       2 => 'file',
     ),
   ),
@@ -65,7 +65,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 "><i class="fa fa-clock-o"></i>Home</a></li>
               <li><a href="<?php echo base_url('user/dashboard/timeline');?>
 "><i class="fa fa-clock-o"></i>Timeline</a></li>
-                <li><a href="../../index.html"><i class="fa fa-circle-o"></i>My Profile</a></li>
+                <li><a href="<?php echo base_url('account/personal-settings/upload');?>
+"><i class="fa fa-circle-o"></i>Edit Profile</a></li>
               </ul>
             </li>
             <li class=" <?php if (isset($_smarty_tpl->tpl_vars['ngroup']->value)&&$_smarty_tpl->tpl_vars['ngroup']->value=='orgn') {?>active<?php }?> treeview">
