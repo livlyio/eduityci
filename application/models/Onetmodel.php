@@ -10,6 +10,7 @@ class Onetmodel extends CI_Model {
     {
         // Call the Model constructor
         parent::__construct();
+        $this->db = $this->load->database('eduity',true);
         $this->odb = $this->load->database('onetdb', TRUE);
         $this->load->helper('string');
     }
@@ -149,6 +150,30 @@ class Onetmodel extends CI_Model {
             return $this->search_jobs_byacts($term);
         }
         return false;
+    }
+
+    function search_jobs_by_title($term)
+    {
+        $this->odb->like('title',$term);
+        $this->odb->limit(20);
+        $this->odb->order_by('title','DESC');
+        $query = $this->odb->get('occupation_data');
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } 
+        return false;        
+    }
+    
+    function search_jobs_by_soc($term)
+    {
+        $this->odb->like('onetsoc_code',$term);
+        $this->odb->limit(20);
+        $this->odb->order_by('title','DESC');
+        $query = $this->odb->get('occupation_data');
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } 
+        return false;        
     }
     
     function search_jobs_byacts($term,$type = 'work_context')

@@ -34,7 +34,10 @@
 
 class Flexi_auth_model extends Flexi_auth_lite_model
 {
-	public function __construct() {}
+	public function __construct() {
+	   $this->db = $this->load->database('eduity',true);
+       
+	}
 
 	###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###	
 	// TOKEN GENERATION
@@ -2760,7 +2763,10 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 		{
 			$template = $this->auth->template_data['template'];
 		}
-		
+        //disable email sending for localhost
+		$this->load->helper('url');
+        if (base_url() == 'http://localhost/') { return true; }
+        
 		$message = $this->load->view($template, $data, TRUE);
 		
 		$this->load->library('email');
@@ -2771,6 +2777,8 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 		$this->email->to($email_to);
 		$this->email->subject($this->auth->email_settings['site_title'] ." ". $email_title);
 		$this->email->message($message);
+
+        
 			
 		return $this->email->send();
 	}

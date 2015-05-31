@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-25 09:57:53
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-26 19:03:18
          compiled from "application\views\templates\user\previewocc.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:13525555ddabf925926-35914850%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '955ae794218f32489de7d34ce2db5c748015f449' => 
     array (
       0 => 'application\\views\\templates\\user\\previewocc.tpl',
-      1 => 1432540596,
+      1 => 1432659794,
       2 => 'file',
     ),
   ),
@@ -54,7 +54,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
 <br /><br />
 
-<div id="tabs">
+<!--<div id="tabs">
     <ul class="nav nav-tabs" id="prodTabs">
  <li> <a href="#" id="link_activities">Activities</a></li>
 <li><a href="#" id="link_knowledge">Knowledge</a></li>
@@ -68,7 +68,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
     </div>
 </div>
-</div>
+</div>-->
 
 <hr>
 

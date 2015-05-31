@@ -1,7 +1,7 @@
-{include file="user/header.tpl" title="Eduity" name="$Name"}
+{include file="user/header.tpl" title="Eduity" name="$Name" css="$css"}
 
 {literal}
-<link href="<?php echo HTTP_CSS_PATH; ?>starter-template.css" rel="stylesheet">
+<link href="starter-template.css" rel="stylesheet">
 <style>
     .panel{
         margin-left: 55px;
@@ -11,6 +11,8 @@
     }
 
 </style>
+
+
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
@@ -91,50 +93,9 @@
 </div>
 <div class="container">
 
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Links</div>
-        <div class="panel-body">
-
-            <ul style="max-width: 260px;" class="nav nav-pills nav-stacked">
-                <li class="active">
-                    <a href="#">
-                        <span class="badge pull-right"></span>
-                        Item 1
-                    </a>
-                </li>
-                <li><a href="#">Item 2
-                        <span class="badge pull-right"></span></a>
-                </li>
-                <li>
-                    <a href="#">
-                        <span class="badge pull-right"></span>
-                        Item 3
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <span class="badge pull-right"></span>
-                        Item 4
-                    </a>
-                </li>
-            </ul>
-        </div>
-   </div>
-
-
-    <div class="panel panel-success">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Panel heading</div>
-        <div class="panel-body">
-            <div id="chart_div" style="width: 300px; height: 200px;"></div>
-
-        </div>
-    </div>
-
-  
+   {$page_content|default:''}
 
 </div><!-- /.container -->
-<hr>
+<hr />
 
 {include file="user/footer.tpl"}

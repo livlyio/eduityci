@@ -65,7 +65,7 @@ class Widget {
      //   $querystr = $data['query_str'];
     $arr['options']['color'] = 'blue';
     $arr['options']['title'] = 'Unit Profile'; 
-    $arr['options']['width'] = '800px';
+    $arr['options']['width'] = '700px';
     $arr['options']['height'] = 'auto'; 
     $arr['data']['0']['name'] = 'Unit Name:';
     $arr['data']['0']['value'] = $data['unit_title'];    
@@ -75,7 +75,9 @@ class Widget {
     $arr['data']['2']['value'] = $data['unit_location']; 
     $arr['data']['3']['name'] = 'Website:';
     $arr['data']['3']['value'] = $data['unit_website'];   
-    $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/edit_unit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/add_unit/'. $querystr) .'" class="btn btn-info" role="button">Add Unit</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/del_unit/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')">Delete Unit</a></td></tr>';
+    $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/edit_unit/'. $querystr) .'" class="btn btn-warning" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp; Edit Attributes</a> &nbsp; &nbsp; 
+    <a href="'. site_url('user/organization/add_unit/'. $querystr) .'" class="btn btn-info" role="button"><li class="fa fa-plus-square"></li>&nbsp; Add Unit</a> &nbsp;&nbsp; 
+    <a href="'. site_url('user/organization/del_unit/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this item?\')"><i class="fa fa-times"></i>&nbsp; Delete Unit</a></td></tr>';
 
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }    
@@ -128,24 +130,46 @@ class Widget {
     function short_occ_info_panel($data,$querystr,$buttons = true)
     {
          
-        
+    $arr['query_str'] = $querystr;   
+    $arr['table_title'] = $this->CI->lang->line('orgocc').' Forecasts';
     $arr['options']['color'] = 'blue';
     $arr['options']['title'] = $this->CI->lang->line('orgocc').' Profile'; 
     $arr['options']['width'] = '900px';
     $arr['options']['height'] = 'auto'; 
     $arr['data']['0']['name'] = $this->CI->lang->line('orgocc').' Name:';
     $arr['data']['0']['value'] = $data->title;    
-    $arr['data']['1']['name'] = 'Description:';
-    $arr['data']['1']['value'] = substr($data->description,0,strpos($data->description, ' ', 200));
     $arr['data']['2']['name'] = 'ONET SOC Code:';
     $arr['data']['2']['value'] = $data->onetsoc_code;
             
     if (isset($data->onetsoc_code_suffix) && $data->onetsoc_code_suffix != '') { $arr['data']['2']['value'] .= '-'. $data->onetsoc_code_suffix; } 
 
-    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button">Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')">Delete Occupation</a></td></tr>';
+    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp; Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button">Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')"><i class="fa fa-times"></i>&nbsp; Delete '.$this->CI->lang->line('orgocc').'</a></td></tr>';
   
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }
+
+    function forecast_info_panel($occ,$querystr,$buttons = true)
+    {
+         
+    $arr['query_str'] = $querystr;   
+    $arr['table_title'] = $this->CI->lang->line('orgocc').' Forecast';
+    $arr['options']['color'] = 'blue';
+    $arr['options']['title'] = $this->CI->lang->line('orgocc').' Profile'; 
+    $arr['options']['width'] = '900px';
+    $arr['options']['height'] = 'auto'; 
+    $arr['data']['0']['name'] = 'Forecast For:';
+    $arr['data']['0']['value'] = $occ->title;    
+    $arr['data']['2']['name'] = 'Effective Date:';
+    $arr['data']['2']['value'] = date("Y-m-d");
+            
+   // if (isset($data->onetsoc_code_suffix) && $data->onetsoc_code_suffix != '') { $arr['data']['2']['value'] .= '-'. $data->onetsoc_code_suffix; } 
+
+    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp; Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button"><i class="fa fa-refresh"></i>&nbsp; Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this occupation?\')"><i class="fa fa-times"></i>&nbsp; Delete '.$this->CI->lang->line('orgocc').'</a></td></tr>';
+  
+    return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
+    }
+
+
 
     function occ_info_panel($data,$querystr,$buttons = true)
     {
@@ -168,7 +192,10 @@ class Widget {
             
     if (isset($data->onetsoc_code_suffix) && $data->onetsoc_code_suffix != '') { $arr['data']['2']['value'] .= '-'. $data->onetsoc_code_suffix; } 
 
-    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/forecast/'. $querystr) .'" class="btn btn-success" role="button">Create Forecast</a> &nbsp; &nbsp;<a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button">Edit Attributes</a> &nbsp; &nbsp; <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button">Clone</a> &nbsp;&nbsp; <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this item?\')">Delete '.$this->CI->lang->line('orgocc').'</a></td></tr>';
+    if ($buttons) $arr['buttons'] = '<tr><td></td><td><a href="'. site_url('/user/organization/forecast/'. $querystr) .'" class="btn btn-success" role="button"><i class="fa fa-bar-chart"></i>&nbsp; Forecast</a> &nbsp;
+    <a href="'. site_url('/user/organization/occ_oper/func/edit/'. $querystr) .'" class="btn btn-warning" role="button"><i class="fa fa-pencil-square-o"></i>&nbsp; Edit Attributes</a> &nbsp; &nbsp; 
+    <a href="'. site_url('user/organization/occ_oper/func/clone/'. $querystr) .'" class="btn btn-info" role="button"><i class="fa fa-refresh"></i>&nbsp; Clone</a> &nbsp;&nbsp; 
+    <a href="'. site_url('user/organization/occ_oper/func/delete/'. $querystr) .'" class="btn btn-danger" role="button" onclick="javascript:return confirm(\'Are you sure you want to delete this item?\')"><i class="fa fa-times"></i>&nbsp; Delete '.$this->CI->lang->line('orgocc').'</a></td></tr>';
   
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }
@@ -182,6 +209,44 @@ class Widget {
     return $this->CI->load->view('widgets/open-panel',$arr,TRUE);     
     } 
     
+    function like_increase($percent,$number,$title,$description) {
+        return $this->percent_info_box('fa-thumbs-o-up','bg-green',$title,$number,$percent,$description);
+    }
+    
+    
+    function percent_info_box($icon,$color,$title,$number,$progress,$description) {
+        
+        
+        
+    $out = '
+              <div class="info-box '.$color.'">
+                <span class="info-box-icon"><i class="fa '.$icon.'"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">'.$title.'</span>
+                  <span class="info-box-number">'.$number.'</span>
+                  <div class="progress">
+                    <div class="progress-bar" style="width: '.$progress.'"></div>
+                  </div>
+                  <span class="progress-description">
+                    '.$description.'
+                  </span>
+                </div><!-- /.info-box-content -->
+              </div><!-- /.info-box -->
+            </div><!-- /.col -->
+            </div>';
+            
+            return $out;
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+
+    
     function standard_table($title,$thead,$tbody)
     {
     $arr['color'] = 'grey';
@@ -192,10 +257,17 @@ class Widget {
     return $this->CI->load->view('widgets/standard-table',$arr,TRUE);     
     }   
     
-    function forecast($data)
+    function forecast_list($data)
     {
+        if (!$data) return '';
         $arr['list'] = $data;
         return $this->CI->load->view('widgets/forecast',$arr,TRUE);
+    }
+    
+    function forecast_details($data)
+    {
+        $arr['list'] = $data;
+        return $this->CI->load->view('widgets/forecast_details',$arr,TRUE);
     }
     
     function edit_occ($post,$data)

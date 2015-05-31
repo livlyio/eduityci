@@ -27,6 +27,7 @@ class Dashboard extends CI_Controller {
      */
     public function __construct() {
         parent::__construct();
+        $this->info = new stdClass();
         $this->load->library('form_validation');
         $this->load->library('session');
         $this->load->library('userlib');
@@ -36,7 +37,7 @@ class Dashboard extends CI_Controller {
         $this->load->model('onetmodel','omodel');
  		$this->load->helper('url');
  		$this->load->helper('form');
-
+        
         // Auth STDclass
   		$this->auth = new stdClass;
 		// Load 'standard' flexi auth library by default.
@@ -53,7 +54,7 @@ class Dashboard extends CI_Controller {
         $auth = $this->session->userdata('flexi_auth');
         $this->uid = $auth['user_id'];
         $this->profile = $this->userlib->get_profile($this->uid);
-        $this->menu['org_menu'] = $this->userlib->org_menu();
+        $this->info->org_menu = $this->userlib->org_menu();
         $this->menu['pg'] = 'dash';
         $this->menu['base'] = base_url();
         
@@ -62,28 +63,66 @@ class Dashboard extends CI_Controller {
         if (!$this->profile) {
             // User has no profile information, something went wrong.
             // Set a custom error message.
-            log_message('error','No profile information existed for user: '. $this->uid .' on dashboard, returned False.');
+           /* log_message('error','No profile information existed for user: '. $this->uid .' on dashboard, returned False.');
 			$this->flexi_auth->set_error_message('There is an error with your account, please contact support.', TRUE);
 			$this->session->set_flashdata('message', $this->flexi_auth->get_messages());
-            redirect('support');
+            redirect('support');*/
+            $this->userlib->create_profile($auth['user_id']);
         }
+$this->load->library('../controllers/stream/stream');
+    }
 
+    public function notifications()
+    {
+        
+        $this->info->msgcount = count($this->stream->data['msgs']);
+        $this->info->notecount = count($this->stream->data['notifications']);
+        $this->info->user_full_name = $this->stream->data['signed_user_display'];
+        $this->info->user_profile_pic = $this->stream->data['signed_user_photo'];
+                
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        return $this->smarty->view( 'user/topnav.tpl', $this->info, true);        
+    }
+    
+    public function sidebar()
+    {
+        return $this->smarty->view( 'user/sidebar.tpl', $this->info, true);  
     }
 
     public function index() {
-  		$data['title'] = 'Welcome to the Smarty Website';
-		$data['bold'] = true;
-		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
         
-        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        $data['page_content'] = '';
+        $this->info->ngroup = 'dash';
         
-     //   print_r($data); die();
-        
-        $this->smarty->assign("css","");
+        $data['topnav'] = $this->notifications();
+        $data['sidebar'] = $this->sidebar();
+       
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/home.tpl', $data );
+        $this->smarty->view( 'user/dashboard.tpl', $data );
     }
 
+    public function load_content($input,$data,$ngroup)
+    {
+        $this->info->ngroup = $ngroup;
+        $data['page_content'] = $input;
+        $data['topnav'] = $this->notifications();
+        $data['sidebar'] = $this->sidebar();
+       
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'user/content.tpl', $data );        
+    }
+
+    public function timeline()
+    {
+        $data['page_content'] = $this->stream->get();
+        $this->info->ngroup = 'dash';
+        $data['topnav'] = $this->notifications();
+        $data['sidebar'] = $this->sidebar();
+       
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'user/timeline.tpl', $data );       
+        
+    }
     
     
 

@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title>{$title} - {$name}</title>
+    <title>{$title|default:'Eduity'} - {$name|default:'Workforce Planning'}</title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/font-lineicons.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/animate.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/style.css" type="text/css" media="all" />
-    {$css}
+    {$css|default:''}
     <!--[if lt IE 9]>
         <script src="assets/js/html5.js"></script>
         <script src="assets/js/respond.min.js"></script>

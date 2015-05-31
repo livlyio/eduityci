@@ -22,22 +22,33 @@ class Register extends CI_Controller {
      */
     public function __construct() {
         parent::__construct();
-        $this->load->library('form_validation');
-        $this->load->library('flexi_auth');
+        @$this->load->library('form_validation');
+        @$this->load->library('flexi_auth');
     }
 
     public function index() {
+        if ($this->input->post('register_user'))
+		{			
+			$this->load->model('flexi_auth_model');
+			$this->flexi_auth_model->register_account();
+		}
+		
+		// Get any status message that may have been set.
+		$this->data['message'] = (! isset($this->data['message'])) ? $this->session->flashdata('message') : $this->data['message'];		
+
+
   		$data['title'] = 'Welcome to the Smarty Website';
 		$data['bold'] = true;
 		$data['ip_address'] = $this->input->server('REMOTE_ADDR');
         
         $form = $this->load->view('vwRegister','',TRUE);
         
-        $this->smarty->assign("css","<link href=\"https://eduity.wufoo.com/stylesheets/public/forms/css/index.0173.css\" rel=\"stylesheet\">");
         $this->smarty->assign("page_content",$form);
         $this->smarty->assign("page_title","Register Account");
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'home/basic.tpl', $data );
+        $this->smarty->assign('pg','org');
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'home/register.tpl', $data );
         
      //   $arr['page'] ='home';
        // $this->load->view('vwHome',$arr);
@@ -117,7 +128,7 @@ class Register extends CI_Controller {
 		// Get any status message that may have been set.
 		$this->data['message'] = (! isset($this->data['message'])) ? $this->session->flashdata('message') : $this->data['message'];		
 
-print_r($this->data); die();
+        //print_r($this->data); die();
 
 		$this->load->view('register_view', $this->data);
 	}    

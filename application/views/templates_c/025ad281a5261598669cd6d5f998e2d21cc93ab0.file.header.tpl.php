@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-26 11:30:59
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 09:24:51
          compiled from "application\views\templates\user\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3515553a93ec298723-01882159%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '025ad281a5261598669cd6d5f998e2d21cc93ab0' => 
     array (
       0 => 'application\\views\\templates\\user\\header.tpl',
-      1 => 1432632655,
+      1 => 1433057087,
       2 => 'file',
     ),
   ),
@@ -20,219 +20,43 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'variables' => 
   array (
     'title' => 0,
-    'name' => 0,
-    'css' => 0,
-    'update' => 0,
-    'navigation' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_553a93ec2e9d41_78939663')) {function content_553a93ec2e9d41_78939663($_smarty_tpl) {?><!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="<?php echo @constant('HTTP_CSS_PATH');?>
-favicon.png">
-    <title><?php echo $_smarty_tpl->tpl_vars['title']->value;?>
- - <?php echo $_smarty_tpl->tpl_vars['name']->value;?>
+    <meta charset="UTF-8">
+    <title><?php echo (($tmp = @$_smarty_tpl->tpl_vars['title']->value)===null||$tmp==='' ? 'EdUity' : $tmp);?>
 </title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <!-- Bootstrap 3.3.4 -->
+    <link href="<?php echo base_url('adminlte/bootstrap/css/bootstrap.min.css');?>
+" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url('assets/css/slickmap.css');?>
+" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url('assets/css/custom.css');?>
+" rel="stylesheet" type="text/css" />
+    <!-- Font Awesome Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons -->
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    <!-- jvectormap -->
+    <link href="http://localhost/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+    <!-- Theme style -->
+    <link href="http://localhost/adminlte/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <!-- AdminLTE Skins. Choose a skin from the css/skins 
+         folder instead of downloading all of them to reduce the load. -->
+    <link href="http://localhost/adminlte/dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
 
-    <?php echo (($tmp = @$_smarty_tpl->tpl_vars['css']->value)===null||$tmp==='' ? '' : $tmp);?>
-
-    <?php echo '<script'; ?>
- type="text/javascript" src="<?php echo @constant('HTTP_JS_PATH');?>
-jquery.js"><?php echo '</script'; ?>
->
-    <?php echo '<script'; ?>
- type="text/javascript" src="<?php echo @constant('HTTP_JS_PATH');?>
-jquery-ui.js"><?php echo '</script'; ?>
->
-    <link href="<?php echo @constant('HTTP_CSS_PATH');?>
-jquery-ui.css" rel="stylesheet" type="text/css" />
-
-    <?php echo '<script'; ?>
- type="text/javascript" src="http://johnny.github.io/jquery-sortable/js/jquery-sortable.js"><?php echo '</script'; ?>
->
-    
-    
-    
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-          <?php echo '<script'; ?>
->var base_url = ‘<?php echo @constant('BASE_URL');?>
-’; 
-          var base_url = ‘<?php echo @constant('BASE_URL');?>
-’;<?php echo '</script'; ?>
->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <?php echo '<script'; ?>
- src="<?php echo @constant('HTTP_JS_PATH');?>
-html5shiv.js"><?php echo '</script'; ?>
+        <?php echo '<script'; ?>
+ src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"><?php echo '</script'; ?>
 >
-      <?php echo '<script'; ?>
- src="<?php echo @constant('HTTP_JS_PATH');?>
-respond.min.js"><?php echo '</script'; ?>
+        <?php echo '<script'; ?>
+ src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"><?php echo '</script'; ?>
 >
     <![endif]-->
-
-    <link href="http://vitalets.github.io/x-editable/assets/bootstrap300/css/bootstrap.css" rel="stylesheet">
- 
-    <!-- bootstrap -->
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-    <?php echo '<script'; ?>
- src="http://code.jquery.com/jquery-2.0.3.min.js"><?php echo '</script'; ?>
-> 
-    <?php echo '<script'; ?>
- src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"><?php echo '</script'; ?>
->  
-
-    <!-- x-editable (bootstrap version) -->
-    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.6/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-    <?php echo '<script'; ?>
- src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.4.6/bootstrap-editable/js/bootstrap-editable.min.js"><?php echo '</script'; ?>
->
-
-<link href="<?php echo @constant('HTTP_CSS_PATH');?>
-starter-template.css" rel="stylesheet" />
-    
-
-<style type="text/css">
-body {
-    font-size:18px;
-}
-body.dragging, body.dragging * {
-  cursor: move !important;
-}
-
-.dragged {
-  position: absolute;
-  opacity: 0.5;
-  z-index: 2000;
-}
-
-ol.example li.placeholder {
-  position: relative;
-  /** More li styles **/
-}
-ol.example li.placeholder:before {
-  position: absolute;
-  /** Define arrowhead **/
-}
-
-</style>
-<?php echo '<script'; ?>
- type="text/javascript">
-$(document).ready(function() {
-    //toggle `popup` / `inline` mode
-    $.fn.editable.defaults.mode = 'popup';     
-    
-    //make username editable
-    $('#username').editable( {
-        type: 'text'
-        ,send: 'always'
-        ,pk: 1
-        ,url: <?php echo (($tmp = @$_smarty_tpl->tpl_vars['update']->value)===null||$tmp==='' ? '' : $tmp);?>
-
-    });
-    
-    $('#least').editable( {
-        type: 'text'
-        ,send: 'always'
-        ,url: <?php echo (($tmp = @$_smarty_tpl->tpl_vars['update']->value)===null||$tmp==='' ? '' : $tmp);?>
-
-    });
-    
-    $('#likely').editable( {
-        type: 'text'
-        ,send: 'always'
-        ,url: <?php echo (($tmp = @$_smarty_tpl->tpl_vars['update']->value)===null||$tmp==='' ? '' : $tmp);?>
-
-    }); 
-    
-    $('#most').editable( {
-        type: 'text'
-        ,send: 'always'
-        ,url: <?php echo (($tmp = @$_smarty_tpl->tpl_vars['update']->value)===null||$tmp==='' ? '' : $tmp);?>
-
-    });   
-    
-    $('#title').editable( {
-        type: 'text'
-        ,send: 'title'
-        ,url: <?php echo (($tmp = @$_smarty_tpl->tpl_vars['update']->value)===null||$tmp==='' ? '' : $tmp);?>
-
-    });     
-    
-    $('#projected').editable({
-        format: 'yyyy-mm-dd'
-        ,viewformat: 'mm/dd/yyyy'
-        ,send: 'always'
-        ,url: <?php echo (($tmp = @$_smarty_tpl->tpl_vars['update']->value)===null||$tmp==='' ? '' : $tmp);?>
-   
-        ,datepicker: {
-                weekStart: 1
-           }
-        });      
-
-// Sortable rows
-$('.sorted_table').sortable({
-  containerSelector: 'table',
-  itemPath: '> tbody',
-  itemSelector: 'tr',
-  placeholder: '<tr class="placeholder"/>'
-})
-
-// Sortable column heads
-var oldIndex
-$('.sorted_head tr').sortable({
-  containerSelector: 'tr',
-  itemSelector: 'th',
-  placeholder: '<th class="placeholder"/>',
-  vertical: false,
-  onDragStart: function (item, group, _super) {
-    oldIndex = item.index()
-    item.appendTo(item.parent())
-    _super(item)
-  },
-  onDrop: function  (item, container, _super) {
-    var field,
-    newIndex = item.index()
-    
-    if(newIndex != oldIndex)
-      item.closest('table').find('tbody tr').each(function (i, row) {
-        row = $(row)
-        field = row.children().eq(oldIndex)
-        if(newIndex)
-          field.before(row.children()[newIndex])
-        else
-          row.prepend(field)
-      })
-
-    _super(item)
-  }
-})
-    
- } );
-
-<?php echo '</script'; ?>
->  
-
-       
-       
- 
-     	<?php echo '<script'; ?>
- type="text/javascript" src="<?php echo @constant('HTTP_JS_PATH');?>
-ajax-search-suggest.js"><?php echo '</script'; ?>
->
-	<link rel="stylesheet" type="text/css" media="screen" href="<?php echo @constant('HTTP_CSS_PATH');?>
-search.css" />
-	<link href="http://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet" type="text/css" />   
-  </head>
-<body>
-<?php echo $_smarty_tpl->tpl_vars['navigation']->value;?>
-
-
-<?php }} ?>
+  </head><?php }} ?>

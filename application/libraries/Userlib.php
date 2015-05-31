@@ -99,6 +99,11 @@ class Userlib
         return $this->profile;
     }
     
+    public function create_profile($id)
+    {
+        $this->CI->usermodel->insert_permission('DASH',$id,'0','RW');
+    }
+    
     // Menus and Tree generation
     
     public function org_menu()
@@ -125,21 +130,17 @@ class Userlib
         if (!$items) {
             return '';
         } else {
-            $out =
-            '<li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">'. $name .'<b class="caret"></b></a>
-              <ul class="dropdown-menu">';
+            $out = '';
               
             $c = count($items);
             $i = 1;
     
                 foreach ($items as $item) {
-                    $out .= '<li><a href="'.$item['url'].'">'.$item['anchor'].'</a></li>'."\n";
-                    if ($i < $c) { $out .= '<li class="divider"></li>'."\n"; }
+                    $out .= '<li><a href="'.$item['url'].'"><i class="fa fa-sitemap"></i>'.$item['anchor'].'</a></li>';
+                   // if ($i < $c) { $out .= '<li class="divider"></li>'."\n"; }
                     $i++;
                 }          
-            $out .= '</ul>
-            </li>';
+            $out .= '</li>';
         }
         return $out;
     }

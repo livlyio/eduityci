@@ -10,6 +10,7 @@ class Orgmodel extends CI_Model {
     {
         // Call the Model constructor
         parent::__construct();
+        $this->db = $this->load->database('eduity',true);
         $this->odb = $this->load->database('orgdb', TRUE);
         $this->onet = $this->load->database('onetdb', TRUE);
         $this->load->model('onetmodel');
@@ -79,46 +80,101 @@ class Orgmodel extends CI_Model {
     return $branch;
     }
     
-    function new_forecast($org,$unit,$occ)
+    function new_forecast($get)
     {
-        $data = array('org_id' => $org,'unit_id' => $unit,'ouj_id' => $occ,'title' => 'Forecast Title','least' => '0','likely' => '0','most' => '0','projected' => '0000-00-00','notes' => '');
+        $data = array('org_id' => $get->org,'unit_id' => $get->unit,'oujob_id' => $get->code);
         $data['created'] = date("Y-m-d");
-        $this->odb->insert('organizations_units_jobs_forecasts',$data);      
+        $fcid = $this->odb->insert('organizations_forecasts',$data);
+        $this->new_forecast_sets($get,$fcid);
+        return $fcid;
+    }
+    
+    function new_forecast_sets($get,$fcid)
+    {
+        foreach (array('least','likely','most') as $fcset) {
+            $data = array('org_id' => $get->org,'unit_id' => $get->unit,'oujob_id' => $get->code,'fcast_id' => $fcid,'fcast_set' => $fcset);
+            $data['created'] = date("Y-m-d");
+            $this->odb->insert('organizations_forecasts_sets',$data); 
+        }     
+    }
+    
+    function get_forecast_details($get)
+    {
+        $this->odb->where('org_id',$get->org);
+        $this->odb->where('unit_id',$get->unit);
+        $this->odb->where('oujob_id',$get->code);
+        $query = $this->odb->get('organizations_forecasts_sets');
+        
+        return ($query->num_rows() > 0) ? $query->result() : false;        
+    }
+    
+    function get_forecast_created($get)
+    {
+        $this->odb->where('org_id',$get->org);
+        $this->odb->where('unit_id',$get->unit);
+        $this->odb->where('oujob_id',$get->code);
+        $this->odb->limit('1');
+        $query = $this->odb->get('organizations_forecasts_sets');
+        
+        return ($query->num_rows() > 0) ? $query->row() : false;        
+       
     }
     
     function update_forecast($get,$data)
     {
-        $update[$data['name']] = $data['value'];
+        $update['fcast_'.$data['name']] = $data['value'];
         $this->odb->where('org_id',$get->org);
         $this->odb->where('unit_id',$get->unit);
-        $this->odb->where('ouj_id',$get->code);
-        $this->odb->where('fc_id',$data['pk']);
-        return $this->odb->update('organizations_units_jobs_forecasts',$update);      
+        $this->odb->where('oujob_id',$get->code);
+        $this->odb->where('fset_id',$data['pk']);
+        return $this->odb->update('organizations_forecasts_sets',$update);      
     }
     
-    function list_or_create_forecasts($org,$unit,$occ)
+    function del_forecast($get)
     {
-        $list = $this->list_forecasts($org,$unit,$occ);
+        $data = array('fcast_6mo' => 0,'fcast_12mo' => 0,'fcast_18mo' => 0,'fcast_24mo' => 0,'fcast_36mo' => 0,'fcast_48mo' => 0,'fcast_60mo' => 0);
+        $this->odb->where('org_id',$get->org);
+        $this->odb->where('unit_id',$get->unit);
+        $this->odb->where('oujob_id',$get->code);
+        $this->odb->where('fset_id',$get->fcast);
+        return $this->odb->update('organizations_forecasts_sets',$data);      
+    }
+
+    
+    function list_or_create_forecast($get)
+    {
+        $list = $this->get_forecast_details($get);
         if (!$list) {
-            $this->new_forecast($org,$unit,$occ);
-            $list = $this->list_forecasts($org,$unit,$occ);
+            $this->new_forecast($get);
+            $list = $this->get_forecast_details($get);
         }
         return $list;   
     }
     
-    function get_forecast_byid($fid)
+    function get_forecast_byid($get)
     {
-        
+        $this->odb->where('org_id',$get->org);
+        $this->odb->where('unit_id',$get->unit);
+        $this->odb->where('oujob_id',$get->code);
+        $this->odb->where('fcast_id',$get->fcast);
+        $query = $this->odb->get('organizations_forecasts');
+
+        return ($query->num_rows() > 0) ? $query->result() : false; 
+          
     }
     
-    function list_forecasts($org,$unit,$occ)
+    function list_forecasts($get)
     {
-        $this->odb->where('org_id',$org);
-        $this->odb->where('unit_id',$unit);
-        $this->odb->where('ouj_id',$occ);
-        $query = $this->odb->get('organizations_units_jobs_forecasts');
+        $this->odb->where('org_id',$get->org);
+        $this->odb->where('unit_id',$get->unit);
+        $this->odb->where('oujob_id',$get->code);
+        $query = $this->odb->get('organizations_forecasts');
         
-        return ($query->num_rows() > 0) ? $query->result() : false;
+        
+        if ($query->num_rows() > 0) {
+            $results = $query->result();
+            return $results;
+           } else return false;
     }
     
     function get_bcpath($unit,$org = 0)
@@ -231,6 +287,7 @@ class Orgmodel extends CI_Model {
         $this->odb->where('org_id',$org);
         $this->odb->where('unit_id',$unit);
         $this->odb->where('oujob_id',$code);
+        $this->odb->order_by('order');
         $this->odb->join('eduity_onet.content_model_reference','content_model_reference.element_id = organizations_units_jobs_skills.element_id');
 
         $query = $this->odb->get('organizations_units_jobs_skills');
@@ -274,7 +331,7 @@ class Orgmodel extends CI_Model {
     {    
         $skills = $this->get_soc_default_skills($soc);
         
-       // print_r($skills); die();
+        $i=0;
         
         foreach ($skills as $skill) {                    
         $data['org_id'] = $org;
@@ -284,10 +341,22 @@ class Orgmodel extends CI_Model {
         $data['element_id'] = $skill->element_id;
         $data['element_name'] = $skill->element_name;
         $data['description'] = $skill->description;
+        $data['order'] = $i; $i++;
         $this->odb->insert('organizations_units_jobs_skills',$data);     
         }
        
     } 
+    
+    function reorder_skills($get,$order)
+    {
+        foreach ($order as $key => $skill) {
+            $this->odb->where('org_id',$get->org);
+            $this->odb->where('unit_id',$get->unit);
+            $this->odb->where('oujob_id',$get->code);
+            $this->odb->where('oujs_id',$skill); 
+            $this->odb->update('organizations_units_jobs_skills',array('order' => $key));           
+        }
+    }
     
     function add_unit($orgid,$parent,$data)
     {

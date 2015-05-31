@@ -3,8 +3,8 @@
 		<h1>Organizational Map</h1>
 	
 		<ul id="utilityNav">
-			<li><a href="<?php site_url('/user/organization/add_unit/'.$query_str); ?>">Add Unit</a></li>
-			<li><a href="/login">Reorder Units</a></li>
+			<li><a href="<?=site_url('/user/organization/add_unit/'.$query_str); ?>">Add Unit</a></li>
+	<!--		<li><a href="/login">Reorder Units</a></li> -->
 		</ul>
 
 		<ul id="primaryNav" class="col4">

@@ -11,6 +11,7 @@ class Tw_model extends CI_Model {
         // Call the Model constructor
         parent::__construct();
         $this->load->helper('string');
+        $this->db = $this->load->database('eduity',true);
     }
     
     function list_accts()

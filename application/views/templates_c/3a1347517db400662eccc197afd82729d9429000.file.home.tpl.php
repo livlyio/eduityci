@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-30 20:38:29
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-30 22:08:54
          compiled from "application\views\templates\user\home.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:14922553a93ec200ea8-90473859%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '3a1347517db400662eccc197afd82729d9429000' => 
     array (
       0 => 'application\\views\\templates\\user\\home.tpl',
-      1 => 1430419108,
+      1 => 1433016416,
       2 => 'file',
     ),
   ),
@@ -17,15 +17,17 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'version' => 'Smarty-3.1.21-dev',
   'unifunc' => 'content_553a93ec2463b7_87336924',
+  'variables' => 
+  array (
+    'page_content' => 0,
+  ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_553a93ec2463b7_87336924')) {function content_553a93ec2463b7_87336924($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("user/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value)), 0);?>
+<?php if ($_valid && !is_callable('content_553a93ec2463b7_87336924')) {function content_553a93ec2463b7_87336924($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("user/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value),'css'=>((string)$_smarty_tpl->tpl_vars['css']->value)), 0);?>
 
 
 
-<link href="<?php echo '<?php'; ?>
- echo HTTP_CSS_PATH; <?php echo '?>'; ?>
-starter-template.css" rel="stylesheet">
+<link href="starter-template.css" rel="stylesheet">
 <style>
     .panel{
         margin-left: 55px;
@@ -35,6 +37,8 @@ starter-template.css" rel="stylesheet">
     }
 
 </style>
+
+
 
 <?php echo '<script'; ?>
  type="text/javascript" src="https://www.google.com/jsapi"><?php echo '</script'; ?>
@@ -123,51 +127,11 @@ starter-template.css" rel="stylesheet">
 </div>
 <div class="container">
 
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Links</div>
-        <div class="panel-body">
+   <?php echo (($tmp = @$_smarty_tpl->tpl_vars['page_content']->value)===null||$tmp==='' ? '' : $tmp);?>
 
-            <ul style="max-width: 260px;" class="nav nav-pills nav-stacked">
-                <li class="active">
-                    <a href="#">
-                        <span class="badge pull-right"></span>
-                        Item 1
-                    </a>
-                </li>
-                <li><a href="#">Item 2
-                        <span class="badge pull-right"></span></a>
-                </li>
-                <li>
-                    <a href="#">
-                        <span class="badge pull-right"></span>
-                        Item 3
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <span class="badge pull-right"></span>
-                        Item 4
-                    </a>
-                </li>
-            </ul>
-        </div>
-   </div>
-
-
-    <div class="panel panel-success">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Panel heading</div>
-        <div class="panel-body">
-            <div id="chart_div" style="width: 300px; height: 200px;"></div>
-
-        </div>
-    </div>
-
-  
 
 </div><!-- /.container -->
-<hr>
+<hr />
 
 <?php echo $_smarty_tpl->getSubTemplate ("user/footer.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array(), 0);?>
 

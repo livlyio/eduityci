@@ -10,6 +10,7 @@ class Usermodel extends CI_Model {
     {
         // Call the Model constructor
         parent::__construct();
+        $this->db = $this->load->database('eduity',true);
         $this->odb = $this->load->database('orgdb', TRUE);
         $this->load->helper('string');
     }

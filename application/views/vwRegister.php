@@ -1,12 +1,20 @@
-<div id="container" class="ltr">
-	
-
+<style type="text/css">
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { margin: .2em 0; }
   
-<header id="header" class="info">
-	<h2>Register</h2>
-	<div>Fill out the information below to register with Eduity!</div>
-</header>
-<ul>
+  .info_req label { 
+    float: left; 
+    width: 200px; 
+    margin-right: 15px; 
+    text-align: right; 
+  }
+  fieldset {
+    margin-top:40px;
+    
+  }
+  </style>
+
+<div id="container" class="ltr">
 
 	
 	<!-- Main Content -->
@@ -48,10 +56,6 @@
 								<input type="text" id="email_address" name="register_email_address" value="<?php echo set_value('register_email_address');?>" class="tooltip_trigger"
 									title="This demo requires that upon registration, you will need to activate your account via clicking a link that is sent to your email address."
 								/>
-							</li>
-							<li>
-								<label for="newsletter">Subscribe to Newsletter:</label>
-								<input type="checkbox" id="newsletter" name="register_newsletter" value="1" <?php echo set_checkbox('register_newsletter',1);?>/>
 							</li>
 							<li class="info_req">
 								<label for="username">Username:</label>

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-04-30 15:45:24
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-30 17:23:03
          compiled from "application\views\templates\home\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:17776553a707f7c6954-70834282%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1e18a1efd56e0bb5e1b1464a2c5a2c1716798b31' => 
     array (
       0 => 'application\\views\\templates\\home\\header.tpl',
-      1 => 1430401522,
+      1 => 1432999379,
       2 => 'file',
     ),
   ),
@@ -32,15 +32,15 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     <meta charset="utf-8">
     <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title><?php echo $_smarty_tpl->tpl_vars['title']->value;?>
- - <?php echo $_smarty_tpl->tpl_vars['name']->value;?>
+    <title><?php echo (($tmp = @$_smarty_tpl->tpl_vars['title']->value)===null||$tmp==='' ? 'Eduity' : $tmp);?>
+ - <?php echo (($tmp = @$_smarty_tpl->tpl_vars['name']->value)===null||$tmp==='' ? 'Workforce Planning' : $tmp);?>
 </title>
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/font-awesome.min.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/font-lineicons.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/animate.css" type="text/css" media="all" />
     <link rel="stylesheet" href="assets/css/style.css" type="text/css" media="all" />
-    <?php echo $_smarty_tpl->tpl_vars['css']->value;?>
+    <?php echo (($tmp = @$_smarty_tpl->tpl_vars['css']->value)===null||$tmp==='' ? '' : $tmp);?>
 
     <!--[if lt IE 9]>
         <?php echo '<script'; ?>

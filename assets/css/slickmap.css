@@ -2,24 +2,6 @@
 	Reset Styles (from meyerweb.com)
 ------------------------------------------------------------ */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, font, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	outline: 0;
-	font-weight: inherit;
-	font-style: inherit;
-	font-size: 100%;
-	font-family: inherit;
-	vertical-align: baseline;
-}
 
 /* ------------------------------------------------------------
 	NUMBER OF COLUMNS: Adjust #primaryNav li to set the number
@@ -54,9 +36,8 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 body {
 	background: white;
 	color: black;
-	padding: 40px;
 	font-family: Gotham, Helvetica, Arial, sans-serif;
-	font-size: 12px;
+	font-size: 16px;
 	line-height: 1;
 }
 .smap {
@@ -71,9 +52,8 @@ h1 {
 	margin: 0 0 5px 0;
 }
 h2 {
-	font-family: "Lucida Grande", Verdana, sans-serif;
-	font-size: 10px;
-	color: #777777;
+	font-size: 18px;
+	color: #000;
 	margin: 0 0 20px 0;
 }
 a {
@@ -113,7 +93,7 @@ ol, ul {
 	margin: 0 20px 0 0;
 	padding: 10px 0;
 	display: block;
-	font-size: 14px;
+	font-size: 15px;
 	font-weight: bold;
 	text-align: center;
 	color: black;	
