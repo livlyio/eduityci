@@ -1,15 +1,4 @@
-{include file="user/header.tpl" title="Eduity" name="$Name"}
-{literal}
-<style>
-    .panel{
-        margin-left: 55px;
-        float: left;
-        width: 500px;
-        height: 303px;
-    }
 
-</style>
-{/literal}
 
 <div class="page-header container">
     <h1><small>{$org_name}</small></h1>
@@ -37,5 +26,3 @@
   
 </div>
 <hr>
-
-{include file="user/footer.tpl"}

@@ -27,10 +27,12 @@ class Organization extends CI_Controller {
      */
     public function __construct() {
         parent::__construct();
-        $this->load->library('form_validation');
-        $this->load->library('session');
+        
+        
+       // $this->load->library('form_validation');
+       // $this->load->library('session');
         $this->load->library('userlib');
-        $this->load->library('encrypt');
+       // $this->load->library('encrypt');
         $this->load->library('widget');
         $this->load->library('script');
         
@@ -40,22 +42,13 @@ class Organization extends CI_Controller {
         $this->load->model('Usermodel','usermodel');
         $this->load->model('onetmodel','onet');
  		$this->load->helper('url');
- 		$this->load->helper('form');
+ 	//	$this->load->helper('form');
         $this->lang->load('label', 'english');
        
+        //Dashboard Controller
+        $this->load->library('../controllers/user/dashboard');
 
 
-		//if not logged-in redirect to home
-		if($this->account_model->is_logged_in() == FALSE)
-		{
-			redirect(base_url());
-		}
-		//if not verified
-		if($this->account_model->is_verified() == FALSE)
-		{
-			//redirect to unverified account page				
-			redirect(base_url().'unverifiedAccount');
-		}
 		//save logged-in user id and profile id for using in script
 		$this->userid = $this->session->userdata('userid');
 		$this->profileid = $this->session->userdata('profileid');
@@ -70,7 +63,7 @@ class Organization extends CI_Controller {
         $this->menu['org_menu'] = $this->userlib->org_menu();
         $this->menu['pg'] = 'org';
         $this->menu['base'] = base_url();
-        $this->load->library('../controllers/user/dashboard');
+        
     }
     
     public function index()
@@ -131,18 +124,16 @@ class Organization extends CI_Controller {
 
     public function units()
     {                    
-        // Security Check_
-        $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
-        // Passed security check, continue
-        // Grab unit information
+
         $udata = $this->orgmodel->get_unit($this->get->unit);
         // Grab org information
         $odata = $this->orgmodel->get_org($this->get->org);
         // Merge with unit information for display
         $data = array_merge($udata,$odata);
         // Set additional variables for display
-        //$data['unit_id'] = $this->userlib->encode($data['unit_id']);
-        $data['unit_info_panel'] = $this->widget->unit_info_panel($this->orgmodel->get_unit($this->get->unit),$this->getquery());
+
+        $unit = $this->orgmodel->get_unit($this->get->unit);
+        $data['unit_info_panel'] = $this->widget->unit_info_panel($unit,$this->getquery());
         $data['query_str'] = $this->getquery();
         $data['base'] = $this->menu['base'];
         // Create breadcrumb links for easy navigation
@@ -155,15 +146,14 @@ class Organization extends CI_Controller {
         
         $data['org'] = $this->get->org;
         $data['unit'] = $this->get->unit;
-        $data['page_title'] = 'XYZ Corporation';
-        $data['box_title'] = 'Plant A';
+
+        $data['page_title'] = $odata['org_name'];
+        $data['box_title'] = $unit['unit_title'];
         $data['unit_updates'] = $this->widget->like_increase('70%','26','Ratings Increase','An increasae of 70%');
         
         
         // Assign and display template
-        $out = $this->smarty->view( 'user/organization/viewunit.tpl', $data, true );   
-        
-        $this->dashboard->load_content($out,$data,'orgn');     
+        $this->dashboard->load_template('user/organization/viewunit.tpl',$data,'orgn');     
     }
     
     function onetsoc_search()
@@ -208,7 +198,7 @@ class Organization extends CI_Controller {
     public function previewsoc()
     {
        // Security Check_
-        $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
+        //$this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
         // Passed security check, continue
 
         $job = $this->onet->get_job_common($this->get->code,$this->get->common);
@@ -219,16 +209,13 @@ class Organization extends CI_Controller {
         $data['baseme'] = site_url('/user/organization/previewsoc/');
         $data['org_name'] = $this->orgmodel->org_name($this->get->org);
 
-        $buttons = '<tr><td></td><td><a id="link" href="'.site_url('/user/organization/addsoc/'.$this->getquery()) .'/common/'.$this->get->common.'" class="btn btn-info" role="button">Use '.$this->lang->line('orgocc').'</a></td></tr>';
+        $buttons = '<tr><td></td><td><a id="link" href="'.site_url('/user/organization/addsoc/'.$this->getquery()) .'/common/'.$this->get->common.'" class="btn btn-success" role="button"><i class="fa fa-user-plus"></i> &nbsp; &nbsp;<b>Add This '.$this->lang->line('orgocc').'</b></a></td></tr>';
 
         $data['pageh'] = '<h1>Preview '.$this->lang->line('orgocc').'</h1>';
         $data['occ_info_panel'] = $this->widget->occ_preview_panel($job,$this->getquery(),$buttons);
         $data['generic_info_panel'] = $this->widget->occ_preview_panel2($jd,$this->getquery());      
-
-
-        $out = $this->smarty->view( 'user/organization/previewocc.tpl', $data, true );   
         
-        $this->dashboard->load_content($out,$data,'orgn');         
+        $this->dashboard->load_template('user/organization/previewocc.tpl',$data,'orgn');         
     }
     
     public function update_forecast()
@@ -260,7 +247,7 @@ class Organization extends CI_Controller {
     public function forecast()
     {
         // Security Check_
-        $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
+        //$this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
         // Passed security check, continue
 
         //$data = $this->getview();
@@ -289,7 +276,7 @@ class Organization extends CI_Controller {
     //    print_r($this->input->post()); die();
     $common = $this->onetmodel->get_common_byid($this->input->post('common'))->common_name;
     
-    $code = $this->orgmodel->add_soc($this->input->post('org'),$this->input->post('unit'),$this->input->post('code'),$common);
+    $code = $this->orgmodel->add_soc($this->get->org,$this->get->unit,$this->get->code,$common);
         
     $get = $this->getquery($this->input->post('org'),$this->input->post('unit'),$code);    
         
@@ -326,14 +313,16 @@ class Organization extends CI_Controller {
     public function viewocc()
     {
         // Security Check_
-        $this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
+        //$this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
         // Passed security check, continue
 
         $data = $this->getview();
         
         $data['baseme'] = site_url('/user/organization/viewocc/');
         $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-        $data['occ_info_panel'] = $this->widget->occ_info_panel($this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code,true),$this->getquery());
+       // $unit = $this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code,true);
+       // print_r($unit); die();
+      //  $data['occ_info_panel'] = $this->widget->occ_info_panel($unit,$this->getquery());
         $data['pageh'] = '<h1>View '.$this->lang->line('orgocc').'</h1>';
         $data['generic_info_panel'] ='';    
         $data['script'] = $this->script->sortable();  
@@ -429,53 +418,6 @@ class Organization extends CI_Controller {
         //Print please
         $this->output->set_output($this->flexigrid->json_build($records['record_count'], $record_items, $records['footmsg']));
     } 
-
-
-    public function occ_oper()
-    {
-        
-       // print_r($this->get); die();
-        switch($this->get->func) {
-            case 'edit':
-        // Security Check
-        //$this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
-        // Passed check
-        // If submitting form proceed to save routine       
-        if ($this->input->post('save_edits')) {
-            $this->orgmodel->update_occ($this->get->code,$this->input->post());
-            redirect('user/organization/viewocc/'.$this->getquery());         
-        }       
-        // Otherwise get occupation data
-        $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-
-        $data['edit_form'] = $this->widget->edit_occ(site_url('user/organization/occ_oper/func/edit/'. $this->getquery()),$this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code));
- 
-
-        // Create breadcrumb links for easy navigation
-        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));        
-        $data['query_str'] = $this->getquery();
-        $data['base'] = $this->menu['base'];
-//        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        // Load template
-        $this->smarty->assign('pg','org');
-  		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/edit-common.tpl', $data );  
-            break;
-            case 'delete':
-            $this->orgmodel->delete_occ($this->get->code);
-            redirect('user/organization/units/'.$this->getquery());
-            break;
-            case 'clone':
-            die("NOT IMPLEMENTED");
-            break;
-            default:
-            redirect('user/dashboard');
-            break;
-        }
-        
-    }
-
-
     
 
     
@@ -484,11 +426,11 @@ class Organization extends CI_Controller {
         if ($this->get->unit == '0') {
             // Home is parent, adding to Tier 1
             // Security Check
-            $this->userlib->check_acl('ORG',$this->user,$this->get->org,'RW'); 
+           // $this->userlib->check_acl('ORG',$this->user,$this->get->org,'RW'); 
         } else {
             // Another unit is the parent, adding to Tier 2+
             // Security Check
-            $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
+           // $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
         }
 
         // Passed check, get org info
@@ -516,11 +458,7 @@ class Organization extends CI_Controller {
             }
                  
         
-        $this->smarty->assign('pg','org');
-  		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/addunit.tpl', $data );          
-        
-        
+        $this->dashboard->load_template('user/organization/addunit.tpl',$data,'orgn');     
     }
     
     public function del_unit()
@@ -537,7 +475,7 @@ class Organization extends CI_Controller {
     public function edit_unit()
     { 
         // Security Check
-        $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
+       // $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
         // Passed check
         // If submitting form proceed to save routine       
         if ($this->input->post('save_unit')) {
@@ -554,9 +492,8 @@ class Organization extends CI_Controller {
         $data['base'] = $this->menu['base'];
 //        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
         // Load template
-        $this->smarty->assign('pg','org');
-  		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/editunit.tpl', $data );                     
+        
+        $this->dashboard->load_template( 'user/organization/editunit.tpl', $data ,'orgn');                     
     }
     
 

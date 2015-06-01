@@ -67,6 +67,15 @@
             $this->db->insert('permit_org',$in);
         }
         
+        public function get_org_permit_byid($uid,$oid)
+        {
+            $this->db->where('user_id',$uid);
+            $this->db->where('org_id',$oid);
+            $query = $this->db->get('permit_org');
+            
+            return ($query->num_rows() > 0) ? $query->row()->permissions : '0000';
+        }
+        
         public function get_org_permits($uid)
         {
             $this->odb = $this->load->database('orgdb',TRUE);

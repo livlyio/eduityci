@@ -34,6 +34,27 @@
 				return TRUE;
 			}
 		}
+        
+        public function count_unread_msgs()
+        {
+			$uid = $this->session->userdata('userid');
+            $this->db->select('COUNT(msg_id) as count');
+            $this->db->where(array('msg_receiver'=>$uid,'msg_read'=>0));
+            $query = $this->db->get('message');    
+            return $query->row();        
+        }
+        
+		public function get_unread_msgs()
+		{
+			$uid = $this->session->userdata('userid');
+            $this->db->where(array('msg_receiver'=>$uid,'msg_read'=>0));
+			$this->db->limit('5');
+            $query = $this->db->get('message');
+            
+			return ($query->num_rows() > 0) ? $query->result_array() : false;
+		}
+        
+        
 		public function get_new_msg($latest_id)
 		{
 			$this->db->select_max('msg_id');

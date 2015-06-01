@@ -28,16 +28,14 @@ class Dashboard extends CI_Controller {
     public function __construct() {
         parent::__construct();
         
-  		$this->load->library('form_validation');
-		$this->load->library('uploading');
-		$this->load->library('photo');
-		
+        // Load Account Model
 		$this->load->model('account/account_model');
+        $this->load->model('message/message_model');
 		$this->load->model('profile/profile_model');
 		$this->load->model('profile/personal_profile_model');
 		$this->load->model('media/photo_model');
-        
-		//if not logged-in redirect to home
+        // Check User Authentication
+		//if not logged-in redirect to login
 		if($this->account_model->is_logged_in() == FALSE)
 		{
 			redirect(base_url('auth'));
@@ -50,42 +48,58 @@ class Dashboard extends CI_Controller {
 			redirect(base_url().'unverifiedAccount');
             die();
 		}
-
-		
+        
+        // Standard libraries
+        $this->load->library('form_validation');
+		$this->load->library('uploading');
+		$this->load->library('photo');
+		$this->load->helper('url');
+        // Called stream controller as a library
+        $this->load->library('../controllers/stream/stream');
+      
+        
+        // All of the variables that are used in templates are stored
+        // in $this->info object properties
+        $this->info = new stdClass();
+        // Set up some empty properties
+        $this->info->org_menu = '';
+        $this->info->options = '';            
+        // Get User Profile Data
 		//save logged-in user id and profile id for using in script
 		$this->userid = $this->session->userdata('userid');
-		$this->profileid = $this->session->userdata('profileid');
-		
-		$this->info = new stdClass();
-		
         $this->info->uid = $this->session->userdata('userid');
+		$this->profileid = $this->session->userdata('profileid');
+		//fetch details that are common to settings pages
+		$this->info->basic_details = $this->profile_model->get_profile_details();
+        //get display name
+		$this->info->display_name = $this->info->basic_details['display_name'];
+		//get profile picture
+		$this->info->profile_pic =  $this->info->basic_details['photo'];
+        //get user name
+		$this->info->user_name = $this->account_model->get_account_details('name');
+        // get org permissions
+        $this->info->orgs = $this->profile_model->get_org_permits($this->userid);
+        
+        $this->get = (object)$this->uri->uri_to_assoc(4);
+        
+        if (isset($this->get->org) && $this->get->org > 0) {
+            $org_permits = $this->profile_model->get_org_permit_byid($this->userid,$this->get->org);
+            if ($org_permits == '0000') { redirect('user/dashboard'); }
+            $perms = str_split($org_permits, 4);
+        }
+        
+        
+        
 	//	$this->info->title = "Info";
 	//	$this->info->css = array('default.css','jquery-ui.css');
 	//	$this->info->scripts = array('jquery.js','jquery.validate.js','jquery.form.js','profile-validation.js','jquery-ui.js');	
 	//	$this->info->page = "stream";
-		
-		//fetch details that are common to settings pages
-		$this->info->basic_details = $this->profile_model->get_profile_details();
-		$this->info->display_name = $this->info->basic_details['display_name'];
-		//get profile picture
-		$this->info->profile_pic =  $this->info->basic_details['photo'];
-		$this->info->user_name = $this->account_model->get_account_details('name');
-        
-        
- 		$this->load->helper('url');
-        $this->load->library('../controllers/stream/stream');
- 
-        $this->info->org_menu = '';
-        $this->info->options = '';
-
-       // print_r($this->info); die();
-
     }
 
     public function notifications()
-    {
-        
-        $this->info->msgcount = count($this->stream->data['msgs']);
+    {   
+        $this->info->notes['msgs']['recent'] = $this->message_model->get_unread_msgs();
+        $this->info->notes['msgs']['count'] = $this->message_model->count_unread_msgs()->count; 
         $this->info->notecount = count($this->stream->data['notifications']);
         $this->info->user_full_name = $this->stream->data['signed_user_display'];
         $this->info->user_profile_pic = $this->stream->data['signed_user_photo'];
@@ -96,7 +110,7 @@ class Dashboard extends CI_Controller {
     
     public function sidebar()
     {
-        $this->info->orgs = $this->profile_model->get_org_permits($this->userid);
+        
      
         return $this->smarty->view( 'user/sidebar.tpl', $this->info, true);  
     }

@@ -25,25 +25,27 @@
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success">{$msgcount}</span>
+                  <span class="label label-success">{$notes.msgs.count}</span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have {$msgcount} messages</li>
+                  <li class="header">You have {$notes.msgs.count} unread messages</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
+                    {foreach from=$notes.msgs.recent item=r}
                       <li><!-- start message -->
                         <a href="#">
                           <div class="pull-left">
                             <img src="{base_url('adminlte/dist/img/user2-160x160.jpg')}" class="img-circle" alt="User Image"/>
                           </div>
                           <h4>
-                            Support Team
+                            {$r.msg_sender}
                             <small><i class="fa fa-clock-o"></i> 5 mins</small>
                           </h4>
-                          <p>Why not buy a new awesome theme?</p>
+                          <p>{$r.msg_text}</p>
                         </a>
                       </li><!-- end message -->
+                      {/foreach}
                     </ul>
                   </li>
                   <li class="footer"><a href="#">See All Messages</a></li>

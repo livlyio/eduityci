@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 09:31:11
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 11:02:36
          compiled from "application\views\templates\user\topnav.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9752556a36093709e1-20448648%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'f447e0a72712fe410292c11be40980696907031c' => 
     array (
       0 => 'application\\views\\templates\\user\\topnav.tpl',
-      1 => 1433143867,
+      1 => 1433149348,
       2 => 'file',
     ),
   ),
@@ -19,7 +19,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_556a3609379fe8_69515905',
   'variables' => 
   array (
-    'msgcount' => 0,
+    'notes' => 0,
+    'r' => 0,
     'notecount' => 0,
     'user_full_name' => 0,
   ),
@@ -52,15 +53,20 @@ $_valid = $_smarty_tpl->decodeProperties(array (
               <li class="dropdown messages-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="label label-success"><?php echo $_smarty_tpl->tpl_vars['msgcount']->value;?>
+                  <span class="label label-success"><?php echo $_smarty_tpl->tpl_vars['notes']->value['msgs']['count'];?>
 </span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li class="header">You have <?php echo $_smarty_tpl->tpl_vars['msgcount']->value;?>
- messages</li>
+                  <li class="header">You have <?php echo $_smarty_tpl->tpl_vars['notes']->value['msgs']['count'];?>
+ unread messages</li>
                   <li>
                     <!-- inner menu: contains the actual data -->
                     <ul class="menu">
+                    <?php  $_smarty_tpl->tpl_vars['r'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['r']->_loop = false;
+ $_from = $_smarty_tpl->tpl_vars['notes']->value['msgs']['recent']; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
+foreach ($_from as $_smarty_tpl->tpl_vars['r']->key => $_smarty_tpl->tpl_vars['r']->value) {
+$_smarty_tpl->tpl_vars['r']->_loop = true;
+?>
                       <li><!-- start message -->
                         <a href="#">
                           <div class="pull-left">
@@ -68,12 +74,15 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 " class="img-circle" alt="User Image"/>
                           </div>
                           <h4>
-                            Support Team
+                            <?php echo $_smarty_tpl->tpl_vars['r']->value['msg_sender'];?>
+
                             <small><i class="fa fa-clock-o"></i> 5 mins</small>
                           </h4>
-                          <p>Why not buy a new awesome theme?</p>
+                          <p><?php echo $_smarty_tpl->tpl_vars['r']->value['msg_text'];?>
+</p>
                         </a>
                       </li><!-- end message -->
+                      <?php } ?>
                     </ul>
                   </li>
                   <li class="footer"><a href="#">See All Messages</a></li>
