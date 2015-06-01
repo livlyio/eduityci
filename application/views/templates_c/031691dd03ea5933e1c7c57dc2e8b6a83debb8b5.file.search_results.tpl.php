@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 11:17:27
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 08:00:27
          compiled from "application\views\templates\user\organization\search_results.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3693556acd5800a093-90506104%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '031691dd03ea5933e1c7c57dc2e8b6a83debb8b5' => 
     array (
       0 => 'application\\views\\templates\\user\\organization\\search_results.tpl',
-      1 => 1433063842,
+      1 => 1433138424,
       2 => 'file',
     ),
   ),
@@ -23,6 +23,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'search' => 0,
     'query_str' => 0,
     'item' => 0,
+    'common' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -39,8 +40,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
  results found for: <span class="text-navy">"<?php echo $_smarty_tpl->tpl_vars['search']->value;?>
 "</span>
                     </h2>
-                    <small>Request time  (0.23 seconds)</small>
-        
 <div class="container">
   <div class="row">
   	<div class="col-md-5">
@@ -82,17 +81,29 @@ $_smarty_tpl->tpl_vars['item']->_loop = true;
                     <div class="hr-line-dashed"></div>
                     <div class="search-result">
                         <h3><a href="<?php echo base_url('user/organization/previewsoc/code');?>
-/<?php echo $_smarty_tpl->tpl_vars['item']->value['onetsoc_code'];?>
+/<?php echo $_smarty_tpl->tpl_vars['item']->value['result']['onetsoc_code'];?>
 /<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
-"><?php echo $_smarty_tpl->tpl_vars['item']->value['title'];?>
-</a></h3>
+"><?php echo $_smarty_tpl->tpl_vars['item']->value['result']['title'];?>
+ [<?php echo $_smarty_tpl->tpl_vars['item']->value['result']['onetsoc_code'];?>
+]</a></h3>
+                        <h4>
+                        <?php  $_smarty_tpl->tpl_vars['common'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['common']->_loop = false;
+ $_from = $_smarty_tpl->tpl_vars['item']->value['common']; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
+foreach ($_from as $_smarty_tpl->tpl_vars['common']->key => $_smarty_tpl->tpl_vars['common']->value) {
+$_smarty_tpl->tpl_vars['common']->_loop = true;
+?>
                         <a href="<?php echo base_url('user/organization/previewsoc/code');?>
-/<?php echo $_smarty_tpl->tpl_vars['item']->value['onetsoc_code'];?>
+/<?php echo $_smarty_tpl->tpl_vars['item']->value['result']['onetsoc_code'];?>
+/common/<?php echo $_smarty_tpl->tpl_vars['common']->value['common_id'];?>
 /<?php echo $_smarty_tpl->tpl_vars['query_str']->value;?>
-" class="search-link"><?php echo $_smarty_tpl->tpl_vars['item']->value['onetsoc_code'];?>
-</a>
+"><?php echo $_smarty_tpl->tpl_vars['common']->value['common_name'];?>
+</a>, 
+                        
+                        <?php } ?>
+                        </h4>
+                        
                         <p>
-                        <?php echo $_smarty_tpl->tpl_vars['item']->value['description'];?>
+                        <?php echo $_smarty_tpl->tpl_vars['item']->value['result']['description'];?>
   
                         </p>
                     </div>

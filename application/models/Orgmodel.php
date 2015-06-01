@@ -17,6 +17,39 @@ class Orgmodel extends CI_Model {
         $this->load->helper('string');
     }
     
+    function new_org($data)
+    {
+        
+        
+    }
+    
+    function create_org($data,$uid)
+    {
+         
+         $in['org_name'] = $data['org_name'];
+         $in['org_desc'] = $data['description'];
+         $in['org_location'] = $data['city'] .", ". $data['state'];
+         $in['website'] = $data['website'];
+         $in['owner_id'] = $uid;
+         $this->odb->insert('organizations',$in);
+         
+         $oid = $this->odb->insert_id();
+         
+         $this->save_attribs($oid,$data);
+         
+         return $oid;
+    }
+    
+    function save_attribs($oid,$data)
+    {
+      foreach ($data as $k => $d) {    
+        $in = new StdClass();
+        $in->org_id = $oid; // ID of org from main organizations table, example: 55
+        $in->key = $k; // Key value for attribute, example: org_location
+        $in->attrib = $d; // The actual attribute data, example: Chattanooga, TN
+        $this->odb->insert('organizations_attributes',$in);
+      }     
+    }
     
     function get_org($id)
     {

@@ -121,7 +121,7 @@ $route['service/update_service']="admin/admin/update_service";
 $route['groups/(:any)'] = "stream/stream/group_stream/$1";
 
 $route['profile/(:any)'] = "stream/stream/user_stream/$1";
-//$route['(:any)/info'] = "profile/profile_info/user_info";
+$route['(:any)/info'] = "profile/profile_info/user_info";
 
 $route['test']="test";
 $route['fetch']="media/media/fetch_link_data";

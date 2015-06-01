@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 09:24:51
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 09:33:00
          compiled from "application\views\templates\user\header.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:3515553a93ec298723-01882159%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '025ad281a5261598669cd6d5f998e2d21cc93ab0' => 
     array (
       0 => 'application\\views\\templates\\user\\header.tpl',
-      1 => 1433057087,
+      1 => 1433143944,
       2 => 'file',
     ),
   ),
@@ -20,6 +20,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'variables' => 
   array (
     'title' => 0,
+    'optional' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -37,6 +38,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 " rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url('assets/css/custom.css');?>
 " rel="stylesheet" type="text/css" />
+    <!-- jQuery 2.1.4 -->
+    <?php echo '<script'; ?>
+ src="<?php echo base_url('adminlte/plugins/jQuery/jQuery-2.1.4.min.js');?>
+"><?php echo '</script'; ?>
+>
     <!-- Font Awesome Icons -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
@@ -59,4 +65,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
  src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"><?php echo '</script'; ?>
 >
     <![endif]-->
+    <?php echo (($tmp = @$_smarty_tpl->tpl_vars['optional']->value)===null||$tmp==='' ? '' : $tmp);?>
+
   </head><?php }} ?>

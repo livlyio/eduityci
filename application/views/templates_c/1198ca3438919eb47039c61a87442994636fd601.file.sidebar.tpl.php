@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 15:46:23
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 09:00:47
          compiled from "application\views\templates\user\sidebar.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:14449556a36093c31b9-84594909%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1198ca3438919eb47039c61a87442994636fd601' => 
     array (
       0 => 'application\\views\\templates\\user\\sidebar.tpl',
-      1 => 1433079877,
+      1 => 1433142045,
       2 => 'file',
     ),
   ),
@@ -19,9 +19,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'unifunc' => 'content_556a36093cc538_71260904',
   'variables' => 
   array (
+    'user_name' => 0,
     'user_full_name' => 0,
     'ngroup' => 0,
-    'org_menu' => 0,
+    'orgs' => 0,
+    'org' => 0,
   ),
   'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
@@ -37,8 +39,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
               <img src="http://localhost/adminlte/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image" />
             </div>
             <div class="pull-left info">
-              <p><?php echo $_smarty_tpl->tpl_vars['user_full_name']->value;?>
-</p>
+              <p><a href="<?php echo base_url('profile');?>
+/<?php echo $_smarty_tpl->tpl_vars['user_name']->value;?>
+"><?php echo $_smarty_tpl->tpl_vars['user_full_name']->value;?>
+</a></p>
 
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
@@ -62,25 +66,34 @@ $_valid = $_smarty_tpl->decodeProperties(array (
               </a>
               <ul class="treeview-menu">
               <li><a href="<?php echo base_url('user/dashboard');?>
-"><i class="fa fa-clock-o"></i>Home</a></li>
+"><i class="fa fa-home"></i>Home</a></li>
               <li><a href="<?php echo base_url('user/dashboard/timeline');?>
 "><i class="fa fa-clock-o"></i>Timeline</a></li>
-                <li><a href="<?php echo base_url('account/personal-settings/upload');?>
-"><i class="fa fa-circle-o"></i>Edit Profile</a></li>
+                <li><a href="<?php echo base_url('account/personal-settings');?>
+"><i class="fa fa-cogs"></i>Settings</a></li>
               </ul>
             </li>
             <li class=" <?php if (isset($_smarty_tpl->tpl_vars['ngroup']->value)&&$_smarty_tpl->tpl_vars['ngroup']->value=='orgn') {?>active<?php }?> treeview">
               <a href="#">
                 <i class="fa fa-files-o"></i>
                 <span>Organization</span>
-                <span class="label label-primary pull-right">4</span>
+                <span class="label label-primary pull-right"><?php echo count($_smarty_tpl->tpl_vars['orgs']->value);?>
+</span>
               </a>
               <ul class="treeview-menu">
-              
-              <?php echo $_smarty_tpl->tpl_vars['org_menu']->value;?>
-
-              
-              <li><a href="../layout/top-nav.html"><i class="fa fa-circle-o"></i>Create Organization</a></li>  
+              <?php  $_smarty_tpl->tpl_vars['org'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['org']->_loop = false;
+ $_from = $_smarty_tpl->tpl_vars['orgs']->value; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
+foreach ($_from as $_smarty_tpl->tpl_vars['org']->key => $_smarty_tpl->tpl_vars['org']->value) {
+$_smarty_tpl->tpl_vars['org']->_loop = true;
+?>
+              <li><a href="<?php echo base_url('user/organization/view/org');?>
+/<?php echo $_smarty_tpl->tpl_vars['org']->value->org_id;?>
+">
+              <i class="fa fa-sitemap"></i><?php echo $_smarty_tpl->tpl_vars['org']->value->org_name;?>
+</a></li>
+              <?php } ?>
+              <li><a href="<?php echo base_url('user/organization/create');?>
+"><i class="fa fa-plus-square"></i>Create Organization</a></li>  
               </ul>
             </li>
             <li class=" <?php if (isset($_smarty_tpl->tpl_vars['ngroup']->value)&&$_smarty_tpl->tpl_vars['ngroup']->value=='netw') {?>active<?php }?> treeview">
@@ -114,13 +127,15 @@ $_valid = $_smarty_tpl->decodeProperties(array (
               </ul>
             </li>
             <li>
-                <a href="../calendar.html">
+                <a href="<?php echo base_url('user/dashboard/calendar');?>
+">
                 <i class="fa fa-calendar"></i> <span>Calendar</span>
                 <small class="label pull-right bg-red">3</small>
               </a>
             </li>
             <li>
-              <a href="../mailbox/mailbox.html">
+              <a href="<?php echo base_url('user/dashboard/mailbox');?>
+">
                 <i class="fa fa-envelope"></i> <span>Mailbox</span>
                 <small class="label pull-right bg-yellow">12</small>
               </a>

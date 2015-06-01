@@ -39,7 +39,7 @@ class Onetmodel extends CI_Model {
         if (is_array($result)) {
         foreach ($result as $key => $r) {
             if ($key != 0) $common .= ', ';
-            $common .= $r->common_name;
+            $common .= $r['common_name'];
         }
         return $common;
         }
@@ -77,7 +77,7 @@ class Onetmodel extends CI_Model {
         $this->odb->where('onetsoc_code',$part['0']);
         $query = $this->odb->get('onet_common_names');
          if ($query->num_rows() > 0) {
-            $result = $query->result(); 
+            $result = $query->result_array(); 
             return $result;
         }
         return false;          
@@ -159,7 +159,10 @@ class Onetmodel extends CI_Model {
         $this->odb->order_by('title','DESC');
         $query = $this->odb->get('occupation_data');
         if ($query->num_rows() > 0) {
-            return $query->result_array();
+            foreach ($query->result_array() as $res) {
+                $arr[] = array('result' => $res, 'common' => $this->get_common_bysoc($res['onetsoc_code']));
+            }
+            return $arr;
         } 
         return false;        
     }

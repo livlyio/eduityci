@@ -57,6 +57,28 @@
 			
 			return $detail;
 		}
+        
+        public function add_permit_org($orgid,$uid,$perm)
+        {
+            $in = new StdClass();
+            $in->org_id = $orgid;
+            $in->user_id = $uid;
+            $in->permissions = $perm;
+            $this->db->insert('permit_org',$in);
+        }
+        
+        public function get_org_permits($uid)
+        {
+            $this->odb = $this->load->database('orgdb',TRUE);
+            $this->odb->where('user_id',$uid);
+            $this->odb->join('eduity_accounts.permit_org','organizations.org_id = permit_org.org_id');
+            
+            $query = $this->odb->get('organizations');
+            
+            return ($query->num_rows() > 0) ? $query->result() : false;
+        }
+        
+        
 		public function update_profile($data)
 		{
 			$id = $this->session->userdata('userid');

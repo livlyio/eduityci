@@ -45,13 +45,20 @@ class Organization extends CI_Controller {
        
 
 
-        // Auth STDclass
-  		$this->auth = new stdClass;
-		// Load 'standard' flexi auth library by default.
-		// Check user is logged in.
-        if (!$this->account_model->is_logged_in()) {
-            redirect(site_url('/auth/login'));
-        }
+		//if not logged-in redirect to home
+		if($this->account_model->is_logged_in() == FALSE)
+		{
+			redirect(base_url());
+		}
+		//if not verified
+		if($this->account_model->is_verified() == FALSE)
+		{
+			//redirect to unverified account page				
+			redirect(base_url().'unverifiedAccount');
+		}
+		//save logged-in user id and profile id for using in script
+		$this->userid = $this->session->userdata('userid');
+		$this->profileid = $this->session->userdata('profileid');
 
         $this->get = $this->userlib->decode_segment('4');
         
@@ -71,11 +78,38 @@ class Organization extends CI_Controller {
 
         redirect('user/dashboard');
     }
+    
+    public function create()
+    {
+        if ($this->input->post()) {
+            $oid = $this->orgmodel->create_org($this->input->post(),$this->userid); 
+            
+            $this->profile_model->add_permit_org($oid,$this->userid,'1111'); // owner,read,write,delete
+                     
+            redirect('user/organization/view/org/'.$oid);
+        }       
+        
+        $data['box_title'] = 'Create Organization';
+        
+        $this->dashboard->load_template('user/organization/org_form.tpl',$data,'orgn');       
+    }
+    
+    public function settings()
+    {
+        if ($this->input->post()) {
+            $oid = $this->orgmodel->create_org($this->input->post(),$this->userid);          
+            redirect('user/organization/settings/org/'.$oid);
+        }       
+        
+        $data['box_title'] = 'Create Organization';
+        
+        $this->dashboard->load_template('user/organization/org_settings.tpl',$data,'orgn');       
+    }
 
     public function view() 
     {      
         // Security Check_        
-        $this->userlib->check_acl('ORG',$this->user,$this->get->org,'RO');
+       // $this->userlib->check_acl('ORG',$this->user,$this->get->org,'RO');
         // Passed security check, continue
         // Pull organization information
         $data = $this->orgmodel->get_org($this->get->org);  
@@ -160,6 +194,7 @@ class Organization extends CI_Controller {
            } else { $data['results'] = array(); }            
         }
                 // Assign and display template
+               // print_r($data); die();
                 
         $data['search'] = $this->input->post('string');
         $data['query_str'] = $this->getquery();
@@ -562,7 +597,13 @@ class Organization extends CI_Controller {
     function getquery($org = false, $unit = false, $code = false)
     {
         $out['org'] = $org ?: $this->get->org;
-        $out['unit'] = $unit ?: $this->get->unit;
+        
+        if (!$unit) {
+            // no unit specified, check query string
+            if (isset($this->get->unit)) { $out['unit'] = $this->get->unit; }
+            else { $out['unit'] = '0'; }
+        } else { $out['unit'] = $unit; }
+        
         if ($code) $out['code'] = $code;
         elseif (isset($this->get->code)) $out['code'] = $this->get->code;
        // else $out['code'] = '0';

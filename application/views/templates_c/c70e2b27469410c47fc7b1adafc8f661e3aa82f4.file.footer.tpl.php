@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 10:23:10
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 09:35:16
          compiled from "application\views\templates\user\footer.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:728553a93ec335df5-57903893%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'c70e2b27469410c47fc7b1adafc8f661e3aa82f4' => 
     array (
       0 => 'application\\views\\templates\\user\\footer.tpl',
-      1 => 1433060586,
+      1 => 1433144112,
       2 => 'file',
     ),
   ),
@@ -230,38 +230,38 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 >
    <!-- Sparkline -->
     <?php echo '<script'; ?>
- src="<?php echo base_url('plugins/sparkline/jquery.sparkline.min.js');?>
+ src="<?php echo base_url('adminlte/plugins/sparkline/jquery.sparkline.min.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >
     <!-- jvectormap -->
     <?php echo '<script'; ?>
- src="<?php echo base_url('plugins/jvectormap/jquery-jvectormap-1.2.2.min.js');?>
+ src="<?php echo base_url('adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >
     <?php echo '<script'; ?>
- src="<?php echo base_url('plugins/jvectormap/jquery-jvectormap-world-mill-en.js');?>
+ src="<?php echo base_url('adminlte/plugins/jvectormap/jquery-jvectormap-world-mill-en.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >
     <!-- SlimScroll 1.3.0 -->
     <?php echo '<script'; ?>
- src="<?php echo base_url('plugins/slimScroll/jquery.slimscroll.min.js');?>
+ src="<?php echo base_url('adminlte/plugins/slimScroll/jquery.slimscroll.min.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >
     <!-- ChartJS 1.0.1 -->
     <?php echo '<script'; ?>
- src="<?php echo base_url('plugins/chartjs/Chart.min.js');?>
+ src="<?php echo base_url('adminlte/plugins/chartjs/Chart.min.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >
 
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <?php echo '<script'; ?>
- src="<?php echo base_url('dist/js/pages/dashboard2.j');?>
-s" type="text/javascript"><?php echo '</script'; ?>
+ src="<?php echo base_url('adminlte/dist/js/pages/dashboard2.js');?>
+" type="text/javascript"><?php echo '</script'; ?>
 >
 
     <!-- AdminLTE for demo purposes -->
     <?php echo '<script'; ?>
- src="<?php echo base_url('dist/js/demo.js');?>
+ src="<?php echo base_url('adminlte/dist/js/demo.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >    
     <!-- Demo -->

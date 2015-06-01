@@ -8,6 +8,8 @@
     <link href="{base_url('adminlte/bootstrap/css/bootstrap.min.css')}" rel="stylesheet" type="text/css" />
     <link href="{base_url('assets/css/slickmap.css')}" rel="stylesheet" type="text/css" />
     <link href="{base_url('assets/css/custom.css')}" rel="stylesheet" type="text/css" />
+    <!-- jQuery 2.1.4 -->
+    <script src="{base_url('adminlte/plugins/jQuery/jQuery-2.1.4.min.js')}"></script>
     <!-- Font Awesome Icons -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <!-- Ionicons -->
@@ -26,4 +28,5 @@
         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    {$optional|default:''}
   </head>

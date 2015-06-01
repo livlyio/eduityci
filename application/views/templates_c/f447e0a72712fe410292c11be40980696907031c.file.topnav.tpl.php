@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 14:01:16
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 09:31:11
          compiled from "application\views\templates\user\topnav.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:9752556a36093709e1-20448648%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'f447e0a72712fe410292c11be40980696907031c' => 
     array (
       0 => 'application\\views\\templates\\user\\topnav.tpl',
-      1 => 1433073669,
+      1 => 1433143867,
       2 => 'file',
     ),
   ),
@@ -64,7 +64,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                       <li><!-- start message -->
                         <a href="#">
                           <div class="pull-left">
-                            <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image"/>
+                            <img src="<?php echo base_url('adminlte/dist/img/user2-160x160.jpg');?>
+" class="img-circle" alt="User Image"/>
                           </div>
                           <h4>
                             Support Team
