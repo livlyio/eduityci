@@ -445,6 +445,93 @@
 		}
 		
 	}
+    
+    public function created_resource($resource)
+    {
+        $data = array('owner' => '1','write' => '1','read' => '1', 'delete' => '1', 'deny' => '0');
+        $data['user_id'] = $this->session->userdata('userid');
+        $data['resource'] = $resource;
+        $this->db->insert('user_permissions',$data);
+    }
+    
+
+    
+    function uri_string_segment($seg) {
+        $sega = $this->uri->uri_to_assoc($seg);     
+        $protected = array_flip(array('org','unit','occ'));       
+        $segs = array_intersect_key($sega,$protected);       
+        return $this->uri->assoc_to_uri($segs);
+    }    
+
+    public function get_org_permits_names()
+    {
+        $this->load->model('orgmodel');
+        $out = array();
+        $permits = $this->get_org_permits();
+        foreach ($permits as $perm) {
+            $name = $this->orgmodel->org_name($perm->org_id);
+            $out[] = array_merge(array('name' => $name),$perm);
+        }
+        return $out;
+    }
+
+    public function get_org_permits()
+    {
+        //$this->orgdb = $this->load->database('orgdb',TRUE);
+        $this->db->where('user_id',$this->session->userdata('userid'));
+        //  Match org resource with regular expression
+        $this->db->where('resource REGEXP','^org\/[0-9]+$');
+        $this->db->where('deny','0');
+        $this->db->where('read','1');      
+         $query = $this->db->get('user_permissions');        
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        }  
+        return false;
+    }
+    
+    public function user_can_read($resource) 
+    {
+        $this->db->where('user_id',$this->session->userdata('userid'));
+        $this->db->where('resource',$resource);
+        $this->db->where('deny','0');
+        $this->db->where('read','1');      
+        $query = $this->db->get('user_permissions');        
+        return ($query->num_rows() > 0) ? true : false;
+    }
+    
+    public function user_can_write($resource)
+    {
+        $this->db->where('user_id',$this->session->userdata('userid'));
+        $this->db->where('resource',$resource);
+        $this->db->where('deny','0');
+        $this->db->where('write','1');      
+        $query = $this->db->get('user_permissions');        
+        return ($query->num_rows() > 0) ? true : false;        
+    }
+    
+    public function user_can_delete()
+    {   
+        $resource = $this->uri_string_segment(4);
+        $this->db->where('user_id',$this->session->userdata('userid'));
+        $this->db->where('resource',$resource);
+        $this->db->where('deny','0');
+        $this->db->where('delete','1');      
+        $query = $this->db->get('user_permissions');        
+        return ($query->num_rows() > 0) ? true : false;        
+    }
+    
+    
+    public function permit_user_read($uid,$resource)
+    {
+        
+    }    
+    
+    
+    
+    
+    
+    
 }
 	
 /* End of file account_model.php */ 

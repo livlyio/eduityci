@@ -106,9 +106,6 @@ $route['user/ban_user']="admin/admin/ban_user";
 $route['user/dashboard']="user/dashboard";
 $route['user/unban_user']="admin/admin/unban_user";
 
-$route['auth']="auth";
-$route['auth/login']="auth/login";
-
 $route['manage/del_admin']="admin/admin/delete_admin";
 $route['manage/add_admin']="admin/admin/add_admin";
 

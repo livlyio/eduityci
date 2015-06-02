@@ -1,28 +1,6 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 22:32:10
-         compiled from "application\views\templates\user\organization\org_form.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:9237556cc14aa1f6c6-50697592%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
-$_valid = $_smarty_tpl->decodeProperties(array (
-  'file_dependency' => 
-  array (
-    'ddbdbef67ea6c0d5fbda04cb54b9bae344229066' => 
-    array (
-      0 => 'application\\views\\templates\\user\\organization\\org_form.tpl',
-      1 => 1433133331,
-      2 => 'file',
-    ),
-  ),
-  'nocache_hash' => '9237556cc14aa1f6c6-50697592',
-  'function' => 
-  array (
-  ),
-  'has_nocache_code' => false,
-  'version' => 'Smarty-3.1.21-dev',
-  'unifunc' => 'content_556cc14aa5b164_25367347',
-),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_556cc14aa5b164_25367347')) {function content_556cc14aa5b164_25367347($_smarty_tpl) {?>
-<form class="jotform-form" action="<?php echo base_url('user/organization/create');?>
-" method="post" accept-charset="utf-8" onkeypress="return event.keyCode != 13;">
 
+<form class="jotform-form" action="{base_url('user/organization/create')}" method="post" accept-charset="utf-8" onkeypress="return event.keyCode != 13;">
+{literal}
   <div class="form-all">
     <ul class="form-section page-section">
       <li id="cid_10" class="form-input-wide" data-type="control_head">
@@ -104,11 +82,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       }
     </style>
     <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
-    <?php echo '<script'; ?>
- src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"><?php echo '</script'; ?>
->
-    <?php echo '<script'; ?>
->
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+    <script>
 // This example displays an address form, using the autocomplete feature
 // of the Google Places API to help users fill in the information.
 
@@ -175,8 +150,7 @@ function geolocate() {
 }
 // [END region_geolocation]
 
-    <?php echo '</script'; ?>
->
+    </script>
 
  
 
@@ -274,14 +248,9 @@ function geolocate() {
     </div>
     </body>
 </form>
-<?php echo '<script'; ?>
- src="http://d2g9qbzl5h49rh.cloudfront.net/static/prototype.forms.js" type="text/javascript"><?php echo '</script'; ?>
->
-<?php echo '<script'; ?>
- src="http://d2g9qbzl5h49rh.cloudfront.net/static/jotform.forms.js?3.2.7293" type="text/javascript"><?php echo '</script'; ?>
->
-<?php echo '<script'; ?>
- type="text/javascript">
+<script src="http://d2g9qbzl5h49rh.cloudfront.net/static/prototype.forms.js" type="text/javascript"></script>
+<script src="http://d2g9qbzl5h49rh.cloudfront.net/static/jotform.forms.js?3.2.7293" type="text/javascript"></script>
+<script type="text/javascript">
    JotForm.setConditions([{"action":[{"field":"13","visibility":"Show"}],"link":"Any","terms":[{"field":"11","operator":"equals","value":"Others, please specify below."}],"type":"field"}]);
    JotForm.init(function(){
       setTimeout(function() {
@@ -289,8 +258,7 @@ function geolocate() {
        }, 20);
       JotForm.onSubmissionError="jumpToSubmit";
    });
-<?php echo '</script'; ?>
->
+</script>
 <link href="http://d2g9qbzl5h49rh.cloudfront.net/static/formCss.css?3.2.7293" rel="stylesheet" type="text/css" />
 <link type="text/css" rel="stylesheet" href="http://d2g9qbzl5h49rh.cloudfront.net/css/styles/nova.css?3.2.7293" />
 <link type="text/css" media="print" rel="stylesheet" href="http://d2g9qbzl5h49rh.cloudfront.net/css/printForm.css?3.2.7293" />
@@ -314,4 +282,4 @@ function geolocate() {
 </style>
 
 
-<?php }} ?>
+{/literal}

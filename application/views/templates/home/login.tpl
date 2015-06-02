@@ -119,7 +119,7 @@
 
 		<div class="row omb_row-sm-offset-3">
 			<div class="col-xs-12 col-sm-6">	
-			    <form class="omb_loginForm" method="post" autocomplete="off" action="{#base_url#}/account/account/login">
+			    <form class="omb_loginForm" method="post" autocomplete="off" action="{base_url('login')}">
 					<div class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i></span>
 						<input type="text" class="form-control" name="useremail" placeholder="Username" />

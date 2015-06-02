@@ -43,10 +43,10 @@
 
                     <div class="hr-line-dashed"></div>
                     <div class="search-result">
-                        <h3><a href="{base_url('user/organization/previewsoc/code')}/{$item.result.onetsoc_code}/{$query_str}">{$item.result.title} [{$item.result.onetsoc_code}]</a></h3>
+                        <h3><a href="{base_url('user/organization/previewsoc/')}/{$query_str}/code/{$item.result.onetsoc_code}">{$item.result.title} [{$item.result.onetsoc_code}]</a></h3>
                         <h4>
                         {foreach from=$item.common item=common}
-                        <a href="{base_url('user/organization/previewsoc/code')}/{$item.result.onetsoc_code}/common/{$common.common_id}/{$query_str}">{$common.common_name}</a>, 
+                        <a href="{base_url('user/organization/previewsoc/')}/{$query_str}/code/{$item.result.onetsoc_code}/common/{$common.common_id}">{$common.common_name}</a>, 
                         
                         {/foreach}
                         </h4>

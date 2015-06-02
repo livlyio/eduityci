@@ -38,7 +38,7 @@ class Dashboard extends CI_Controller {
 		//if not logged-in redirect to login
 		if($this->account_model->is_logged_in() == FALSE)
 		{
-			redirect(base_url('auth'));
+			redirect(base_url('login'));
             die();
 		}
 		//if not verified
@@ -78,7 +78,9 @@ class Dashboard extends CI_Controller {
         //get user name
 		$this->info->user_name = $this->account_model->get_account_details('name');
         // get org permissions
-        $this->info->orgs = $this->profile_model->get_org_permits($this->userid);
+        $this->info->orgs = $this->account_model->get_org_permits_names();
+        
+        print_r($this->info->orgs); die();
         
         $this->get = (object)$this->uri->uri_to_assoc(4);
         

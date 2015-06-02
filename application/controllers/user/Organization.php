@@ -1,61 +1,49 @@
 <?php
+if (!defined('BASEPATH'))
+exit('No direct script access allowed');
+
 /**
- * ark Admin Panel for Codeigniter 
- * Author: Abhishek R. Kaushik
- * downloaded from http://devzone.co.in
+ *  Eduity Organizations controller class
  *
  */
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
 
 class Organization extends CI_Controller {
 
-    /**
-     * Index Page for this controller.
-     *
-     * Maps to the following URL
-     * 		http://example.com/index.php/welcome
-     * 	- or -  
-     * 		http://example.com/index.php/welcome/index
-     * 	- or -
-     * Since this controller is set as the default controller in 
-     * config/routes.php, it's displayed at http://example.com/
-     *
-     * So any other public methods not prefixed with an underscore will
-     * map to /index.php/welcome/<method_name>
-     * @see http://codeigniter.com/user_guide/general/urls.html
-     */
     public function __construct() {
         parent::__construct();
         
-        
-       // $this->load->library('form_validation');
-       // $this->load->library('session');
         $this->load->library('userlib');
-       // $this->load->library('encrypt');
         $this->load->library('widget');
         $this->load->library('script');
-        
         $this->load->helper('data_helper');
+       // $this->load->library('hoovers');
         $this->load->model('account/account_model');
         $this->load->model('Orgmodel','orgmodel');
         $this->load->model('Usermodel','usermodel');
         $this->load->model('onetmodel','onet');
  		$this->load->helper('url');
- 	//	$this->load->helper('form');
         $this->lang->load('label', 'english');
        
-        //Dashboard Controller
+        // Dashboard Controller
         $this->load->library('../controllers/user/dashboard');
-
+        // Dashboard checks if user is logged in from construct
 
 		//save logged-in user id and profile id for using in script
 		$this->userid = $this->session->userdata('userid');
 		$this->profileid = $this->session->userdata('profileid');
 
-        $this->get = $this->userlib->decode_segment('4');
+        $this->get = (object)$this->uri->uri_to_assoc('4',array('org','unit','occ'));
         
-       // print_r($this->get); die();
+        // Check if user has permission to read resource on GET request
+        if (!$this->account_model->user_can_read($this->uri_string_segment(4))) {
+            die("No permission to read resource: ". $this->uri_string_segment(4));
+        }
+        // Check if user has permission to write to resource on POST request
+        if ($this->input->post()) {
+            if (!$this->account_model->user_can_write($this->uri_string_segment(4))) {
+                die("No permission to write to resource: ". $this->uri_string_segment(4));
+            }            
+        }
        
         
         $this->user = $this->userlib->user;
@@ -66,74 +54,57 @@ class Organization extends CI_Controller {
         
     }
     
+    function uri_string_segment($seg) {
+        $sega = $this->uri->uri_to_assoc($seg);     
+        $protected = array_flip(array('org','unit','occ'));       
+        $segs = array_intersect_key($sega,$protected);       
+        return $this->uri->assoc_to_uri($segs);
+    }
+    
     public function index()
     {
-
         redirect('user/dashboard');
     }
     
     public function create()
     {
         if ($this->input->post()) {
+            // Save form data to database
             $oid = $this->orgmodel->create_org($this->input->post(),$this->userid); 
-            
-            $this->profile_model->add_permit_org($oid,$this->userid,'1111'); // owner,read,write,delete
-                     
+            // Auto grant read/write access to creator
+            $this->account_model->created_resource($this->uri->assoc_to_uri(array('org' => $oid)));
+            // Go to view the new organization         
             redirect('user/organization/view/org/'.$oid);
         }       
-        
+        // Set template variables
         $data['box_title'] = 'Create Organization';
-        
+        // Load and show template
         $this->dashboard->load_template('user/organization/org_form.tpl',$data,'orgn');       
     }
     
-    public function settings()
-    {
-        if ($this->input->post()) {
-            $oid = $this->orgmodel->create_org($this->input->post(),$this->userid);          
-            redirect('user/organization/settings/org/'.$oid);
-        }       
-        
-        $data['box_title'] = 'Create Organization';
-        
-        $this->dashboard->load_template('user/organization/org_settings.tpl',$data,'orgn');       
-    }
-
     public function view() 
     {      
-        // Security Check_        
-       // $this->userlib->check_acl('ORG',$this->user,$this->get->org,'RO');
-        // Passed security check, continue
         // Pull organization information
         $data = $this->orgmodel->get_org($this->get->org);  
-
+        // Set template variables
         $data['query_str'] = $this->getquery($this->get->org,'0');
         $data['base'] = $this->menu['base'];
         $data['content'] = $this->widget->org_map($this->orgmodel->get_unit_map($this->get->org),$data);
-        $data['info_panel'] = $this->widget->org_info_panel($data);
-        
-        $data['page_title'] = $data['org_name'];
-        
+        $data['info_panel'] = $this->widget->org_info_panel($data);        
+        $data['page_title'] = $data['org_name'];      
         // Assign and show template  
-        $out = $this->smarty->view( 'user/organization/org_view.tpl', $data,true);
-        
-        $this->dashboard->load_content($out,$data,'orgn');
+        $this->dashboard->load_template('user/organization/org_view.tpl',$data,'orgn');
     }
     
-    
-
     public function units()
     {                    
-
         $udata = $this->orgmodel->get_unit($this->get->unit);
         // Grab org information
         $odata = $this->orgmodel->get_org($this->get->org);
         // Merge with unit information for display
         $data = array_merge($udata,$odata);
         // Set additional variables for display
-
-        $unit = $this->orgmodel->get_unit($this->get->unit);
-        $data['unit_info_panel'] = $this->widget->unit_info_panel($unit,$this->getquery());
+        $data['unit_info_panel'] = $this->widget->unit_info_panel($udata,$this->getquery());
         $data['query_str'] = $this->getquery();
         $data['base'] = $this->menu['base'];
         // Create breadcrumb links for easy navigation
@@ -146,15 +117,76 @@ class Organization extends CI_Controller {
         
         $data['org'] = $this->get->org;
         $data['unit'] = $this->get->unit;
-
         $data['page_title'] = $odata['org_name'];
-        $data['box_title'] = $unit['unit_title'];
+        $data['box_title'] = $udata['unit_title'];
         $data['unit_updates'] = $this->widget->like_increase('70%','26','Ratings Increase','An increasae of 70%');
-        
-        
+           
         // Assign and display template
         $this->dashboard->load_template('user/organization/viewunit.tpl',$data,'orgn');     
     }
+    
+    public function add_unit()
+    {
+        $data = $this->orgmodel->get_org($this->get->org);  
+                
+        // When user submits form...
+        if ($this->input->post('add_unit')) {
+            // Save new unit
+            $id = $this->orgmodel->add_unit($this->get->org,$this->get->unit,$this->input->post());
+            // Auto grant read/write access to creator
+            $ura = array('org' => $this->get->org,'unit' => $id);
+            $this->account_model->created_resource($this->uri->assoc_to_uri($ura));
+            
+            // Redirect to view new unit
+            redirect('/user/organization/units/'. $this->getquery($this->get->org,$id));
+        } 
+        // Otherwise display add unit page
+        $data['query_str'] = $this->getquery();
+
+        // Create breadcrumb links for easy navigation
+        if ($this->get->unit == '0') {
+                $data['crumbs'] = '<a href="'. site_url('user/organization/view/'. $this->uri->uri_to_assoc(array('org' => $this->get->org))) .'">Home</a>';
+            } else { 
+                $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
+            }
+                     
+        $this->dashboard->load_template('user/organization/addunit.tpl',$data,'orgn');     
+    }
+    
+    public function del_unit()
+    { 
+        // Security Check
+        if (!$this->account_model->user_can_delete()) { die("You do not have delete permission."); }
+        
+        $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
+        // Passed check
+        // Delete the unit
+        $this->orgmodel->delete_unit($this->get->unit);
+        // Go back to org home
+        redirect('user/organization/view/'. $this->getquery($this->get->org,'0'));
+    }
+    
+    public function edit_unit()
+    { 
+        // If submitting form proceed to save routine       
+        if ($this->input->post('save_unit')) {
+            $this->orgmodel->update_unit($this->get->unit,$this->input->post());
+            redirect('user/organization/units/'.$this->getquery());         
+        }       
+        // Otherwise get unit data
+        $udata = $this->orgmodel->get_unit($this->get->unit);
+        $odata = $this->orgmodel->get_org($this->get->org);
+        $data = array_merge($udata,$odata);
+        // Create breadcrumb links for easy navigation
+        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));        
+        $data['query_str'] = $this->getquery();
+        $data['base'] = $this->menu['base'];
+//        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
+        // Load template
+        
+        $this->dashboard->load_template( 'user/organization/editunit.tpl', $data ,'orgn');                     
+    }
+
     
     function onetsoc_search()
     {
@@ -197,10 +229,6 @@ class Organization extends CI_Controller {
   
     public function previewsoc()
     {
-       // Security Check_
-        //$this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
-        // Passed security check, continue
-
         $job = $this->onet->get_job_common($this->get->code,$this->get->common);
         $jd = $this->onet->get_basic_bysoc($this->get->code);
         $job->common = $this->onet->list_common($this->get->code);
@@ -246,19 +274,12 @@ class Organization extends CI_Controller {
     
     public function forecast()
     {
-        // Security Check_
-        //$this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
-        // Passed security check, continue
-
-        //$data = $this->getview();
-//        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        // Create breadcrumb links for easy navigation
         $data['jobs'] = '';        
         $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
         $data['query_str'] = $this->getquery(); 
         $data['baseme'] = site_url('/user/organization/viewocc/');
         $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-        $data['info_panel'] = $this->widget->forecast_info_panel($this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code,true),$this->getquery());      
+        $data['info_panel'] = $this->widget->forecast_info_panel($this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->occ,true),$this->getquery());      
         $data['update'] = "'".site_url('/user/organization/update_forecast/'.$this->getquery())."'";
         $data['baseme'] = site_url('/user/organization/viewocc/');
         $data['script'] = $this->script->editable();  
@@ -312,15 +333,11 @@ class Organization extends CI_Controller {
     
     public function viewocc()
     {
-        // Security Check_
-        //$this->userlib->check_acl('UNT',$this->get->org,$this->get->unit,'RO');
-        // Passed security check, continue
-
         $data = $this->getview();
         
         $data['baseme'] = site_url('/user/organization/viewocc/');
         $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-       // $unit = $this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->code,true);
+       // $unit = $this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->occ,true);
        // print_r($unit); die();
       //  $data['occ_info_panel'] = $this->widget->occ_info_panel($unit,$this->getquery());
         $data['pageh'] = '<h1>View '.$this->lang->line('orgocc').'</h1>';
@@ -329,7 +346,7 @@ class Organization extends CI_Controller {
         $data['update'] = "'".site_url('/user/organization/update_occ_subset/'.$this->getquery())."'";
         
         //$data['update'] = "'post'";
-        $data['tabcontent'] = $this->widget->sortedit(array('Soc Code','Title','Description'),$this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->code));
+        $data['tabcontent'] = $this->widget->sortedit(array('Soc Code','Title','Description'),$this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->occ));
 
         // Assign and display template
         $out = $this->smarty->view( 'user/organization/viewocc.tpl', $data, true );   
@@ -421,80 +438,6 @@ class Organization extends CI_Controller {
     
 
     
-    public function add_unit()
-    {
-        if ($this->get->unit == '0') {
-            // Home is parent, adding to Tier 1
-            // Security Check
-           // $this->userlib->check_acl('ORG',$this->user,$this->get->org,'RW'); 
-        } else {
-            // Another unit is the parent, adding to Tier 2+
-            // Security Check
-           // $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
-        }
-
-        // Passed check, get org info
-        $data = $this->orgmodel->get_org($this->get->org);  
-                
-        // When user submits form...
-        if ($this->input->post('add_unit')) {
-            // Save new unit
-            $id = $this->orgmodel->add_unit($this->get->org,$this->get->unit,$this->input->post());
-            // Auto grant read/write access to creator
-            $this->userlib->grant_rw_access('UNT',$this->user,$id);
-            // Redirect to view new unit
-            redirect('/user/organization/units/'. $this->getquery($this->get->org,$id));
-        } 
-        // Otherwise display add unit page
-        $data['query_str'] = $this->getquery();
-//        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-
-        // Create breadcrumb links for easy navigation
-        if ($this->get->unit == '0') {
-                $data['crumbs'] = '<a href="'. base_url() .'user/organization/view/'. $this->userlib->encode_query(array('org' => $this->get->org,'unit' => '0')) .'">Home</a>';
-
-            } else { 
-                $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
-            }
-                 
-        
-        $this->dashboard->load_template('user/organization/addunit.tpl',$data,'orgn');     
-    }
-    
-    public function del_unit()
-    { 
-        // Security Check
-        $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
-        // Passed check
-        // Delete the unit
-        $this->orgmodel->delete_unit($this->get->unit);
-        // Go back to org home
-        redirect('user/organization/view/'. $this->getquery($this->get->org,'0'));
-    }
-    
-    public function edit_unit()
-    { 
-        // Security Check
-       // $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
-        // Passed check
-        // If submitting form proceed to save routine       
-        if ($this->input->post('save_unit')) {
-            $this->orgmodel->update_unit($this->get->unit,$this->input->post());
-            redirect('user/organization/units/'.$this->getquery());         
-        }       
-        // Otherwise get unit data
-        $udata = $this->orgmodel->get_unit($this->get->unit);
-        $odata = $this->orgmodel->get_org($this->get->org);
-        $data = array_merge($udata,$odata);
-        // Create breadcrumb links for easy navigation
-        $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));        
-        $data['query_str'] = $this->getquery();
-        $data['base'] = $this->menu['base'];
-//        $data['navigation'] = $this->load->view('user/vwNavigation',$this->menu,TRUE);
-        // Load template
-        
-        $this->dashboard->load_template( 'user/organization/editunit.tpl', $data ,'orgn');                     
-    }
     
 
     
@@ -531,7 +474,7 @@ class Organization extends CI_Controller {
     
     // Generates URL Query string for controller functions
     
-    function getquery($org = false, $unit = false, $code = false)
+    function getquery($org = false, $unit = false, $occ = false)
     {
         $out['org'] = $org ?: $this->get->org;
         
@@ -541,8 +484,8 @@ class Organization extends CI_Controller {
             else { $out['unit'] = '0'; }
         } else { $out['unit'] = $unit; }
         
-        if ($code) $out['code'] = $code;
-        elseif (isset($this->get->code)) $out['code'] = $this->get->code;
+        if ($occ) $out['occ'] = $occ;
+        elseif (isset($this->get->occ)) $out['occ'] = $this->get->occ;
        // else $out['code'] = '0';
         return $this->uri->assoc_to_uri($out);
     }
@@ -552,7 +495,7 @@ class Organization extends CI_Controller {
         $a = new stdClass();
         $a->org = isset($this->get->org) ? $this->get->org : '0';
         $a->unit = isset($this->get->unit) ? $this->get->unit : '0';
-        $a->code = isset($this->get->code) ? $this->get->code : '0';
+        $a->code = isset($this->get->occ) ? $this->get->occ : '0';
         return $a;
     }
 

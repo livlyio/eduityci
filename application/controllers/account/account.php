@@ -25,7 +25,7 @@ class Account extends CI_Controller
 		//load required library and models
 		$this->load->library('form_validation');
 		//custome class, contains email functions
-		$this->load->library('social/myemail');
+	//	$this->load->library('social/myemail');
 		$this->load->model('account/account_model');
 		$this->load->model('profile/profile_model');
 					
@@ -174,7 +174,12 @@ class Account extends CI_Controller
 		
 		if ($this->form_validation->run() == FALSE)
 		{
-			$this->load->view('account/login',$this->data);
+            $data['bold'] = true;
+		    $data['ip_address'] = $this->input->server('REMOTE_ADDR');
+            $this->smarty->assign("css","");
+  		    $this->smarty->assign("Name","Collaborative Workforce Planning");
+            $this->smarty->view( 'home/login.tpl', $data );
+            
 		}
 		else if($this->account_model->is_banned($this->_email) == TRUE)
 		{

@@ -1,25 +1,25 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-05-31 12:58:52
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 22:31:58
          compiled from "application\views\templates\home\login.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:2348855411ef30e82c5-84409918%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:27507556cc13e1ac163-56110725%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     '0b918cf667d88ed2b9b0f8c6e36d3f1a750678b8' => 
     array (
       0 => 'application\\views\\templates\\home\\login.tpl',
-      1 => 1433069928,
+      1 => 1433190346,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '2348855411ef30e82c5-84409918',
+  'nocache_hash' => '27507556cc13e1ac163-56110725',
   'function' => 
   array (
   ),
-  'version' => 'Smarty-3.1.21-dev',
-  'unifunc' => 'content_55411ef31aacd0_37327324',
   'has_nocache_code' => false,
+  'version' => 'Smarty-3.1.21-dev',
+  'unifunc' => 'content_556cc13e2012a5_76847645',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_55411ef31aacd0_37327324')) {function content_55411ef31aacd0_37327324($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("home/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value)), 0);?>
+<?php if ($_valid && !is_callable('content_556cc13e2012a5_76847645')) {function content_556cc13e2012a5_76847645($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("home/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value)), 0);?>
 
 
     <div id="hero" class="static-header clearfix">
@@ -142,8 +142,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 
 		<div class="row omb_row-sm-offset-3">
 			<div class="col-xs-12 col-sm-6">	
-			    <form class="omb_loginForm" method="post" autocomplete="off" action="<?php echo $_smarty_tpl->getConfigVariable('base_url');?>
-/account/account/login">
+			    <form class="omb_loginForm" method="post" autocomplete="off" action="<?php echo base_url('login');?>
+">
 					<div class="input-group">
 						<span class="input-group-addon"><i class="fa fa-user"></i></span>
 						<input type="text" class="form-control" name="useremail" placeholder="Username" />

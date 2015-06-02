@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 07:35:33
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 22:32:02
          compiled from "application\views\templates\user\dashboard.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:18981556a8467435741-13358753%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:1058556cc142dd65d8-84351600%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,20 +11,20 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '18981556a8467435741-13358753',
+  'nocache_hash' => '1058556cc142dd65d8-84351600',
   'function' => 
   array (
   ),
-  'version' => 'Smarty-3.1.21-dev',
-  'unifunc' => 'content_556a8467488f74_11974239',
   'variables' => 
   array (
     'topnav' => 0,
     'sidebar' => 0,
   ),
   'has_nocache_code' => false,
+  'version' => 'Smarty-3.1.21-dev',
+  'unifunc' => 'content_556cc142e74fd4_86585534',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_556a8467488f74_11974239')) {function content_556a8467488f74_11974239($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("user/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value)), 0);?>
+<?php if ($_valid && !is_callable('content_556cc142e74fd4_86585534')) {function content_556cc142e74fd4_86585534($_smarty_tpl) {?><?php echo $_smarty_tpl->getSubTemplate ("user/header.tpl", $_smarty_tpl->cache_id, $_smarty_tpl->compile_id, 0, null, array('title'=>"Eduity",'name'=>((string)$_smarty_tpl->tpl_vars['Name']->value)), 0);?>
 
 
 <?php echo $_smarty_tpl->tpl_vars['topnav']->value;?>

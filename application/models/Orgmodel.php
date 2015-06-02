@@ -13,9 +13,16 @@ class Orgmodel extends CI_Model {
         $this->db = $this->load->database('eduity',true);
         $this->odb = $this->load->database('orgdb', TRUE);
         $this->onet = $this->load->database('onetdb', TRUE);
+      //  $this->load->model('profile/profile_model');
         $this->load->model('onetmodel');
         $this->load->helper('string');
     }
+    
+    function set_permissions()
+    {
+      //  $permits = $this->profile_model->get_org_permit_byid($uid,$oid);
+    }
+    
     
     function new_org($data)
     {
@@ -74,8 +81,7 @@ class Orgmodel extends CI_Model {
             $result = $query->row(); 
             return $result->org_name;
         }
-        log_message('error', 'Orgmodel->org_name() did not return a value.');
-        return '';          
+        return false;        
     }
     
     function get_units($id)

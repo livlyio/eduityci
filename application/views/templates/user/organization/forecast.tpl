@@ -1,4 +1,3 @@
-{include file="user/header.tpl" title="Eduity" name="$Name"}
 
 <div class="page-header container">
     <h1>{$org_name}</h1>
@@ -34,6 +33,6 @@
 </div>
 </div>
 
-<hr>
+<hr />
 
-{include file="user/footer.tpl"}
+
