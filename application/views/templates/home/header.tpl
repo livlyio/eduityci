@@ -50,7 +50,7 @@
 						<li><a href="{#base_url#}blog">Blog</a></li>
                     </ul>
                     <ul class="navigation-bar navigation-bar-right">
-                        <li><a href="{#base_url#}auth">Login</a></li>
+                        <li><a href="{#base_url#}login">Login</a></li>
                         <!--<li class="featured"><a href="register.html">Sign up</a></li>-->
                     </ul>  
                 </div>

@@ -32,19 +32,7 @@ class Organization extends CI_Controller {
 		$this->userid = $this->session->userdata('userid');
 		$this->profileid = $this->session->userdata('profileid');
 
-        $this->get = (object)$this->uri->uri_to_assoc('4',array('org','unit','occ'));
-        
-        // Check if user has permission to read resource on GET request
-        if (!$this->account_model->user_can_read($this->uri_string_segment(4))) {
-            die("No permission to read resource: ". $this->uri_string_segment(4));
-        }
-        // Check if user has permission to write to resource on POST request
-        if ($this->input->post()) {
-            if (!$this->account_model->user_can_write($this->uri_string_segment(4))) {
-                die("No permission to write to resource: ". $this->uri_string_segment(4));
-            }            
-        }
-       
+        $this->get = (object)$this->uri->uri_to_assoc('4',array('org','unit','occ'));       
         
         $this->user = $this->userlib->user;
         $this->profile = $this->userlib->get_profile($this->user);
@@ -52,6 +40,29 @@ class Organization extends CI_Controller {
         $this->menu['pg'] = 'org';
         $this->menu['base'] = base_url();
         
+    }
+    
+    private function can_read()
+    {
+        if ($this->uri->total_rsegments() > 4) {
+            if (!$this->account_model->user_can_read($this->uri_string_segment(4))) {
+            die("No permission to read resource: ". $this->uri_string_segment(4));  
+            }      }
+        return true;       
+    }
+    
+    private function can_write()
+    {
+        if ($this->uri->total_rsegments() > 4) {
+            if (!$this->account_model->user_can_write($this->uri_string_segment(4))) { die("No permission to write to resource: ". $this->uri_string_segment(4)); }   
+        }
+        return true;
+    }
+    
+    private function can_delete()
+    {
+        if (!$this->account_model->user_can_delete($this->uri_string_segment(4))) { die("You do not have delete permission."); }
+        return true;
     }
     
     function uri_string_segment($seg) {
@@ -84,6 +95,8 @@ class Organization extends CI_Controller {
     
     public function view() 
     {      
+        // Check for permission
+        $this->can_read();        
         // Pull organization information
         $data = $this->orgmodel->get_org($this->get->org);  
         // Set template variables
@@ -98,6 +111,9 @@ class Organization extends CI_Controller {
     
     public function units()
     {                    
+        // Check for permission
+        $this->can_read();        
+        // Get unit info
         $udata = $this->orgmodel->get_unit($this->get->unit);
         // Grab org information
         $odata = $this->orgmodel->get_org($this->get->org);
@@ -127,6 +143,9 @@ class Organization extends CI_Controller {
     
     public function add_unit()
     {
+        // Check for permission
+        $this->can_write();        
+        
         $data = $this->orgmodel->get_org($this->get->org);  
                 
         // When user submits form...
@@ -155,19 +174,24 @@ class Organization extends CI_Controller {
     
     public function del_unit()
     { 
+        // Check for permission
+        $this->can_delete();        
+
         // Security Check
-        if (!$this->account_model->user_can_delete()) { die("You do not have delete permission."); }
         
-        $this->userlib->check_acl('UNT',$this->user,$this->get->unit,'RW'); 
         // Passed check
         // Delete the unit
         $this->orgmodel->delete_unit($this->get->unit);
-        // Go back to org home
-        redirect('user/organization/view/'. $this->getquery($this->get->org,'0'));
+        // Remove all permissions and child permissions for that resource
+        $this->account_model->deleted_resource($this->uri_string_segment(4));
+        // Redirect to org view
+        redirect('user/organization/view/'. $this->getquery($this->get->org));
     }
     
     public function edit_unit()
     { 
+        $this->can_write();
+        
         // If submitting form proceed to save routine       
         if ($this->input->post('save_unit')) {
             $this->orgmodel->update_unit($this->get->unit,$this->input->post());
@@ -229,6 +253,8 @@ class Organization extends CI_Controller {
   
     public function previewsoc()
     {
+        $this->can_read();
+        
         $job = $this->onet->get_job_common($this->get->code,$this->get->common);
         $jd = $this->onet->get_basic_bysoc($this->get->code);
         $job->common = $this->onet->list_common($this->get->code);
@@ -268,12 +294,16 @@ class Organization extends CI_Controller {
     
     public function del_forecast()
     {
+        $this->can_delete();
+        
         $this->orgmodel->del_forecast($this->get);     
         redirect(site_url('user/organization/forecast/'. $this->getquery()));
     }
     
     public function forecast()
     {
+        $this->can_read();
+        
         $data['jobs'] = '';        
         $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
         $data['query_str'] = $this->getquery(); 
@@ -294,7 +324,8 @@ class Organization extends CI_Controller {
     
     public function addsoc()
     {
-    //    print_r($this->input->post()); die();
+    $this->can_write();
+    
     $common = $this->onetmodel->get_common_byid($this->input->post('common'))->common_name;
     
     $code = $this->orgmodel->add_soc($this->get->org,$this->get->unit,$this->get->code,$common);
@@ -333,6 +364,8 @@ class Organization extends CI_Controller {
     
     public function viewocc()
     {
+        $this->can_read();
+    
         $data = $this->getview();
         
         $data['baseme'] = site_url('/user/organization/viewocc/');
@@ -357,7 +390,8 @@ class Organization extends CI_Controller {
     
     public function update_occ_subset()
     {
-       // print_r($this->input->post());
+       $this->can_write();
+       
         if ($this->input->post('dofunction') == 'reorder') {
             switch ($this->input->post('subset')) {
                 case 'skills':
@@ -371,7 +405,72 @@ class Organization extends CI_Controller {
     
 
 
-    public function get_feed()
+ 
+    
+
+    
+    
+
+    
+    function unitcrumbs($bread)
+    {
+    $out = '<a href="'. base_url() .'user/organization/view/'. $this->getquery($bread['0']['org_id'],'0') .'">Home</a> ';
+        foreach ($bread as $crumb) {
+            $out .= ' &gt; <a href="'. base_url() .'user/organization/units/'. $this->getquery($bread['0']['org_id'],$crumb['unit_id']) .'">'.$crumb['unit_title'].'</a>';          
+        }
+    return $out;
+    }
+    
+    function enc($data)
+    {
+        return $this->userlib->encode($data);
+    }
+    
+    function segval()
+    {
+        return $this->userlib->decode($this->uri->segment('4'));
+    }
+
+    
+    // Generates URL Query string for controller functions
+    
+    function getquery($org = false, $unit = false, $occ = false)
+    {
+        $out['org'] = $org ?: $this->get->org;
+        
+        if (!$unit) {
+            // no unit specified, check query string
+            if (isset($this->get->unit)) { $out['unit'] = $this->get->unit; }
+            else { $out['unit'] = '0'; }
+        } else { $out['unit'] = $unit; }
+        
+        if ($occ) $out['occ'] = $occ;
+        elseif (isset($this->get->occ)) $out['occ'] = $this->get->occ;
+       // else $out['code'] = '0';
+        return $this->uri->assoc_to_uri($out);
+    }
+
+    function getqvals($obj = false)
+    {
+        $a = new stdClass();
+        $a->org = isset($this->get->org) ? $this->get->org : '0';
+        $a->unit = isset($this->get->unit) ? $this->get->unit : '0';
+        $a->code = isset($this->get->occ) ? $this->get->occ : '0';
+        return $a;
+    }
+
+    function control_areas(){
+        $term = $this->input->post('data', TRUE);
+        $countries = $this->omodel->get_areas($term);
+        echo json_encode($countries);
+    }   
+    
+
+    
+    
+    
+    /*
+       public function get_feed()
     {
         if (!is_numeric($this->get->code)) {
         //code is onet format
@@ -414,11 +513,7 @@ class Organization extends CI_Controller {
         $records['footmsg'] = 'test';
         
         $this->output->set_header($this->config->item('json_header'));
-        
-        /*
-         * Json build WITH json_encode. If you do not have this function please read
-         * http://flexigrid.eyeviewdesign.com/index.php/flexigrid/example#s3 to know how to use the alternative
-         */
+ 
         $record_items = array();
         foreach ($records['records'] as $row) {
             $record_items[] = array(
@@ -430,81 +525,13 @@ class Organization extends CI_Controller {
             );
         }
         
+        
       //  print_r($records); die();
         
         //Print please
         $this->output->set_output($this->flexigrid->json_build($records['record_count'], $record_items, $records['footmsg']));
     } 
-    
-
-    
-    
-
-    
-    function unitcrumbs($bread)
-    {
-    $out = '<a href="'. base_url() .'user/organization/view/'. $this->getquery($bread['0']['org_id'],'0') .'">Home</a> ';
-        foreach ($bread as $crumb) {
-            $out .= ' &gt; <a href="'. base_url() .'user/organization/units/'. $this->getquery($bread['0']['org_id'],$crumb['unit_id']) .'">'.$crumb['unit_title'].'</a>';          
-        }
-    return $out;
-    }
-    
-    function enc($data)
-    {
-        return $this->userlib->encode($data);
-    }
-    
-    function segval()
-    {
-        return $this->userlib->decode($this->uri->segment('4'));
-    }
-    
-    function check_acl($type, $privs = 'RO')
-    {
-        switch ($type) {
-            case 'ORG':
-            
-            break;
-            case 'UNT':
-            $this->userlib->check_acl($type,$this->user,$this->get->unit,$privs); 
-            break;
-        }
-    }
-    
-    // Generates URL Query string for controller functions
-    
-    function getquery($org = false, $unit = false, $occ = false)
-    {
-        $out['org'] = $org ?: $this->get->org;
-        
-        if (!$unit) {
-            // no unit specified, check query string
-            if (isset($this->get->unit)) { $out['unit'] = $this->get->unit; }
-            else { $out['unit'] = '0'; }
-        } else { $out['unit'] = $unit; }
-        
-        if ($occ) $out['occ'] = $occ;
-        elseif (isset($this->get->occ)) $out['occ'] = $this->get->occ;
-       // else $out['code'] = '0';
-        return $this->uri->assoc_to_uri($out);
-    }
-
-    function getqvals($obj = false)
-    {
-        $a = new stdClass();
-        $a->org = isset($this->get->org) ? $this->get->org : '0';
-        $a->unit = isset($this->get->unit) ? $this->get->unit : '0';
-        $a->code = isset($this->get->occ) ? $this->get->occ : '0';
-        return $a;
-    }
-
-    function control_areas(){
-        $term = $this->input->post('data', TRUE);
-        $countries = $this->omodel->get_areas($term);
-        echo json_encode($countries);
-    }   
-    
+    */
 
 }
 

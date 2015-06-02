@@ -46,8 +46,8 @@
               </a>
               <ul class="treeview-menu">
               {foreach from=$orgs item=org}
-              <li><a href="{base_url('user/organization/view/org')}/{$org->org_id}">
-              <i class="fa fa-sitemap"></i>{$org->org_name}</a></li>
+              <li><a href="{base_url('user/organization/view')}/{$org.resource}">
+              <i class="fa fa-sitemap"></i>{$org.name}</a></li>
               {/foreach}
               <li><a href="{base_url('user/organization/create')}"><i class="fa fa-plus-square"></i>Create Organization</a></li>  
               </ul>

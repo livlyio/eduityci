@@ -57,18 +57,17 @@ class Dashboard extends CI_Controller {
         // Called stream controller as a library
         $this->load->library('../controllers/stream/stream');
       
-        
-        // All of the variables that are used in templates are stored
-        // in $this->info object properties
+        /**
+         * The $this->info object is used to store variables that are 
+         * displayed in templates or worked with in some other way
+         * */ 
         $this->info = new stdClass();
         // Set up some empty properties
         $this->info->org_menu = '';
         $this->info->options = '';            
-        // Get User Profile Data
 		//save logged-in user id and profile id for using in script
-		$this->userid = $this->session->userdata('userid');
         $this->info->uid = $this->session->userdata('userid');
-		$this->profileid = $this->session->userdata('profileid');
+		$this->info->pid = $this->session->userdata('profileid');
 		//fetch details that are common to settings pages
 		$this->info->basic_details = $this->profile_model->get_profile_details();
         //get display name
@@ -79,23 +78,20 @@ class Dashboard extends CI_Controller {
 		$this->info->user_name = $this->account_model->get_account_details('name');
         // get org permissions
         $this->info->orgs = $this->account_model->get_org_permits_names();
+        // Create our uri query object
+        $this->get = (object)$this->uri->uri_to_assoc(4);      
+    }
+
+    public function index() {
         
-        print_r($this->info->orgs); die();
-        
-        $this->get = (object)$this->uri->uri_to_assoc(4);
-        
-        if (isset($this->get->org) && $this->get->org > 0) {
-            $org_permits = $this->profile_model->get_org_permit_byid($this->userid,$this->get->org);
-            if ($org_permits == '0000') { redirect('user/dashboard'); }
-            $perms = str_split($org_permits, 4);
-        }
-        
-        
-        
-	//	$this->info->title = "Info";
-	//	$this->info->css = array('default.css','jquery-ui.css');
-	//	$this->info->scripts = array('jquery.js','jquery.validate.js','jquery.form.js','profile-validation.js','jquery-ui.js');	
-	//	$this->info->page = "stream";
+        $data['page_content'] = '';
+        $this->info->ngroup = 'dash';
+        $data['optional'] = $this->optional();
+        $data['topnav'] = $this->notifications();
+        $data['sidebar'] = $this->sidebar();
+       
+  		$this->smarty->assign("Name","Collaborative Workforce Planning");
+        $this->smarty->view( 'user/dashboard.tpl', $data );
     }
 
     public function notifications()
@@ -112,21 +108,7 @@ class Dashboard extends CI_Controller {
     
     public function sidebar()
     {
-        
-     
         return $this->smarty->view( 'user/sidebar.tpl', $this->info, true);  
-    }
-
-    public function index() {
-        
-        $data['page_content'] = '';
-        $this->info->ngroup = 'dash';
-        $data['optional'] = $this->optional();
-        $data['topnav'] = $this->notifications();
-        $data['sidebar'] = $this->sidebar();
-       
-  		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/dashboard.tpl', $data );
     }
 
     public function load_template_nobox($template,$data,$ngroup)
@@ -174,8 +156,13 @@ class Dashboard extends CI_Controller {
         $data['optional'] = $this->optional();
        
   		$this->smarty->assign("Name","Collaborative Workforce Planning");
-        $this->smarty->view( 'user/timeline.tpl', $data );       
-        
+        $this->smarty->view( 'user/timeline.tpl', $data );               
+    }
+    
+    private function optional($input = false)
+    {
+        if (!$input) return $this->info->options;
+        else { $this->info->options = $input; }     
     }
     
     public function calendar()
@@ -193,14 +180,7 @@ class Dashboard extends CI_Controller {
         $this->load_template_nobox('user/individual/messages.tpl',array(),'cald');
     }
     
-    private function optional($input = false)
-    {
-        if (!$input) return $this->info->options;
-        else {
-            $this->info->options = $input;
-        }
-        
-    }
+
     
     
 

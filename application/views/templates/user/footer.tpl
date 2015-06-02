@@ -206,9 +206,7 @@
 
     <!-- AdminLTE for demo purposes -->
     <script src="{base_url('adminlte/dist/js/demo.js')}" type="text/javascript"></script>    
-    <!-- Demo -->
-    <script src="{base_url('adminlte/dist/js/demo.js')}" type="text/javascript"></script>
-    
+   
     <script type="text/javascript">
 $(document).ready(function(e){
     

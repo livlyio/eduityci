@@ -448,12 +448,18 @@
     
     public function created_resource($resource)
     {
-        $data = array('owner' => '1','write' => '1','read' => '1', 'delete' => '1', 'deny' => '0');
+        $data = array('owner' => '1','write' => '1','read' => '1', 'delete' => '1', 'deny' => '0','active' => '1');
         $data['user_id'] = $this->session->userdata('userid');
         $data['resource'] = $resource;
         $this->db->insert('user_permissions',$data);
     }
     
+    public function deleted_resource($resource)
+    {
+        $this->db->set('active','0');
+        $this->db->like('resource',$resource,'after');        
+        $this->db->update('user_permissions');
+    }
 
     
     function uri_string_segment($seg) {
@@ -463,26 +469,44 @@
         return $this->uri->assoc_to_uri($segs);
     }    
 
+    // Get a list of Organization resources with names that the user is permitted to access
     public function get_org_permits_names()
     {
+        // Briefly load the Organizations model
         $this->load->model('orgmodel');
+        // Create our output array
         $out = array();
+        // Get the permitted Organization resource(s)
         $permits = $this->get_org_permits();
-        foreach ($permits as $perm) {
-            $name = $this->orgmodel->org_name($perm->org_id);
-            $out[] = array_merge(array('name' => $name),$perm);
+        // Return false if there aren't any
+        if (!$permits || !is_array($permits)) { return false; }
+        // Go through each one
+        foreach ($permits as $perm) {       
+            // Split the resource identifyer into two parts using the '/'
+            // Part 0 = 'org' and Part 1 = the org_id
+            $pr = explode("/",$perm['resource']);
+            // Use the org_id to get the organization name from orgmodel
+            $name = $this->orgmodel->org_name($pr['1']);
+            // Set values of our output array
+            $out[] = array('name' => $name, 'resource' => $perm['resource'],'org_id' => $pr['1'],'owner' => $perm['owner'],'read' => $perm['read'],'write' => $perm['write'],'delete' => $perm['delete']);
         }
+        // return output as array
         return $out;
     }
 
+    // Get a list of Organization resources that the current user is permitted to access
     public function get_org_permits()
     {
-        //$this->orgdb = $this->load->database('orgdb',TRUE);
         $this->db->where('user_id',$this->session->userdata('userid'));
         //  Match org resource with regular expression
         $this->db->where('resource REGEXP','^org\/[0-9]+$');
+        // Make sure we arent specifically denied
         $this->db->where('deny','0');
+        // Make sure we have at least read permissions
         $this->db->where('read','1');      
+        // Make sure the record is active and hasn't been deleted
+        $this->db->where('active','1');
+        // Return results as an array or false for no results
          $query = $this->db->get('user_permissions');        
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -510,9 +534,8 @@
         return ($query->num_rows() > 0) ? true : false;        
     }
     
-    public function user_can_delete()
+    public function user_can_delete($resource)
     {   
-        $resource = $this->uri_string_segment(4);
         $this->db->where('user_id',$this->session->userdata('userid'));
         $this->db->where('resource',$resource);
         $this->db->where('deny','0');

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 17:23:23
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-02 20:47:20
          compiled from "application\views\templates\user\sidebar.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:16408556c78eba415a2-84078415%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1198ca3438919eb47039c61a87442994636fd601' => 
     array (
       0 => 'application\\views\\templates\\user\\sidebar.tpl',
-      1 => 1433142045,
+      1 => 1433270825,
       2 => 'file',
     ),
   ),
@@ -15,6 +15,8 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
+  'version' => 'Smarty-3.1.21-dev',
+  'unifunc' => 'content_556c78ebae0512_96324869',
   'variables' => 
   array (
     'user_name' => 0,
@@ -24,8 +26,6 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'org' => 0,
   ),
   'has_nocache_code' => false,
-  'version' => 'Smarty-3.1.21-dev',
-  'unifunc' => 'content_556c78ebae0512_96324869',
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_556c78ebae0512_96324869')) {function content_556c78ebae0512_96324869($_smarty_tpl) {?>      <!-- =============================================== -->
 
@@ -86,10 +86,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 foreach ($_from as $_smarty_tpl->tpl_vars['org']->key => $_smarty_tpl->tpl_vars['org']->value) {
 $_smarty_tpl->tpl_vars['org']->_loop = true;
 ?>
-              <li><a href="<?php echo base_url('user/organization/view/org');?>
-/<?php echo $_smarty_tpl->tpl_vars['org']->value->org_id;?>
+              <li><a href="<?php echo base_url('user/organization/view');?>
+/<?php echo $_smarty_tpl->tpl_vars['org']->value['resource'];?>
 ">
-              <i class="fa fa-sitemap"></i><?php echo $_smarty_tpl->tpl_vars['org']->value->org_name;?>
+              <i class="fa fa-sitemap"></i><?php echo $_smarty_tpl->tpl_vars['org']->value['name'];?>
 </a></li>
               <?php } ?>
               <li><a href="<?php echo base_url('user/organization/create');?>
