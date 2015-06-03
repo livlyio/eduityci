@@ -110,6 +110,12 @@ class Dashboard extends CI_Controller {
     {
         return $this->smarty->view( 'user/sidebar.tpl', $this->info, true);  
     }
+    
+    public function not_found()
+    {
+        $input = "<h1>Not Found</h1><br /><strong> The resource you were attempting to access does not exist.</strong>";
+        $this->load_content($input,array(),'orgn');
+    }
 
     public function load_template_nobox($template,$data,$ngroup)
     {

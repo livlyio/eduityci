@@ -81,6 +81,28 @@ class Widget {
 
     return $this->CI->load->view('widgets/data-panel',$arr,TRUE);     
     }    
+    
+    function editable_preview_panel($data,$querystr)
+    {
+    $arr['options']['color'] = 'blue';
+    $arr['options']['title'] = $this->CI->lang->line('orgocc').' Profile'; 
+    $arr['options']['width'] = '800px';
+    $arr['options']['height'] = 'auto'; 
+    $arr['data']['0']['name'] = $this->CI->lang->line('orgocc').' Name:'. form_open(site_url('user/organization/addsoc/'.$querystr),array('id' => 'addsoc'));
+    $arr['data']['0']['value'] = form_input(array('name' => 'title','value' => $data->ctitle,'size' => '70'));   
+    $arr['data']['1']['name'] = 'Description:';
+    $arr['data']['1']['value'] = form_textarea(array('name' => 'description','value' => $data->description,'cols' => '70','rows' => '3'));
+    $arr['data']['2']['name'] = 'ONET SOC Code:';
+    $arr['data']['2']['value'] = $data->onetsoc_code .'&nbsp;<b>-</b>&nbsp;'. form_hidden('onetsoc_code', $data->onetsoc_code) .' '. form_input('onetsoc_code_suffix', '');
+    $arr['data']['3']['name'] = 'Other Titles:';
+    $arr['data']['3']['value'] = $data->common; 
+    $arr['data']['4']['name'] = 'Industry:';
+    $arr['data']['4']['value'] = $data->title;         
+    $arr['data']['5']['name'] = '';
+    $arr['data']['5']['value'] = '<a href="" class="btn btn-success" role="button" onclick="document.getElementById(\'addsoc\').submit();"><i class="fa fa-user-plus"></i> &nbsp; &nbsp;<b>Add This Function</b></a>'.form_close();   
+     
+    return $this->CI->load->view('widgets/data-panel-multi',$arr,TRUE);     
+    }
 
     function occ_preview_panel($data,$querystr,$buttons)
     {

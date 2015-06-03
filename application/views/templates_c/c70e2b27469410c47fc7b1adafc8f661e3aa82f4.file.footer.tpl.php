@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-01 17:23:23
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-02 22:41:10
          compiled from "application\views\templates\user\footer.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:6359556c78ebd5f791-42628248%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'c70e2b27469410c47fc7b1adafc8f661e3aa82f4' => 
     array (
       0 => 'application\\views\\templates\\user\\footer.tpl',
-      1 => 1433144112,
+      1 => 1433274059,
       2 => 'file',
     ),
   ),
@@ -15,9 +15,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
-  'has_nocache_code' => false,
   'version' => 'Smarty-3.1.21-dev',
   'unifunc' => 'content_556c78ebdb18c7_09696674',
+  'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_556c78ebdb18c7_09696674')) {function content_556c78ebdb18c7_09696674($_smarty_tpl) {?>            <div class="box-footer">
              
@@ -264,12 +264,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
  src="<?php echo base_url('adminlte/dist/js/demo.js');?>
 " type="text/javascript"><?php echo '</script'; ?>
 >    
-    <!-- Demo -->
-    <?php echo '<script'; ?>
- src="<?php echo base_url('adminlte/dist/js/demo.js');?>
-" type="text/javascript"><?php echo '</script'; ?>
->
-    
+   
     <?php echo '<script'; ?>
  type="text/javascript">
 $(document).ready(function(e){

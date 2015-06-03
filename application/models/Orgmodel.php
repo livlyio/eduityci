@@ -17,19 +17,7 @@ class Orgmodel extends CI_Model {
         $this->load->model('onetmodel');
         $this->load->helper('string');
     }
-    
-    function set_permissions()
-    {
-      //  $permits = $this->profile_model->get_org_permit_byid($uid,$oid);
-    }
-    
-    
-    function new_org($data)
-    {
         
-        
-    }
-    
     function create_org($data,$uid)
     {
          
@@ -67,8 +55,7 @@ class Orgmodel extends CI_Model {
             $result = $query->row_array(); 
             return $result;
         }
-        return false;        
-        
+        return false;               
     }
     
     function org_name($id)
@@ -91,8 +78,7 @@ class Orgmodel extends CI_Model {
         if ($query->num_rows() > 0) {
             return $query->result_array(); 
         }
-        return false;        
-               
+        return false;                     
     }
     
     
@@ -178,17 +164,6 @@ class Orgmodel extends CI_Model {
         $this->odb->where('fset_id',$get->fcast);
         return $this->odb->update('organizations_forecasts_sets',$data);      
     }
-
-    
-    function list_or_create_forecast($get)
-    {
-        $list = $this->get_forecast_details($get);
-        if (!$list) {
-            $this->new_forecast($get);
-            $list = $this->get_forecast_details($get);
-        }
-        return $list;   
-    }
     
     function get_forecast_byid($get)
     {
@@ -243,17 +218,17 @@ class Orgmodel extends CI_Model {
         return false;
     }
      
-    function add_soc($org,$unit,$soc,$title)
+    function add_soc($get,$title)
     {
-        $data['org_id'] = $org;
-        $data['unit_id'] = $unit;
-        $data['onetsoc_code'] = $soc;
+        $data['org_id'] = $get->org;
+        $data['unit_id'] = $get->unit;
+        $data['onetsoc_code'] = $get->soc;
         $data['title'] = $title;
         
-        $this->odb->insert('organizations_units_jobs',$data);
+        $this->odb->insert('organizations_units_occs',$data);
         $code = $this->odb->insert_id();
         
-        $this->add_soc_default_skills($org,$unit,$soc,$code);
+        $this->add_soc_default_skills($get->org,$get->unit,$soc,$code);
         
         return $code;
     } 
@@ -262,17 +237,17 @@ class Orgmodel extends CI_Model {
     {
         unset($data['save_edits']);
         $this->odb->where('oujob_id',$oujob);
-        $this->odb->update('organizations_units_jobs',$data);
+        $this->odb->update('organizations_units_occs',$data);
         return true;
     }
     
     function delete_occ($oujob)
     {
         $this->odb->where('oujob_id',$oujob);
-        $this->odb->delete('organizations_units_jobs');
+        $this->odb->delete('organizations_units_occs');
         
         $this->odb->where('oujob_id',$oujob);
-        $this->odb->delete('organizations_units_jobs_skills');
+        $this->odb->delete('organizations_units_occs_skills');
             
         return true;   
     }    
@@ -282,14 +257,14 @@ class Orgmodel extends CI_Model {
     {
         $this->odb->select('*');
         //If they have entered a custom title or description, return the custom values
-        $this->odb->select("IF(organizations_units_jobs.title IS NULL or organizations_units_jobs.title = '', occupation_data.title, organizations_units_jobs.title) as title ",FALSE);
-        $this->odb->select("IF(organizations_units_jobs.description IS NULL or organizations_units_jobs.description = '', occupation_data.description, organizations_units_jobs.description) as description ",FALSE);
+        $this->odb->select("IF(organizations_units_occs.title IS NULL or organizations_units_occs.title = '', occupation_data.title, organizations_units_occs.title) as title ",FALSE);
+        $this->odb->select("IF(organizations_units_occs.description IS NULL or organizations_units_occs.description = '', occupation_data.description, organizations_units_occs.description) as description ",FALSE);
         $this->odb->where('org_id',$org);
         $this->odb->where('unit_id',$unit);
         $this->odb->where('oujob_id',$code);
-        $this->odb->join('eduity_onet.occupation_data', 'occupation_data.onetsoc_code = organizations_units_jobs.onetsoc_code');
+        $this->odb->join('eduity_onet.occupation_data', 'occupation_data.onetsoc_code = organizations_units_occs.onetsoc_code');
 
-        $query = $this->odb->get('organizations_units_jobs');
+        $query = $this->odb->get('organizations_units_occs');
  
         if ($query->num_rows() > 0) {
             if ($obj) {
@@ -312,8 +287,8 @@ class Orgmodel extends CI_Model {
     {
         $this->odb->where('org_id',$org);
         $this->odb->where('unit_id',$unit);
-        $this->odb->join('eduity_onet.occupation_data', 'occupation_data.onetsoc_code = organizations_units_jobs.onetsoc_code');
-        $query = $this->odb->get('organizations_units_jobs');
+        $this->odb->join('eduity_onet.occupation_data', 'occupation_data.onetsoc_code = organizations_units_occs.onetsoc_code');
+        $query = $this->odb->get('organizations_units_occs');
         return $query->result();
     }  
     
@@ -321,15 +296,15 @@ class Orgmodel extends CI_Model {
     {
         $this->odb->select('*');
         //If they have entered a custom title or description, return the custom values
-        $this->odb->select("IF(organizations_units_jobs_skills.element_name IS NULL or organizations_units_jobs_skills.element_name = '', content_model_reference.element_name, organizations_units_jobs_skills.element_name) as element_name ",FALSE);
-        $this->odb->select("IF(organizations_units_jobs_skills.description IS NULL or organizations_units_jobs_skills.description = '', content_model_reference.description, organizations_units_jobs_skills.description) as description ",FALSE);
+        $this->odb->select("IF(organizations_units_occs_skills.element_name IS NULL or organizations_units_occs_skills.element_name = '', content_model_reference.element_name, organizations_units_occs_skills.element_name) as element_name ",FALSE);
+        $this->odb->select("IF(organizations_units_occs_skills.description IS NULL or organizations_units_occs_skills.description = '', content_model_reference.description, organizations_units_occs_skills.description) as description ",FALSE);
         $this->odb->where('org_id',$org);
         $this->odb->where('unit_id',$unit);
         $this->odb->where('oujob_id',$code);
         $this->odb->order_by('order');
-        $this->odb->join('eduity_onet.content_model_reference','content_model_reference.element_id = organizations_units_jobs_skills.element_id');
+        $this->odb->join('eduity_onet.content_model_reference','content_model_reference.element_id = organizations_units_occs_skills.element_id');
 
-        $query = $this->odb->get('organizations_units_jobs_skills');
+        $query = $this->odb->get('organizations_units_occs_skills');
  
         if ($query->num_rows() > 0) {
             return $query->result(); 
@@ -381,7 +356,7 @@ class Orgmodel extends CI_Model {
         $data['element_name'] = $skill->element_name;
         $data['description'] = $skill->description;
         $data['order'] = $i; $i++;
-        $this->odb->insert('organizations_units_jobs_skills',$data);     
+        $this->odb->insert('organizations_units_occs_skills',$data);     
         }
        
     } 
@@ -393,7 +368,7 @@ class Orgmodel extends CI_Model {
             $this->odb->where('unit_id',$get->unit);
             $this->odb->where('oujob_id',$get->code);
             $this->odb->where('oujs_id',$skill); 
-            $this->odb->update('organizations_units_jobs_skills',array('order' => $key));           
+            $this->odb->update('organizations_units_occs_skills',array('order' => $key));           
         }
     }
     

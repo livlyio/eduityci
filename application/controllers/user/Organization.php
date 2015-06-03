@@ -72,6 +72,14 @@ class Organization extends CI_Controller {
         return $this->uri->assoc_to_uri($segs);
     }
     
+    function uri_string_segment_add($seg,$add) {
+        // $add = array('occ' => 5)
+        $sega = array_merge($this->uri->uri_to_assoc($seg),$add);  
+        $protected = array_flip(array('org','unit','occ'));       
+        $segs = array_intersect_key($sega,$protected);       
+        return $this->uri->assoc_to_uri($segs);              
+    }
+    
     public function index()
     {
         redirect('user/dashboard');
@@ -99,6 +107,7 @@ class Organization extends CI_Controller {
         $this->can_read();        
         // Pull organization information
         $data = $this->orgmodel->get_org($this->get->org);  
+        if (!$data) { return $this->dashboard->not_found(); }
         // Set template variables
         $data['query_str'] = $this->getquery($this->get->org,'0');
         $data['base'] = $this->menu['base'];
@@ -151,7 +160,8 @@ class Organization extends CI_Controller {
         // When user submits form...
         if ($this->input->post('add_unit')) {
             // Save new unit
-            $id = $this->orgmodel->add_unit($this->get->org,$this->get->unit,$this->input->post());
+            $parent = (isset($this->get->unit)) ? $this->get->unit : '0';
+            $id = $this->orgmodel->add_unit($this->get->org,$parent,$this->input->post());
             // Auto grant read/write access to creator
             $ura = array('org' => $this->get->org,'unit' => $id);
             $this->account_model->created_resource($this->uri->assoc_to_uri($ura));
@@ -163,11 +173,13 @@ class Organization extends CI_Controller {
         $data['query_str'] = $this->getquery();
 
         // Create breadcrumb links for easy navigation
+        if (isset($this->get->unit)) {
         if ($this->get->unit == '0') {
                 $data['crumbs'] = '<a href="'. site_url('user/organization/view/'. $this->uri->uri_to_assoc(array('org' => $this->get->org))) .'">Home</a>';
             } else { 
                 $data['crumbs'] = $this->unitcrumbs($this->orgmodel->get_bcpath($this->get->unit));
             }
+        } else { $data['crumbs'] = 'Main'; }
                      
         $this->dashboard->load_template('user/organization/addunit.tpl',$data,'orgn');     
     }
@@ -255,25 +267,96 @@ class Organization extends CI_Controller {
     {
         $this->can_read();
         
-        $job = $this->onet->get_job_common($this->get->code,$this->get->common);
-        $jd = $this->onet->get_basic_bysoc($this->get->code);
-        $job->common = $this->onet->list_common($this->get->code);
-
-        $data = $this->getview();
+        $job = $this->onet->get_job_bysoc($this->get->code);
+        
+      //  print_r($job); die();
+        
+        if (isset($this->get->common)) {
+            // Common name is set, use at the title
+            $job->ctitle = $this->onet->get_common_byid($this->get->common)->common_name;
+        } else {
+            // Common name isn't set, use the SOC title.   
+            $job->ctitle = $job->title;        
+        }
+        
+        $job->common = $this->onet->list_common($this->get->code);       
+        
         $data['baseme'] = site_url('/user/organization/previewsoc/');
         $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-
-        $buttons = '<tr><td></td><td><a id="link" href="'.site_url('/user/organization/addsoc/'.$this->getquery()) .'/common/'.$this->get->common.'" class="btn btn-success" role="button"><i class="fa fa-user-plus"></i> &nbsp; &nbsp;<b>Add This '.$this->lang->line('orgocc').'</b></a></td></tr>';
-
         $data['pageh'] = '<h1>Preview '.$this->lang->line('orgocc').'</h1>';
-        $data['occ_info_panel'] = $this->widget->occ_preview_panel($job,$this->getquery(),$buttons);
-        $data['generic_info_panel'] = $this->widget->occ_preview_panel2($jd,$this->getquery());      
+        $data['occ_info_panel'] = $this->widget->editable_preview_panel($job,$this->getquery());
+        //$data['generic_info_panel'] = $this->widget->occ_preview_panel2($jd,$this->getquery());      
+        $data['generic_info_panel'] = '';
         
         $this->dashboard->load_template('user/organization/previewocc.tpl',$data,'orgn');         
     }
     
+    public function addsoc()
+    {
+    $this->can_write();
+    
+    print_r($this->input->post()); die();
+    
+    if ($this->input->post()) {    
+        if ($this->input->post('common')) {
+            // Retrive the common name by ID for use as a title
+            $common = $this->onetmodel->get_common_byid($this->input->post('common'))->common_name;
+        } else { 
+            // Otherwise just use the ONET title
+            $common = '';
+        }
+        
+        // Create new occupation
+        $occ = $this->orgmodel->add_soc($this->get,$common);
+        // Permission for occupation
+        $resource = uri_string_segment_add($seg,array('occ' => $occ));
+        $this->account_model->created_resource($resource); 
+        
+        // New URI string
+        $get = $this->getquery($this->input->post('org'),$this->input->post('unit'),$occ);
+        
+        // Create new default forecast
+        $this->orgmodel->new_forecast($resource);     
+        // Permission for forecast
+        $resource = uri_string_segment_add($seg,array('occ' => $occ,'forecast' => $forc));
+        $this->account_model->created_resource($resource);         
+        
+    redirect('user/organization/viewocc/'.$get);  
+    } else die('test');
+        
+    }
+    
+    public function viewocc()
+    {
+        $this->can_read();
+    
+        $data = $this->getview();
+        
+        $data['baseme'] = site_url('/user/organization/viewocc/');
+        $data['org_name'] = $this->orgmodel->org_name($this->get->org);
+       // $unit = $this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->occ,true);
+       // print_r($unit); die();
+      //  $data['occ_info_panel'] = $this->widget->occ_info_panel($unit,$this->getquery());
+        $data['pageh'] = '<h1>View '.$this->lang->line('orgocc').'</h1>';
+        $data['generic_info_panel'] ='';    
+        $data['script'] = $this->script->sortable();  
+        $data['update'] = "'".site_url('/user/organization/update_occ_subset/'.$this->getquery())."'";
+        
+        //$data['update'] = "'post'";
+        $data['tabcontent'] = $this->widget->sortedit(array('Soc Code','Title','Description'),$this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->occ));
+
+        // Assign and display template
+        $out = $this->smarty->view( 'user/organization/viewocc.tpl', $data, true );   
+        
+        $this->dashboard->load_content($out,$data,'orgn');     
+        
+    }    
+    
+    
     public function update_forecast()
     {        
+    $this->can_write();
+    
     if ($this->orgmodel->update_forecast($this->get,$this->input->post())) {
         $yes[] = array(
             'success' => 'true',
@@ -314,7 +397,7 @@ class Organization extends CI_Controller {
         $data['baseme'] = site_url('/user/organization/viewocc/');
         $data['script'] = $this->script->editable();  
 
-        $data['content'] = $this->widget->forecast_details($this->orgmodel->list_or_create_forecast($this->get));
+        $data['content'] = $this->widget->forecast_details($this->orgmodel->get_forecast_details($this->get));
 
         // Assign and display template
         $this->smarty->assign('pg','org');
@@ -322,19 +405,7 @@ class Organization extends CI_Controller {
         $this->smarty->view( 'user/org_view.tpl', $data );      
     }    
     
-    public function addsoc()
-    {
-    $this->can_write();
-    
-    $common = $this->onetmodel->get_common_byid($this->input->post('common'))->common_name;
-    
-    $code = $this->orgmodel->add_soc($this->get->org,$this->get->unit,$this->get->code,$common);
-        
-    $get = $this->getquery($this->input->post('org'),$this->input->post('unit'),$code);    
-        
-    redirect('user/organization/viewocc/'.$get);  
-        
-    }
+
     
     public function getview()
     {
@@ -362,31 +433,7 @@ class Organization extends CI_Controller {
         return $data;
     }
     
-    public function viewocc()
-    {
-        $this->can_read();
-    
-        $data = $this->getview();
-        
-        $data['baseme'] = site_url('/user/organization/viewocc/');
-        $data['org_name'] = $this->orgmodel->org_name($this->get->org);
-       // $unit = $this->orgmodel->get_unit_soc($this->get->org,$this->get->unit,$this->get->occ,true);
-       // print_r($unit); die();
-      //  $data['occ_info_panel'] = $this->widget->occ_info_panel($unit,$this->getquery());
-        $data['pageh'] = '<h1>View '.$this->lang->line('orgocc').'</h1>';
-        $data['generic_info_panel'] ='';    
-        $data['script'] = $this->script->sortable();  
-        $data['update'] = "'".site_url('/user/organization/update_occ_subset/'.$this->getquery())."'";
-        
-        //$data['update'] = "'post'";
-        $data['tabcontent'] = $this->widget->sortedit(array('Soc Code','Title','Description'),$this->orgmodel->get_occ_skills($this->get->org,$this->get->unit,$this->get->occ));
 
-        // Assign and display template
-        $out = $this->smarty->view( 'user/organization/viewocc.tpl', $data, true );   
-        
-        $this->dashboard->load_content($out,$data,'orgn');     
-        
-    }
     
     public function update_occ_subset()
     {
@@ -441,7 +488,7 @@ class Organization extends CI_Controller {
         if (!$unit) {
             // no unit specified, check query string
             if (isset($this->get->unit)) { $out['unit'] = $this->get->unit; }
-            else { $out['unit'] = '0'; }
+            else { unset($out['unit']); }
         } else { $out['unit'] = $unit; }
         
         if ($occ) $out['occ'] = $occ;

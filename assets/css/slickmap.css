@@ -196,9 +196,9 @@ a:visited:before {
 ------------------------------------------------------------ */
 
 #utilityNav {
-	float: right;
+	float: left;
 	max-width: 50%;
-	margin-right: 10px;
+	margin-left: 400px;
 }
 #utilityNav li {
 	float: left;

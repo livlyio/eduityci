@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-02 20:47:20
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2015-06-03 04:01:06
          compiled from "application\views\templates\user\sidebar.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:16408556c78eba415a2-84078415%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '1198ca3438919eb47039c61a87442994636fd601' => 
     array (
       0 => 'application\\views\\templates\\user\\sidebar.tpl',
-      1 => 1433270825,
+      1 => 1433296864,
       2 => 'file',
     ),
   ),
@@ -81,6 +81,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 </span>
               </a>
               <ul class="treeview-menu">
+              <?php if ($_smarty_tpl->tpl_vars['orgs']->value!=false) {?>
               <?php  $_smarty_tpl->tpl_vars['org'] = new Smarty_Variable; $_smarty_tpl->tpl_vars['org']->_loop = false;
  $_from = $_smarty_tpl->tpl_vars['orgs']->value; if (!is_array($_from) && !is_object($_from)) { settype($_from, 'array');}
 foreach ($_from as $_smarty_tpl->tpl_vars['org']->key => $_smarty_tpl->tpl_vars['org']->value) {
@@ -92,6 +93,7 @@ $_smarty_tpl->tpl_vars['org']->_loop = true;
               <i class="fa fa-sitemap"></i><?php echo $_smarty_tpl->tpl_vars['org']->value['name'];?>
 </a></li>
               <?php } ?>
+              <?php }?>
               <li><a href="<?php echo base_url('user/organization/create');?>
 "><i class="fa fa-plus-square"></i>Create Organization</a></li>  
               </ul>

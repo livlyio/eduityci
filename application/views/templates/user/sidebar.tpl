@@ -45,10 +45,12 @@
                 <span class="label label-primary pull-right">{count($orgs)}</span>
               </a>
               <ul class="treeview-menu">
+              {if $orgs != false}
               {foreach from=$orgs item=org}
               <li><a href="{base_url('user/organization/view')}/{$org.resource}">
               <i class="fa fa-sitemap"></i>{$org.name}</a></li>
               {/foreach}
+              {/if}
               <li><a href="{base_url('user/organization/create')}"><i class="fa fa-plus-square"></i>Create Organization</a></li>  
               </ul>
             </li>
